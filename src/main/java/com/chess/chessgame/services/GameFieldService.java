@@ -29,9 +29,9 @@ public class GameFieldService {
         Scene scene = new Scene(rootGroup, 1000, 1000, Color.GRAY);
 
         paintGameBoard(rootGroup);
-        paintBorders(rootGroup, 0, 50);
+        paintBorders(rootGroup, 0, 80);
         paintBorders(rootGroup, 0, 900);
-        paintBorders(rootGroup, 50, 0);
+        paintBorders(rootGroup, 80, 0);
         paintBorders(rootGroup, 900, 0);
 
         ChessFigure chessFigure = new ChessFigure();
@@ -74,7 +74,7 @@ public class GameFieldService {
                 Rectangle rectangle = new Rectangle();
                 rectangle.setFill(Color.WHITE);
                 rectangle.setWidth(100);
-                rectangle.setHeight(50);
+                rectangle.setHeight(20);
                 Text text = new Text(String.valueOf(i + 1));
                 stack.getChildren().addAll(rectangle, text);
                 group.getChildren().add(stack);
@@ -87,7 +87,7 @@ public class GameFieldService {
                 stack.setLayoutY((i * 100) + 100);
                 Rectangle rectangle = new Rectangle();
                 rectangle.setFill(Color.WHITE);
-                rectangle.setWidth(50);
+                rectangle.setWidth(20);
                 rectangle.setHeight(100);
                 Text text = new Text(String.valueOf(i + 1));
                 stack.getChildren().addAll(rectangle, text);
@@ -108,7 +108,7 @@ public class GameFieldService {
     }
 
     public static ImageView loadFigureImage(FigureColor figureColor, FigureName figureName) throws FileNotFoundException {
-        String path = "images/" + figureColor.toString().toLowerCase(Locale.ROOT)
+        String path = "D:\\PROJECTS\\chessGame\\src\\main\\resources\\images/" + figureColor.toString().toLowerCase(Locale.ROOT)
                 + figureName.toString().substring(0, 1).toUpperCase(Locale.ROOT)
                 + figureName.toString().substring(1).toLowerCase(Locale.ROOT)+".png";
         File file = new File(path);
