@@ -4,10 +4,12 @@ import com.chess.chessgame.domain.figures.ChessFigure;
 import com.chess.chessgame.domain.figures.Position;
 import com.chess.chessgame.enums.FigureColor;
 import com.chess.chessgame.enums.FigureName;
+import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -23,10 +25,6 @@ import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class GameFieldService {
-
-    //    public static Scene createGameBoard(){
-//
-//    }
     public static Scene createGameScene() {
         Group rootGroup = new Group();
 
@@ -66,7 +64,11 @@ public class GameFieldService {
                     rectangle.setFill(Color.ANTIQUEWHITE);
                 }
                 borderPane.setId("BorderPane-" + i + j);
+                borderPane.setStyle("-fx-cursor: hand;");
                 borderPane.getChildren().add(rectangle);
+
+                EventHandler<MouseEvent> eventHandler = GameFieldService::onClick;
+                borderPane.addEventHandler(MouseEvent.MOUSE_CLICKED, eventHandler);
                 group.getChildren().add(borderPane);
                 isSecond = !isSecond;
             }
@@ -160,5 +162,9 @@ public class GameFieldService {
         ImageView imageView = new ImageView();
         imageView.setImage(image);
         return imageView;
+    }
+
+    public static void onClick(MouseEvent e) {
+        System.out.println("CLICKED!!!!"+ e.toString());
     }
 }
