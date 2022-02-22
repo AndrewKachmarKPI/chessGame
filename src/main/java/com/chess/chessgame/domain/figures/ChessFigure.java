@@ -15,12 +15,10 @@ public class ChessFigure {
 
     }
 
-    public ChessFigure(Integer id, FigureName name, FigureColor color, Position position, String image) {
-        this.id = id;
+    public ChessFigure(FigureName name, FigureColor color, Position position) {
         this.name = name;
         this.color = color;
         this.position = position;
-        this.image = image;
     }
 
     public FigureName getName() {
