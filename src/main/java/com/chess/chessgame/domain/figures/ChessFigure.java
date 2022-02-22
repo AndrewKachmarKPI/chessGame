@@ -1,0 +1,65 @@
+package com.chess.chessgame.domain.figures;
+
+import com.chess.chessgame.enums.FigureColor;
+import com.chess.chessgame.enums.FigureName;
+
+public class ChessFigure {
+    private Integer id;
+    private FigureName name;
+    private FigureColor color;
+    private Position position;
+    private String image;
+
+
+    public ChessFigure() {
+
+    }
+
+    public ChessFigure(Integer id, FigureName name, FigureColor color, Position position, String image) {
+        this.id = id;
+        this.name = name;
+        this.color = color;
+        this.position = position;
+        this.image = image;
+    }
+
+    public FigureName getName() {
+        return name;
+    }
+
+    public void setName(FigureName name) {
+        this.name = name;
+    }
+
+    public FigureColor getColor() {
+        return color;
+    }
+
+    public void setColor(FigureColor color) {
+        this.color = color;
+    }
+
+    public Position getPosition() {
+        return position;
+    }
+
+    public void setPosition(Position position) {
+        this.position = position;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+}
