@@ -38,7 +38,7 @@ public class GameFieldService {
         GameService.initGame();
 //        Rook rook = new Rook(FigureName.ROOK, FigureColor.BLACK, new Position(0,0));
 //        rook.getMoveDirection();
-        Knight rook = new Knight(FigureName.ROOK, FigureColor.BLACK, new Position(4,4));
+        Knight rook = new Knight(FigureName.ROOK, FigureColor.BLACK, new Position(4, 4));
         rook.getMoveDirection();
         return new Scene(rootGroup, 1000, 1000, Color.GRAY);
     }
@@ -109,11 +109,11 @@ public class GameFieldService {
     public static void setFigureOnBoard(ChessFigure chessFigure) {
         try {
             ImageView imageView = loadFigureImage(chessFigure.getColor(), chessFigure.getName());
-            imageView.setId(chessFigure.getColor().toString().toLowerCase(Locale.ROOT) + "-" + chessFigure.getName());
+            imageView.setId(chessFigure.getColor().toString().toUpperCase(Locale.ROOT) + "-" + chessFigure.getName());
             imageView.setX(50);
             imageView.setY(50);
 
-            List<BorderPane> borderPanes = getAllBorderPanes(rootGroup);
+            List<BorderPane> borderPanes = getAllBorderPanes();
             for (BorderPane pane : borderPanes) {
                 String paneId = "BorderPane-" + chessFigure.getPosition().getyPosition() + "" + chessFigure.getPosition().getxPosition();
                 if (!isCellOccupied(pane) && pane.getId().equals(paneId)) {
@@ -137,9 +137,9 @@ public class GameFieldService {
         return isUsed.get();
     }
 
-    public static List<BorderPane> getAllBorderPanes(Group group) {
+    public static List<BorderPane> getAllBorderPanes() {
         List<BorderPane> borderPanes = new ArrayList<>();
-        group.getChildren().forEach(node -> {
+        rootGroup.getChildren().forEach(node -> {
             if (node instanceof BorderPane) {
                 borderPanes.add((BorderPane) node);
             }
@@ -147,14 +147,24 @@ public class GameFieldService {
         return borderPanes;
     }
 
-    public static Rectangle getRectangleOfBorderPane(BorderPane borderPane){
+    public static Rectangle getRectangleOfBorderPane(BorderPane borderPane) {
         AtomicReference<Rectangle> rectangle = new AtomicReference<>(new Rectangle());
-       borderPane.getChildren().forEach(content->{
-           if(content instanceof Rectangle){
-               rectangle.set((Rectangle) content);
-           }
-       });
-       return rectangle.get();
+        borderPane.getChildren().forEach(content -> {
+            if (content instanceof Rectangle) {
+                rectangle.set((Rectangle) content);
+            }
+        });
+        return rectangle.get();
+    }
+
+    public static ImageView getImageOfBorderPane(BorderPane borderPane) {
+        AtomicReference<ImageView> rectangle = new AtomicReference<>(new ImageView());
+        borderPane.getChildren().forEach(content -> {
+            if (content instanceof ImageView) {
+                rectangle.set((ImageView) content);
+            }
+        });
+        return rectangle.get();
     }
 
     public static ImageView loadFigureImage(FigureColor figureColor, FigureName figureName) throws FileNotFoundException {
@@ -169,25 +179,43 @@ public class GameFieldService {
     }
 
     public static BorderPane findBorderPaneById(String borderPaneId) {
-        List<BorderPane> borderPanes = getAllBorderPanes(rootGroup);
+        List<BorderPane> borderPanes = getAllBorderPanes();
         return borderPanes.stream().filter(borderPane -> borderPane.getId().equals(borderPaneId)).findFirst().orElse(new BorderPane());
     }
 
+    public static void paintFigurePath(ChessFigure chessFigure, int[][] matrix) {
+        List<BorderPane> borderPanes = getAllBorderPanes();
+//        borderPanes.forEach(borderPane -> {
+//            String borderPaneId = "BorderPane-" + finalJ + "" + finalI;
+//            if (borderPane.getId().equals(borderPaneId)) {
+//                Rectangle rectangle = getRectangleOfBorderPane(borderPane);
+//                rectangle.setFill(Color.WHITESMOKE);
+//            }
+//        });
+    }
+
     public static void onHoverFigure(MouseEvent e) {
-        if(!isCellSelected){
-            BorderPane borderPane= findBorderPaneById(((BorderPane) e.getSource()).getId());
-            if(borderPane.getCenter() instanceof ImageView){
+        if (!isCellSelected) {
+            BorderPane borderPane = findBorderPaneById(((BorderPane) e.getSource()).getId());
+            if (borderPane.getCenter() instanceof ImageView) {
                 isCellSelected = true;
                 Rectangle rectangle = getRectangleOfBorderPane(borderPane);
                 selectedCellColor = (Color) rectangle.getFill();
                 rectangle.setFill(Color.GREEN);
+
+                String figureId = getImageOfBorderPane(borderPane).getId();
+                ChessFigure chessFigure = new ChessFigure(FigureName.valueOf(figureId.split("-")[1]), FigureColor.valueOf(figureId.split("-")[0]), new Position());
+                int[][] figureTrajectory = GameService.getFigureTrajectory(chessFigure);
+                paintFigurePath(chessFigure, figureTrajectory);
+                System.out.println(figureId);
             }
         }
     }
+
     public static void onUnHooverFigure(MouseEvent e) {
-        if(isCellSelected){
-            BorderPane borderPane= findBorderPaneById(((BorderPane) e.getSource()).getId());
-            if(borderPane.getCenter() instanceof ImageView){
+        if (isCellSelected) {
+            BorderPane borderPane = findBorderPaneById(((BorderPane) e.getSource()).getId());
+            if (borderPane.getCenter() instanceof ImageView) {
                 isCellSelected = false;
                 Rectangle rectangle = getRectangleOfBorderPane(borderPane);
                 rectangle.setFill(selectedCellColor);

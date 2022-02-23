@@ -6,7 +6,9 @@ import com.chess.chessgame.enums.FigureName;
 public class Queen extends ChessFigure{
     public Queen() {
     }
-
+    public Queen(ChessFigure chessFigure) {
+        super(chessFigure.getName(), chessFigure.getColor(), chessFigure.getPosition());
+    }
     public Queen(FigureName name, FigureColor color, Position position) {
         super(name, color, position);
     }

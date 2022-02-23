@@ -6,7 +6,9 @@ import com.chess.chessgame.enums.FigureName;
 public class Rook extends ChessFigure{
     public Rook() {
     }
-
+    public Rook(ChessFigure chessFigure) {
+        super(chessFigure.getName(), chessFigure.getColor(), chessFigure.getPosition());
+    }
     public Rook(FigureName name, FigureColor color, Position position) {
         super(name, color, position);
     }

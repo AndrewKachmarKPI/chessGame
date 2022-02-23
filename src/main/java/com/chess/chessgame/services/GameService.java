@@ -11,13 +11,48 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import static com.chess.chessgame.enums.FigureName.*;
+
 public class GameService {
     public static ChessBoard chessBoard = new ChessBoard();
 
-    public static void initGame(){
+    public static void initGame() {
         createGame();
         paintFigures();
     }
+
+    public static int[][] getFigureTrajectory(ChessFigure chessFigure) {
+        int[][] matrix = new int[8][8];
+        switch (chessFigure.getName()) {
+            case KING: {
+                King king = new King(chessFigure);
+                matrix = king.getMoveDirection();
+                break;
+            }
+            case QUEEN: {
+                Queen queen = new Queen(chessFigure);
+                matrix = queen.getMoveDirection();
+                break;
+            }
+            case ROOK: {
+                Rook rook = new Rook(chessFigure);
+                matrix = rook.getMoveDirection();
+                break;
+            }
+            case BISHOP: {
+                Bishop bishop = new Bishop(chessFigure);
+                matrix = bishop.getMoveDirection();
+                break;
+            }
+            case KNIGHT: {
+                Knight knight = new Knight(chessFigure);
+                matrix = knight.getMoveDirection();
+                break;
+            }
+        }
+        return matrix;
+    }
+
     private static void createGame() {
         File file = new File("D:\\PROJECTS\\chessGame\\src\\main\\resources\\game\\init.txt");
         try {
@@ -25,7 +60,7 @@ public class GameService {
             String line;
             List<ChessFigure> figures = new ArrayList<>();
             int[][] matrix = new int[8][8];
-            while ((line = bufferedReader.readLine()) != null && figures.size()<=10) {
+            while ((line = bufferedReader.readLine()) != null && figures.size() <= 10) {
                 line = line.trim();
                 String color = line.split(" ")[0];
                 String name = line.split(" ")[1];
@@ -76,23 +111,6 @@ public class GameService {
     }
 
     private static ChessFigure createChessFigure(InitChessBoard initChessBoard) {
-//        switch (initChessBoard.getFigureName()) {
-//            case KNIGHT: {
-//                return new Knight(initChessBoard.getFigureName(), initChessBoard.getFigureColor(), initChessBoard.getPosition());
-//            }
-//            case BISHOP: {
-//                return new Bishop(initChessBoard.getFigureName(), initChessBoard.getFigureColor(), initChessBoard.getPosition());
-//            }
-//            case QUEEN: {
-//                return new Queen(initChessBoard.getFigureName(), initChessBoard.getFigureColor(), initChessBoard.getPosition());
-//            }
-//            case ROCK: {
-//                return new Rook(initChessBoard.getFigureName(), initChessBoard.getFigureColor(), initChessBoard.getPosition());
-//            }
-//            case KING: {
-//                return new King(initChessBoard.getFigureName(), initChessBoard.getFigureColor(), initChessBoard.getPosition());
-//            }
-//        }
         return new ChessFigure(initChessBoard.getFigureName(), initChessBoard.getFigureColor(), initChessBoard.getPosition());
     }
 }

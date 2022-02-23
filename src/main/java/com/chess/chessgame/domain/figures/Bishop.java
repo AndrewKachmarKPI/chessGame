@@ -4,7 +4,8 @@ import com.chess.chessgame.enums.FigureColor;
 import com.chess.chessgame.enums.FigureName;
 
 public class Bishop extends ChessFigure {
-    public Bishop() {
+    public Bishop(ChessFigure chessFigure) {
+        super(chessFigure.getName(), chessFigure.getColor(), chessFigure.getPosition());
     }
 
     public Bishop(FigureName name, FigureColor color, Position position) {
@@ -15,7 +16,7 @@ public class Bishop extends ChessFigure {
         int[][] matrix = new int[8][8];
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                if (i+this.getPosition().getyPosition() == j+this.getPosition().getxPosition()) {
+                if (i + this.getPosition().getyPosition() == j + this.getPosition().getxPosition()) {
                     matrix[i][j] = 1;
                 }
             }
@@ -23,7 +24,7 @@ public class Bishop extends ChessFigure {
 
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                if (i+(8-this.getPosition().getyPosition()) + j - this.getPosition().getxPosition() == 8) {
+                if (i + (8 - this.getPosition().getyPosition()) + j - this.getPosition().getxPosition() == 8) {
                     matrix[i][j] = 1;
                 }
             }

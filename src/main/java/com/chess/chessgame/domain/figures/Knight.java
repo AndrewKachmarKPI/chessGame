@@ -4,6 +4,9 @@ import com.chess.chessgame.enums.FigureColor;
 import com.chess.chessgame.enums.FigureName;
 
 public class Knight extends ChessFigure {
+    public Knight(ChessFigure chessFigure) {
+        super(chessFigure.getName(), chessFigure.getColor(), chessFigure.getPosition());
+    }
     public Knight() {
     }
 
