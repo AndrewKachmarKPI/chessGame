@@ -1,9 +1,6 @@
 package com.chess.chessgame.services;
 
-import com.chess.chessgame.domain.figures.ChessFigure;
-import com.chess.chessgame.domain.figures.King;
-import com.chess.chessgame.domain.figures.Position;
-import com.chess.chessgame.domain.figures.Rook;
+import com.chess.chessgame.domain.figures.*;
 import com.chess.chessgame.enums.FigureColor;
 import com.chess.chessgame.enums.FigureName;
 import javafx.event.EventHandler;
@@ -41,7 +38,7 @@ public class GameFieldService {
         GameService.initGame();
 //        Rook rook = new Rook(FigureName.ROOK, FigureColor.BLACK, new Position(0,0));
 //        rook.getMoveDirection();
-        King rook = new King(FigureName.ROOK, FigureColor.BLACK, new Position(0,0));
+        Bishop rook = new Bishop(FigureName.ROOK, FigureColor.BLACK, new Position(3,7));
         rook.getMoveDirection();
         return new Scene(rootGroup, 1000, 1000, Color.GRAY);
     }
