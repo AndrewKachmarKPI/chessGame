@@ -1,7 +1,9 @@
 package com.chess.chessgame.services;
 
 import com.chess.chessgame.domain.figures.ChessFigure;
+import com.chess.chessgame.domain.figures.King;
 import com.chess.chessgame.domain.figures.Position;
+import com.chess.chessgame.domain.figures.Rook;
 import com.chess.chessgame.enums.FigureColor;
 import com.chess.chessgame.enums.FigureName;
 import javafx.event.EventHandler;
@@ -37,6 +39,10 @@ public class GameFieldService {
         paintBorders(rootGroup, 80, 0);
         paintBorders(rootGroup, 900, 0);
         GameService.initGame();
+//        Rook rook = new Rook(FigureName.ROOK, FigureColor.BLACK, new Position(0,0));
+//        rook.getMoveDirection();
+        King rook = new King(FigureName.ROOK, FigureColor.BLACK, new Position(0,0));
+        rook.getMoveDirection();
         return new Scene(rootGroup, 1000, 1000, Color.GRAY);
     }
 
@@ -61,8 +67,8 @@ public class GameFieldService {
                 borderPane.setStyle("-fx-cursor: hand;");
                 borderPane.getChildren().add(rectangle);
 
-                EventHandler<MouseEvent> selectFigure = GameFieldService::selectFigure;
-                EventHandler<MouseEvent> unselectFigure = GameFieldService::unselectFigure;
+                EventHandler<MouseEvent> selectFigure = GameFieldService::onHoverFigure;
+                EventHandler<MouseEvent> unselectFigure = GameFieldService::onUnHooverFigure;
                 borderPane.addEventHandler(MouseEvent.MOUSE_ENTERED_TARGET, selectFigure);
                 borderPane.addEventHandler(MouseEvent.MOUSE_EXITED_TARGET, unselectFigure);
                 group.getChildren().add(borderPane);
@@ -170,18 +176,18 @@ public class GameFieldService {
         return borderPanes.stream().filter(borderPane -> borderPane.getId().equals(borderPaneId)).findFirst().orElse(new BorderPane());
     }
 
-    public static void selectFigure(MouseEvent e) {
+    public static void onHoverFigure(MouseEvent e) {
         if(!isCellSelected){
             BorderPane borderPane= findBorderPaneById(((BorderPane) e.getSource()).getId());
             if(borderPane.getCenter() instanceof ImageView){
                 isCellSelected = true;
                 Rectangle rectangle = getRectangleOfBorderPane(borderPane);
                 selectedCellColor = (Color) rectangle.getFill();
-                rectangle.setFill(Color.RED);
+                rectangle.setFill(Color.GREEN);
             }
         }
     }
-    public static void unselectFigure(MouseEvent e) {
+    public static void onUnHooverFigure(MouseEvent e) {
         if(isCellSelected){
             BorderPane borderPane= findBorderPaneById(((BorderPane) e.getSource()).getId());
             if(borderPane.getCenter() instanceof ImageView){

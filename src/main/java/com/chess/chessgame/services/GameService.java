@@ -26,6 +26,7 @@ public class GameService {
             List<ChessFigure> figures = new ArrayList<>();
             int[][] matrix = new int[8][8];
             while ((line = bufferedReader.readLine()) != null) {
+                line = line.trim();
                 String color = line.split(" ")[0];
                 String name = line.split(" ")[1];
                 Position position = new Position(Integer.parseInt(line.split(" ")[2]), Integer.parseInt(line.split(" ")[3]));
@@ -34,7 +35,7 @@ public class GameService {
                 figures.add(chessFigure);
                 for (int i = 0; i < 8; i++) {
                     for (int j = 0; j < 8; j++) {
-                        if (chessFigure.getPosition().getxPosition() == i && chessFigure.getPosition().getyPosition() == j) {
+                        if (chessFigure.getPosition().getyPosition() == i && chessFigure.getPosition().getxPosition() == j) {
                             matrix[i][j] = getFigureNumber(chessFigure);
                             break;
                         }
@@ -56,19 +57,19 @@ public class GameService {
     private static int getFigureNumber(ChessFigure chessFigure) {
         switch (chessFigure.getName()) {
             case KING: {
-                return 1;
-            }
-            case QUEEN: {
                 return 2;
             }
-            case ROOK: {
+            case QUEEN: {
                 return 3;
             }
-            case BISHOP: {
+            case ROOK: {
                 return 4;
             }
-            case KNIGHT: {
+            case BISHOP: {
                 return 5;
+            }
+            case KNIGHT: {
+                return 6;
             }
         }
         return 0;
