@@ -38,7 +38,7 @@ public class GameFieldService {
         GameService.initGame();
 //        Rook rook = new Rook(FigureName.ROOK, FigureColor.BLACK, new Position(0,0));
 //        rook.getMoveDirection();
-        Bishop rook = new Bishop(FigureName.ROOK, FigureColor.BLACK, new Position(3,7));
+        Queen rook = new Queen(FigureName.ROOK, FigureColor.BLACK, new Position(5,5));
         rook.getMoveDirection();
         return new Scene(rootGroup, 1000, 1000, Color.GRAY);
     }
