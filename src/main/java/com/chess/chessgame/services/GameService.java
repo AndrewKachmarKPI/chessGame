@@ -25,7 +25,7 @@ public class GameService {
             String line;
             List<ChessFigure> figures = new ArrayList<>();
             int[][] matrix = new int[8][8];
-            while ((line = bufferedReader.readLine()) != null) {
+            while ((line = bufferedReader.readLine()) != null && figures.size()<=10) {
                 line = line.trim();
                 String color = line.split(" ")[0];
                 String name = line.split(" ")[1];
