@@ -23,11 +23,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class GameFieldService {
-    public static Scene createGameScene() {
-        Group rootGroup = new Group();
+    public static Group rootGroup = new Group();
+    public static boolean isCellSelected = false;
+    public static Color selectedCellColor;
 
+    public static Scene createGameScene() {
         paintGameBoard(rootGroup);
         paintBorders(rootGroup, 0, 80);
         paintBorders(rootGroup, 0, 900);
@@ -35,15 +38,10 @@ public class GameFieldService {
         paintBorders(rootGroup, 900, 0);
 
         ChessFigure chessFigure = new ChessFigure(FigureName.KING, FigureColor.BLACK, new Position(0, 7));
-        ChessFigure chessFigure2 = new ChessFigure(FigureName.QUEEN, FigureColor.WHITE, new Position(0, 7));
-        ChessFigure chessFigure3 = new ChessFigure(FigureName.BISHOP, FigureColor.BLACK, new Position(0, 7));
 
         setFigureOnBoard(rootGroup, chessFigure);
-        setFigureOnBoard(rootGroup, chessFigure2);
-        setFigureOnBoard(rootGroup, chessFigure3);
 
-        Scene scene = new Scene(rootGroup, 1000, 1000, Color.GRAY);
-        return scene;
+        return new Scene(rootGroup, 1000, 1000, Color.GRAY);
     }
 
     public static void paintGameBoard(Group group) {
@@ -67,8 +65,10 @@ public class GameFieldService {
                 borderPane.setStyle("-fx-cursor: hand;");
                 borderPane.getChildren().add(rectangle);
 
-                EventHandler<MouseEvent> eventHandler = GameFieldService::onClick;
-                borderPane.addEventHandler(MouseEvent.MOUSE_CLICKED, eventHandler);
+                EventHandler<MouseEvent> selectFigure = GameFieldService::selectFigure;
+                EventHandler<MouseEvent> unselectFigure = GameFieldService::unselectFigure;
+                borderPane.addEventHandler(MouseEvent.MOUSE_ENTERED_TARGET, selectFigure);
+                borderPane.addEventHandler(MouseEvent.MOUSE_EXITED_TARGET, unselectFigure);
                 group.getChildren().add(borderPane);
                 isSecond = !isSecond;
             }
@@ -113,7 +113,6 @@ public class GameFieldService {
             imageView.setId(chessFigure.getColor().toString().toLowerCase(Locale.ROOT) + "-" + chessFigure.getName());
             imageView.setX(50);
             imageView.setY(50);
-//            group.getChildren().add(imageView);
 
             List<BorderPane> borderPanes = getAllBorderPanes(group);
             for (BorderPane pane : borderPanes) {
@@ -148,10 +147,16 @@ public class GameFieldService {
         });
         return borderPanes;
     }
-//    public static Rectangle getPaneRectangle(BorderPane borderPane){
-//        return (Rectangle) borderPane.getChildren().stream().filter(node -> node.getId().equals(borderPane.getId())).findFirst()
-//                .orElseThrow(() -> new RuntimeException("rectangle not found"));
-//    }
+
+    public static Rectangle getRectangleOfBorderPane(BorderPane borderPane){
+        AtomicReference<Rectangle> rectangle = new AtomicReference<>(new Rectangle());
+       borderPane.getChildren().forEach(content->{
+           if(content instanceof Rectangle){
+               rectangle.set((Rectangle) content);
+           }
+       });
+       return rectangle.get();
+    }
 
     public static ImageView loadFigureImage(FigureColor figureColor, FigureName figureName) throws FileNotFoundException {
         String path = "D:\\PROJECTS\\chessGame\\src\\main\\resources\\images\\" + figureColor.toString().toLowerCase(Locale.ROOT)
@@ -164,7 +169,37 @@ public class GameFieldService {
         return imageView;
     }
 
-    public static void onClick(MouseEvent e) {
-        System.out.println("CLICKED!!!!"+ e.toString());
+    public static BorderPane findBorderPaneById(String borderPaneId) {
+        List<BorderPane> borderPanes = getAllBorderPanes(rootGroup);
+        return borderPanes.stream().filter(borderPane -> borderPane.getId().equals(borderPaneId)).findFirst().orElse(new BorderPane());
     }
+
+    public static void selectFigure(MouseEvent e) {
+        System.out.println("CLICKED!!!!" + e.toString());
+        ChessFigure chessFigure2 = new ChessFigure(FigureName.QUEEN, FigureColor.WHITE, new Position(1, 7));
+        ChessFigure chessFigure3 = new ChessFigure(FigureName.BISHOP, FigureColor.BLACK, new Position(5, 0));
+        setFigureOnBoard(rootGroup, chessFigure2);
+        setFigureOnBoard(rootGroup, chessFigure3);
+
+        if(!isCellSelected){
+            BorderPane borderPane= findBorderPaneById(((BorderPane) e.getSource()).getId());
+            if(borderPane.getCenter() instanceof ImageView){
+                isCellSelected = true;
+                Rectangle rectangle = getRectangleOfBorderPane(borderPane);
+                selectedCellColor = (Color) rectangle.getFill();
+                rectangle.setFill(Color.RED);
+            }
+        }
+    }
+    public static void unselectFigure(MouseEvent e) {
+        if(isCellSelected){
+            BorderPane borderPane= findBorderPaneById(((BorderPane) e.getSource()).getId());
+            if(borderPane.getCenter() instanceof ImageView){
+                isCellSelected = false;
+                Rectangle rectangle = getRectangleOfBorderPane(borderPane);
+                rectangle.setFill(selectedCellColor);
+            }
+        }
+    }
+
 }
