@@ -3,6 +3,8 @@ package com.chess.chessgame.domain.figures;
 import com.chess.chessgame.enums.FigureColor;
 import com.chess.chessgame.enums.FigureName;
 
+import java.util.Objects;
+
 public class ChessFigure {
     private Integer id;
     private FigureName name;
@@ -59,5 +61,29 @@ public class ChessFigure {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    @Override
+    public String toString() {
+        return "ChessFigure{" +
+                "id=" + id +
+                ", name=" + name +
+                ", color=" + color +
+                ", position=" + position +
+                ", image='" + image + '\'' +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ChessFigure that = (ChessFigure) o;
+        return Objects.equals(id, that.id) && name == that.name && color == that.color && Objects.equals(position, that.position) && Objects.equals(image, that.image);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, color, position, image);
     }
 }

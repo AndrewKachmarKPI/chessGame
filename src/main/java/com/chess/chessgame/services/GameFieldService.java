@@ -36,11 +36,7 @@ public class GameFieldService {
         paintBorders(rootGroup, 0, 900);
         paintBorders(rootGroup, 80, 0);
         paintBorders(rootGroup, 900, 0);
-
-        ChessFigure chessFigure = new ChessFigure(FigureName.KING, FigureColor.BLACK, new Position(0, 7));
-
-        setFigureOnBoard(rootGroup, chessFigure);
-
+        GameService.initGame();
         return new Scene(rootGroup, 1000, 1000, Color.GRAY);
     }
 
@@ -107,14 +103,14 @@ public class GameFieldService {
         }
     }
 
-    public static void setFigureOnBoard(Group group, ChessFigure chessFigure) {
+    public static void setFigureOnBoard(ChessFigure chessFigure) {
         try {
             ImageView imageView = loadFigureImage(chessFigure.getColor(), chessFigure.getName());
             imageView.setId(chessFigure.getColor().toString().toLowerCase(Locale.ROOT) + "-" + chessFigure.getName());
             imageView.setX(50);
             imageView.setY(50);
 
-            List<BorderPane> borderPanes = getAllBorderPanes(group);
+            List<BorderPane> borderPanes = getAllBorderPanes(rootGroup);
             for (BorderPane pane : borderPanes) {
                 String paneId = "BorderPane-" + chessFigure.getPosition().getyPosition() + "" + chessFigure.getPosition().getxPosition();
                 if (!isCellOccupied(pane) && pane.getId().equals(paneId)) {
@@ -175,12 +171,6 @@ public class GameFieldService {
     }
 
     public static void selectFigure(MouseEvent e) {
-        System.out.println("CLICKED!!!!" + e.toString());
-        ChessFigure chessFigure2 = new ChessFigure(FigureName.QUEEN, FigureColor.WHITE, new Position(1, 7));
-        ChessFigure chessFigure3 = new ChessFigure(FigureName.BISHOP, FigureColor.BLACK, new Position(5, 0));
-        setFigureOnBoard(rootGroup, chessFigure2);
-        setFigureOnBoard(rootGroup, chessFigure3);
-
         if(!isCellSelected){
             BorderPane borderPane= findBorderPaneById(((BorderPane) e.getSource()).getId());
             if(borderPane.getCenter() instanceof ImageView){
