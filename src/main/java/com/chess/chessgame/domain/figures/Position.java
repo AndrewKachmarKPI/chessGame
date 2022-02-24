@@ -28,4 +28,12 @@ public class Position {
     public void setyPosition(int yPosition) {
         this.yPosition = yPosition;
     }
+
+    @Override
+    public String toString() {
+        return "Position{" +
+                "xPosition=" + xPosition +
+                ", yPosition=" + yPosition +
+                '}';
+    }
 }

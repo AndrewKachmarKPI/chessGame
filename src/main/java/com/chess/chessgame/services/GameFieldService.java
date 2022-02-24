@@ -1,5 +1,6 @@
 package com.chess.chessgame.services;
 
+import com.chess.chessgame.domain.board.SelectedCells;
 import com.chess.chessgame.domain.figures.*;
 import com.chess.chessgame.enums.FigureColor;
 import com.chess.chessgame.enums.FigureName;
@@ -28,6 +29,7 @@ public class GameFieldService {
     public static Group rootGroup = new Group();
     public static boolean isCellSelected = false;
     public static Color selectedCellColor;
+    public static List<SelectedCells> selectedCells = new ArrayList<>();
 
     public static Scene createGameScene() {
         paintGameBoard(rootGroup);
@@ -184,27 +186,55 @@ public class GameFieldService {
     }
 
     public static void paintFigurePath(ChessFigure chessFigure, int[][] matrix) {
+        int k = 0;
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                if (matrix[i][j] == 1) {
+                    paintRectangle(i, j, Color.WHITESMOKE, k);
+                    k++;
+                }
+            }
+        }
+    }
+
+    public static void paintRectangle(int x, int y, Color color, int id) {
         List<BorderPane> borderPanes = getAllBorderPanes();
-//        borderPanes.forEach(borderPane -> {
-//            String borderPaneId = "BorderPane-" + finalJ + "" + finalI;
-//            if (borderPane.getId().equals(borderPaneId)) {
-//                Rectangle rectangle = getRectangleOfBorderPane(borderPane);
-//                rectangle.setFill(Color.WHITESMOKE);
-//            }
-//        });
+        borderPanes.forEach(borderPane -> {
+            String borderPaneId = "BorderPane-" + x + "" + y;
+            if (borderPane.getId().equals(borderPaneId)) {
+                Rectangle rectangle = getRectangleOfBorderPane(borderPane);
+                selectedCells.add(new SelectedCells((Color) rectangle.getFill(), new Position(x, y)));
+                rectangle.setFill(color);
+            }
+        });
+    }
+    public static void unPaintRectangle() {
+        selectedCells.forEach(selected -> {
+            List<BorderPane> borderPanes = getAllBorderPanes();
+            borderPanes.forEach(borderPane -> {
+                String borderPaneId = "BorderPane-" + selected.getPosition().getxPosition() + "" + selected.getPosition().getyPosition();
+                if (borderPane.getId().equals(borderPaneId)) {
+                    Rectangle rectangle = getRectangleOfBorderPane(borderPane);
+                    rectangle.setFill(selected.getColor());
+                }
+            });
+        });
     }
 
     public static void onHoverFigure(MouseEvent e) {
         if (!isCellSelected) {
             BorderPane borderPane = findBorderPaneById(((BorderPane) e.getSource()).getId());
+            System.out.println(borderPane);
             if (borderPane.getCenter() instanceof ImageView) {
                 isCellSelected = true;
                 Rectangle rectangle = getRectangleOfBorderPane(borderPane);
                 selectedCellColor = (Color) rectangle.getFill();
                 rectangle.setFill(Color.GREEN);
 
+                Position position = new Position(Integer.parseInt(borderPane.getId().split("-")[1].split("")[0]),
+                        Integer.parseInt(borderPane.getId().split("-")[1].split("")[1]));
                 String figureId = getImageOfBorderPane(borderPane).getId();
-                ChessFigure chessFigure = new ChessFigure(FigureName.valueOf(figureId.split("-")[1]), FigureColor.valueOf(figureId.split("-")[0]), new Position());
+                ChessFigure chessFigure = new ChessFigure(FigureName.valueOf(figureId.split("-")[1]), FigureColor.valueOf(figureId.split("-")[0]), position);
                 int[][] figureTrajectory = GameService.getFigureTrajectory(chessFigure);
                 paintFigurePath(chessFigure, figureTrajectory);
                 System.out.println(figureId);
@@ -219,6 +249,7 @@ public class GameFieldService {
                 isCellSelected = false;
                 Rectangle rectangle = getRectangleOfBorderPane(borderPane);
                 rectangle.setFill(selectedCellColor);
+                unPaintRectangle();
             }
         }
     }
