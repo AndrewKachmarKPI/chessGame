@@ -32,4 +32,23 @@ public class Bishop extends ChessFigure {
         matrix[this.getPosition().getxPosition()][this.getPosition().getyPosition()] = 5;
         return matrix;
     }
+
+    public int[][] removeDuplicate(int[][] matrix) {
+        int[][] finalMatrix = new int[8][8];
+
+        for (int i = 0; i < 8; i++) {
+            boolean contains = false;
+            for (int j = 0; j < 8; j++) {
+                if (i + this.getPosition().getyPosition() == j + this.getPosition().getxPosition()) {
+                    if (matrix[i][j] == 10 && !contains) {
+                        matrix[i][j] = 1;
+                        contains = true;
+                    }else{
+                        matrix[i][j] = 0;
+                    }
+                }
+            }
+        }
+        return finalMatrix;
+    }
 }

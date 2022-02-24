@@ -52,8 +52,8 @@ public class GameFieldService {
                 BorderPane borderPane = new BorderPane();
                 borderPane.setMinWidth(100);
                 borderPane.setMinHeight(100);
-                borderPane.setLayoutX((i * 100) + 100);
-                borderPane.setLayoutY((j * 100) + 100);
+                borderPane.setLayoutX((j * 100) + 100);
+                borderPane.setLayoutY((i * 100) + 100);
                 Rectangle rectangle = new Rectangle();
                 rectangle.setWidth(100);
                 rectangle.setHeight(100);
@@ -191,6 +191,10 @@ public class GameFieldService {
             for (int j = 0; j < 8; j++) {
                 if (matrix[i][j] == 1) {
                     paintRectangle(i, j, Color.WHITESMOKE, k);
+                    k++;
+                }
+                if(matrix[i][j] == 10){
+                    paintRectangle(i, j, Color.RED, k);
                     k++;
                 }
             }

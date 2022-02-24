@@ -26,31 +26,49 @@ public class GameService {
         switch (chessFigure.getName()) {
             case KING: {
                 King king = new King(chessFigure);
-                matrix = king.getMoveDirection();
+                matrix = checkForPassing(king, king.getMoveDirection());
                 break;
             }
             case QUEEN: {
                 Queen queen = new Queen(chessFigure);
-                matrix = queen.getMoveDirection();
+                matrix = checkForPassing(queen, queen.getMoveDirection());
                 break;
             }
             case ROOK: {
                 Rook rook = new Rook(chessFigure);
-                matrix = rook.getMoveDirection();
+                matrix = checkForPassing(rook, rook.getMoveDirection());
                 break;
             }
             case BISHOP: {
                 Bishop bishop = new Bishop(chessFigure);
-                matrix = bishop.getMoveDirection();
+                matrix = checkForPassing(bishop, bishop.getMoveDirection());
                 break;
             }
             case KNIGHT: {
                 Knight knight = new Knight(chessFigure);
-                matrix = knight.getMoveDirection();
+                matrix = checkForPassing(knight, knight.getMoveDirection());
                 break;
             }
         }
         return matrix;
+    }
+
+    private static int[][] checkForPassing(ChessFigure chessFigure, int[][] figureMatrix) {
+        int figureNumber = getFigureNumber(chessFigure);
+        int[][] finalMatrix = new int[8][8];
+        int[][] gameMatrix = chessBoard.getChessMatrix();
+
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                finalMatrix[i][j] = figureMatrix[i][j];
+                if (figureMatrix[i][j] == 1) {
+                    if (gameMatrix[i][j] > 1) {
+                        finalMatrix[i][j] = 10;
+                    }
+                }
+            }
+        }
+        return finalMatrix;
     }
 
     private static void createGame() {
