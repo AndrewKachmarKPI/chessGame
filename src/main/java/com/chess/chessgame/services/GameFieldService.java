@@ -4,15 +4,22 @@ import com.chess.chessgame.domain.board.SelectedCells;
 import com.chess.chessgame.domain.figures.*;
 import com.chess.chessgame.enums.FigureColor;
 import com.chess.chessgame.enums.FigureName;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
+import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
@@ -32,16 +39,16 @@ public class GameFieldService {
     public static boolean isCellSelected = false;
     public static Color selectedCellColor;
     public static List<SelectedCells> selectedCells = new ArrayList<>();
+    public static boolean gameStarted = false;
 
     public static Scene createGameScene() {
         BorderPane borderPane = new BorderPane();
         createGameBoard();
         borderPane.setCenter(borderPanesGroup);
-
+        borderPane.setRight(createFormsModule());
 
         rootGroup.getChildren().add(borderPane);
-        GameService.initGame();
-        return new Scene(rootGroup, 1000, 1000, Color.GRAY);
+        return new Scene(rootGroup, 1200, 1000, Color.GRAY);
     }
 
     public static void createGameBoard() {
@@ -50,6 +57,32 @@ public class GameFieldService {
         paintBorders(borderPanesGroup, 0, 900);
         paintBorders(borderPanesGroup, 80, 0);
         paintBorders(borderPanesGroup, 900, 0);
+    }
+
+    public static VBox createFormsModule() {
+        VBox vBox = new VBox();
+        vBox.getChildren().add(createButtons());
+        for (int i = 0; i < 10; i++) {
+            vBox.getChildren().add(createComboBox(i));
+        }
+        return vBox;
+    }
+
+
+    public static HBox createButtons() {
+        EventHandler<MouseEvent> onStartGame = GameFieldService::onStartGame;
+        Button startGame = new Button("Start game");
+        startGame.addEventHandler(MouseEvent.MOUSE_CLICKED, onStartGame);
+//        startGame.setStyle("-fx-border-color: #04AA6D; -fx-color-label-visible: green; -fx-background-color: white; -fx-cursor: hand");
+        EventHandler<MouseEvent> onClearField = GameFieldService::onClearField;
+        Button clearField = new Button("Clear field");
+        clearField.addEventHandler(MouseEvent.MOUSE_CLICKED, onClearField);
+
+        Button randomPosition = new Button("Random position");
+        HBox hBox = new HBox(10, startGame, clearField, randomPosition);
+        hBox.setPadding(new Insets(20, 0, 0, 20));
+//        hBox.getStylesheets().add("css/chessGame.css");
+        return hBox;
     }
 
     public static void paintGameBoard(Group group) {
@@ -233,6 +266,77 @@ public class GameFieldService {
         });
     }
 
+    public static void clearBoard() {
+        List<BorderPane> borderPanes = getAllBorderPanes();
+        for (BorderPane pane : borderPanes) {
+            if (isCellOccupied(pane)) {
+                pane.setCenter(null);
+            }
+        }
+    }
+
+
+    public static HBox createComboBox(int id) {
+        ObservableList<String> figureNameTypes = FXCollections.observableArrayList(
+                FigureName.KING.toString(),
+                FigureName.QUEEN.toString(),
+                FigureName.BISHOP.toString(),
+                FigureName.ROOK.toString(),
+                FigureName.KNIGHT.toString());
+        ComboBox<String> figureNameBox = new ComboBox<>(figureNameTypes);
+        figureNameBox.setValue(FigureName.KING.toString());
+
+        ObservableList<String> figureColors = FXCollections.observableArrayList(FigureColor.BLACK.toString(), FigureColor.WHITE.toString());
+        ComboBox<String> figureColorsBox = new ComboBox<>(figureColors);
+        figureColorsBox.setValue(FigureColor.BLACK.toString());
+
+        TextField xPosition = new TextField();
+        xPosition.setPrefWidth(30);
+        xPosition.setAlignment(Pos.CENTER);
+        xPosition.setPromptText("X");
+        xPosition.setText("0");
+        xPosition.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.matches("\\d*")) {
+                xPosition.setText(newValue.replaceAll("[^\\d]", ""));
+            }
+            if (newValue.equals("9") || newValue.equals("8")) {
+                xPosition.setText("");
+            }
+        });
+        EventHandler<KeyEvent> xkeyEvent = keyEvent1 -> xPosition.setText("");
+        xPosition.addEventHandler(KeyEvent.KEY_PRESSED, xkeyEvent);
+
+        TextField yPosition = new TextField();
+        yPosition.setPrefWidth(30);
+        yPosition.setAlignment(Pos.CENTER);
+        yPosition.setPromptText("Y");
+        yPosition.setText("0");
+        yPosition.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.matches("\\d*")) {
+                yPosition.setText(newValue.replaceAll("[^\\d]", ""));
+            }
+            if (newValue.equals("9") || newValue.equals("8")) {
+                yPosition.setText("");
+            }
+        });
+        EventHandler<KeyEvent> ykeyEvent = keyEvent1 -> yPosition.setText("");
+        yPosition.addEventHandler(KeyEvent.KEY_PRESSED, ykeyEvent);
+
+        Button button = new Button("ADD");
+        button.setOnAction(actionEvent -> {
+            ChessFigure chessFigure = new ChessFigure();
+            chessFigure.setPosition(new Position(Integer.parseInt(xPosition.getText()), Integer.parseInt(yPosition.getText())));
+            chessFigure.setName(FigureName.valueOf(figureNameBox.getValue()));
+            chessFigure.setColor(FigureColor.valueOf(figureColorsBox.getValue()));
+            GameService.writeFigureToFile(chessFigure);
+        });
+        HBox hBox = new HBox(10, figureNameBox, figureColorsBox, xPosition, yPosition, button);
+        hBox.setPadding(new Insets(20, 0, 0, 20));
+        hBox.setId("ADD-FORM-" + id);
+        return hBox;
+    }
+
+    //ACTIONS
     public static void onHoverFigure(MouseEvent e) {
         if (!isCellSelected) {
             BorderPane borderPane = findBorderPaneById(((BorderPane) e.getSource()).getId());
@@ -263,6 +367,21 @@ public class GameFieldService {
                 rectangle.setFill(selectedCellColor);
                 unPaintRectangle();
             }
+        }
+    }
+
+    public static void onStartGame(MouseEvent e) {
+        gameStarted = true;
+        GameService.initGame();
+    }
+
+    public static void onClearField(MouseEvent e) {
+        if (gameStarted) {
+            gameStarted = false;
+            isCellSelected = false;
+            selectedCells = new ArrayList<>();
+            GameService.clearGameField();
+            clearBoard();
         }
     }
 

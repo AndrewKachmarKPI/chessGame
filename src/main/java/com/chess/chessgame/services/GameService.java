@@ -127,4 +127,37 @@ public class GameService {
         return finalMatrix;
     }
 
+    public static void clearGameField() {
+        chessBoard = new ChessBoard();
+        try {
+            File file = new File("D:\\PROJECTS\\chessGame\\src\\main\\resources\\game\\init.txt");
+            PrintWriter writer = new PrintWriter(file);
+            writer.print("");
+            writer.close();
+            createGame();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public static boolean writeFigureToFile(ChessFigure chessFigure) {
+        try {
+
+            String fileName = "D:\\PROJECTS\\chessGame\\src\\main\\resources\\game\\init.txt";
+            FileWriter fileWriter = new FileWriter(fileName, true);
+            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+            String chessPath = chessFigure.getColor().toString().toLowerCase(Locale.ROOT) + " " +
+                    chessFigure.getName().toString().toLowerCase(Locale.ROOT) + " " +
+                    chessFigure.getPosition().getyPosition() + " " +
+                    chessFigure.getPosition().getxPosition();
+            bufferedWriter.write(chessPath);
+            bufferedWriter.newLine();
+            bufferedWriter.close();
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }
