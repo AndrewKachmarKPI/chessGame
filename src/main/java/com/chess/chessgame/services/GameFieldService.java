@@ -7,6 +7,7 @@ import com.chess.chessgame.enums.FigureName;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -27,20 +28,28 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class GameFieldService {
     public static Group rootGroup = new Group();
+    public static Group borderPanesGroup = new Group();
     public static boolean isCellSelected = false;
     public static Color selectedCellColor;
     public static List<SelectedCells> selectedCells = new ArrayList<>();
 
     public static Scene createGameScene() {
-        paintGameBoard(rootGroup);
-        paintBorders(rootGroup, 0, 80);
-        paintBorders(rootGroup, 0, 900);
-        paintBorders(rootGroup, 80, 0);
-        paintBorders(rootGroup, 900, 0);
+        BorderPane borderPane = new BorderPane();
+        createGameBoard();
+        borderPane.setCenter(borderPanesGroup);
+
+
+        rootGroup.getChildren().add(borderPane);
         GameService.initGame();
-        Knight rook = new Knight(FigureName.ROOK, FigureColor.BLACK, new Position(4, 4));
-        rook.getMoveDirection();
         return new Scene(rootGroup, 1000, 1000, Color.GRAY);
+    }
+
+    public static void createGameBoard() {
+        paintGameBoard(borderPanesGroup);
+        paintBorders(borderPanesGroup, 0, 80);
+        paintBorders(borderPanesGroup, 0, 900);
+        paintBorders(borderPanesGroup, 80, 0);
+        paintBorders(borderPanesGroup, 900, 0);
     }
 
     public static void paintGameBoard(Group group) {
@@ -139,7 +148,7 @@ public class GameFieldService {
 
     public static List<BorderPane> getAllBorderPanes() {
         List<BorderPane> borderPanes = new ArrayList<>();
-        rootGroup.getChildren().forEach(node -> {
+        borderPanesGroup.getChildren().forEach(node -> {
             if (node instanceof BorderPane) {
                 borderPanes.add((BorderPane) node);
             }
@@ -188,18 +197,18 @@ public class GameFieldService {
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
                 if (matrix[i][j] == 1) {
-                    paintRectangle(i, j, Color.WHITESMOKE, k);
+                    paintRectangle(i, j, Color.WHITESMOKE);
                     k++;
                 }
-                if(matrix[i][j] == 10){
-                    paintRectangle(i, j, Color.RED, k);
+                if (matrix[i][j] == 10) {
+                    paintRectangle(i, j, Color.RED);
                     k++;
                 }
             }
         }
     }
 
-    public static void paintRectangle(int x, int y, Color color, int id) {
+    public static void paintRectangle(int x, int y, Color color) {
         List<BorderPane> borderPanes = getAllBorderPanes();
         borderPanes.forEach(borderPane -> {
             String borderPaneId = "BorderPane-" + x + "" + y;
@@ -210,6 +219,7 @@ public class GameFieldService {
             }
         });
     }
+
     public static void unPaintRectangle() {
         selectedCells.forEach(selected -> {
             List<BorderPane> borderPanes = getAllBorderPanes();
