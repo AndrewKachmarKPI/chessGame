@@ -1,5 +1,6 @@
 package com.chess.chessgame.services;
 
+import com.chess.chessgame.domain.board.BoardCell;
 import com.chess.chessgame.domain.board.ChessBoard;
 import com.chess.chessgame.domain.board.InitChessBoard;
 import com.chess.chessgame.domain.figures.*;
@@ -11,7 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import static com.chess.chessgame.enums.FigureName.*;
 
 public class GameService {
     public static ChessBoard chessBoard = new ChessBoard();
@@ -19,56 +19,6 @@ public class GameService {
     public static void initGame() {
         createGame();
         paintFigures();
-    }
-
-    public static int[][] getFigureTrajectory(ChessFigure chessFigure) {
-        int[][] matrix = new int[8][8];
-        switch (chessFigure.getName()) {
-            case KING: {
-                King king = new King(chessFigure);
-                matrix = checkForPassing(king, king.getMoveDirection());
-                break;
-            }
-            case QUEEN: {
-                Queen queen = new Queen(chessFigure);
-                matrix = checkForPassing(queen, queen.getMoveDirection());
-                break;
-            }
-            case ROOK: {
-                Rook rook = new Rook(chessFigure);
-                matrix = checkForPassing(rook, rook.getMoveDirection());
-                break;
-            }
-            case BISHOP: {
-                Bishop bishop = new Bishop(chessFigure);
-                matrix = checkForPassing(bishop, bishop.getMoveDirection());
-                break;
-            }
-            case KNIGHT: {
-                Knight knight = new Knight(chessFigure);
-                matrix = checkForPassing(knight, knight.getMoveDirection());
-                break;
-            }
-        }
-        return matrix;
-    }
-
-    private static int[][] checkForPassing(ChessFigure chessFigure, int[][] figureMatrix) {
-        int figureNumber = getFigureNumber(chessFigure);
-        int[][] finalMatrix = new int[8][8];
-        int[][] gameMatrix = chessBoard.getChessMatrix();
-
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
-                finalMatrix[i][j] = figureMatrix[i][j];
-                if (figureMatrix[i][j] == 1) {
-                    if (gameMatrix[i][j] > 1) {
-                        finalMatrix[i][j] = 10;
-                    }
-                }
-            }
-        }
-        return finalMatrix;
     }
 
     private static void createGame() {
@@ -94,7 +44,6 @@ public class GameService {
                         }
                     }
                 }
-                chessBoard.setChessMatrix(matrix);
             }
             chessBoard.setFigures(figures);
             chessBoard.setChessMatrix(matrix);
@@ -128,7 +77,54 @@ public class GameService {
         return 0;
     }
 
-    private static ChessFigure createChessFigure(InitChessBoard initChessBoard) {
-        return new ChessFigure(initChessBoard.getFigureName(), initChessBoard.getFigureColor(), initChessBoard.getPosition());
+    public static int[][] getFigureTrajectory(ChessFigure chessFigure) {
+        int[][] matrix = new int[8][8];
+        switch (chessFigure.getName()) {
+            case KING: {
+                King king = new King(chessFigure);
+                matrix = checkForPassing(king.getMoveDirection());
+                break;
+            }
+            case QUEEN: {
+                Queen queen = new Queen(chessFigure);
+                matrix = checkForPassing(queen.getMoveDirection());
+                break;
+            }
+            case ROOK: {
+                Rook rook = new Rook(chessFigure);
+                matrix = checkForPassing(rook.getMoveDirection());
+                break;
+            }
+            case BISHOP: {
+                Bishop bishop = new Bishop(chessFigure);
+                matrix = checkForPassing(bishop.getMoveDirection());
+                break;
+            }
+            case KNIGHT: {
+                Knight knight = new Knight(chessFigure);
+                matrix = checkForPassing(knight.getMoveDirection());
+                break;
+            }
+        }
+        return matrix;
     }
+
+    private static int[][] checkForPassing(int[][] figureMatrix) {
+        int[][] finalMatrix = new int[8][8];
+        int[][] gameMatrix = chessBoard.getChessMatrix();
+
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                finalMatrix[i][j] = gameMatrix[i][j];
+                if (figureMatrix[i][j] == 1) {
+                    finalMatrix[i][j] = 1;
+                    if (gameMatrix[i][j] > 1) {
+                        finalMatrix[i][j] = 10;
+                    }
+                }
+            }
+        }
+        return finalMatrix;
+    }
+
 }

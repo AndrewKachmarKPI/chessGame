@@ -38,8 +38,6 @@ public class GameFieldService {
         paintBorders(rootGroup, 80, 0);
         paintBorders(rootGroup, 900, 0);
         GameService.initGame();
-//        Rook rook = new Rook(FigureName.ROOK, FigureColor.BLACK, new Position(0,0));
-//        rook.getMoveDirection();
         Knight rook = new Knight(FigureName.ROOK, FigureColor.BLACK, new Position(4, 4));
         rook.getMoveDirection();
         return new Scene(rootGroup, 1000, 1000, Color.GRAY);
@@ -185,7 +183,7 @@ public class GameFieldService {
         return borderPanes.stream().filter(borderPane -> borderPane.getId().equals(borderPaneId)).findFirst().orElse(new BorderPane());
     }
 
-    public static void paintFigurePath(ChessFigure chessFigure, int[][] matrix) {
+    public static void paintFigurePath(int[][] matrix) {
         int k = 0;
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
@@ -240,7 +238,7 @@ public class GameFieldService {
                 String figureId = getImageOfBorderPane(borderPane).getId();
                 ChessFigure chessFigure = new ChessFigure(FigureName.valueOf(figureId.split("-")[1]), FigureColor.valueOf(figureId.split("-")[0]), position);
                 int[][] figureTrajectory = GameService.getFigureTrajectory(chessFigure);
-                paintFigurePath(chessFigure, figureTrajectory);
+                paintFigurePath(figureTrajectory);
                 System.out.println(figureId);
             }
         }
