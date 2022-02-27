@@ -122,10 +122,8 @@ public class GameService {
         return 0;
     }
 
-    public static List<Position> getPassedPositions(ChessFigure chessFigure) {
-        ChessFigure figure = chessBoard.getFigures().stream().filter(chessFigure1 -> chessFigure1.getName().equals(chessFigure.getName()))
-                .findFirst().orElse(new ChessFigure());
-        return chessBoard.getChessFigureMap().get(figure).stream().map(ChessFigure::getPosition).collect(Collectors.toList());
+    public static Map<ChessFigure, List<ChessFigure>> getPassMap() {
+        return chessBoard.getChessFigureMap();
     }
 
     public static int[][] getFigureTrajectory(ChessFigure chessFigure) {

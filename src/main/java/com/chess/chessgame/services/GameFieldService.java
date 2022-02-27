@@ -22,14 +22,13 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -78,8 +77,10 @@ public class GameFieldService {
         Button clearField = new Button("Clear field");
         clearField.addEventHandler(MouseEvent.MOUSE_CLICKED, onClearField);
 
-        Button randomPosition = new Button("Random position");
-        HBox hBox = new HBox(10, startGame, clearField, randomPosition);
+        EventHandler<MouseEvent> onFigureAttacks = GameFieldService::onFigureAttacks;
+        Button figureAttacks = new Button("Figure attacks");
+        figureAttacks.addEventHandler(MouseEvent.MOUSE_CLICKED, onFigureAttacks);
+        HBox hBox = new HBox(10, startGame, clearField, figureAttacks);
         hBox.setPadding(new Insets(20, 0, 0, 20));
 //        hBox.getStylesheets().add("css/chessGame.css");
         return hBox;
@@ -333,6 +334,89 @@ public class GameFieldService {
         return hBox;
     }
 
+    public static void openDialogWindow() {
+        Map<ChessFigure, List<ChessFigure>> chessFigureListMap = GameService.getPassMap();
+        VBox vBox = loadFigureList(chessFigureListMap);
+
+        ScrollPane scrollPane = new ScrollPane();
+        scrollPane.setContent(vBox);
+        scrollPane.setPannable(true);
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+
+        Dialog<String> dialog = new Dialog<>();
+        dialog.setTitle("Figure attacks");
+        dialog.setHeaderText(null);
+        dialog.setGraphic(null);
+
+        Text headerText = new Text("Figure attacks");
+        headerText.setFont(Font.font("Verdana", 20));
+        BorderPane borderPane = new BorderPane();
+        BorderPane.setAlignment(headerText, Pos.CENTER);
+        BorderPane.setAlignment(scrollPane, Pos.CENTER);
+        borderPane.setTop(headerText);
+        borderPane.setCenter(scrollPane);
+        borderPane.setPrefHeight(600);
+
+        ButtonType okButton = new ButtonType("Close", ButtonBar.ButtonData.OK_DONE);
+        DialogPane dialogPane = new DialogPane();
+        dialogPane.setContentText("All figures attacks");
+        dialogPane.setContent(borderPane);
+        dialogPane.getButtonTypes().add(okButton);
+        dialog.setDialogPane(dialogPane);
+
+        dialog.show();
+//        Optional<ButtonType> option = dialog.showAndWait();
+    }
+
+    public static VBox loadFigureList(Map<ChessFigure, List<ChessFigure>> chessFigureListMap) {
+        VBox figuresList = new VBox();
+        chessFigureListMap.forEach((chessFigure, chessFigures) -> {
+            if (chessFigures.size() > 0) {
+                try {
+                    Label label = new Label(chessFigure.getName() + "- (" + chessFigure.getPosition().getxPosition() + "," + chessFigure.getPosition().getyPosition() + ")");
+                    ImageView imageView = loadFigureImage(chessFigure.getColor(), chessFigure.getName());
+
+                    BorderPane figureBox = new BorderPane();
+                    BorderPane.setAlignment(label, Pos.CENTER);
+                    BorderPane.setAlignment(imageView, Pos.CENTER);
+                    figureBox.setCenter(imageView);
+                    figureBox.setBottom(label);
+                    figureBox.setStyle("-fx-border-style: solid; -fx-border-width : 0 0 4; -fx-border-color: #28a745;");
+
+                    HBox mainRow = new HBox(10, figureBox, loadNestedFigures(chessFigures));
+                    mainRow.setStyle("-fx-border-style: solid; -fx-border-width : 0 0 2; -fx-border-color: #gray;");
+                    mainRow.setPadding(new Insets(10, 10, 10, 10));
+                    figuresList.getChildren().add(mainRow);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        return figuresList;
+    }
+
+    public static HBox loadNestedFigures(List<ChessFigure> chessFigures) {
+        HBox hBox = new HBox();
+        chessFigures.forEach(chessFigure -> {
+            BorderPane figureBox = new BorderPane();
+            figureBox.setStyle("-fx-border-style: solid; -fx-border-width : 0 0 4; -fx-border-color: red;");
+            Label label = new Label(chessFigure.getName() + "- (" + chessFigure.getPosition().getxPosition() + "," + chessFigure.getPosition().getyPosition() + ")");
+            try {
+                ImageView imageView = loadFigureImage(chessFigure.getColor(), chessFigure.getName());
+                BorderPane.setAlignment(imageView, Pos.CENTER);
+                figureBox.setCenter(imageView);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+            BorderPane.setAlignment(label, Pos.CENTER);
+            figureBox.setBottom(label);
+            hBox.getChildren().add(figureBox);
+            hBox.setSpacing(10);
+        });
+        return hBox;
+    }
+
     //ACTIONS
     public static void onHoverFigure(MouseEvent e) {
         if (!isCellSelected) {
@@ -370,6 +454,12 @@ public class GameFieldService {
     public static void onStartGame(MouseEvent e) {
         gameStarted = true;
         GameService.initGame();
+    }
+
+    public static void onFigureAttacks(MouseEvent e) {
+        if (gameStarted) {
+            openDialogWindow();
+        }
     }
 
     public static void onClearField(MouseEvent e) {
