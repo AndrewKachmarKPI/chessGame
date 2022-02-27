@@ -98,9 +98,9 @@ public class GameFieldService {
                 rectangle.setWidth(100);
                 rectangle.setHeight(100);
                 if (isSecond) {
-                    rectangle.setFill(Color.YELLOWGREEN);
+                    rectangle.setFill(Color.web("#789655"));
                 } else {
-                    rectangle.setFill(Color.ANTIQUEWHITE);
+                    rectangle.setFill(Color.web("#ecedd1"));
                 }
                 borderPane.setId("BorderPane-" + i + j);
                 borderPane.setStyle("-fx-cursor: hand;");
@@ -226,16 +226,13 @@ public class GameFieldService {
     }
 
     public static void paintFigurePath(int[][] matrix) {
-        int k = 0;
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
                 if (matrix[i][j] == 1) {
-                    paintRectangle(i, j, Color.WHITESMOKE);
-                    k++;
+                    paintRectangle(i, j, Color.web("#f6f87a"));
                 }
                 if (matrix[i][j] == 10) {
                     paintRectangle(i, j, Color.RED);
-                    k++;
                 }
             }
         }
@@ -345,7 +342,7 @@ public class GameFieldService {
                 isCellSelected = true;
                 Rectangle rectangle = getRectangleOfBorderPane(borderPane);
                 selectedCellColor = (Color) rectangle.getFill();
-                rectangle.setFill(Color.GREEN);
+                rectangle.setFill(Color.web("#bacd33"));
 
                 Position position = new Position(Integer.parseInt(borderPane.getId().split("-")[1].split("")[0]),
                         Integer.parseInt(borderPane.getId().split("-")[1].split("")[1]));
