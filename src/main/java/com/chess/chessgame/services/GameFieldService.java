@@ -24,6 +24,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import org.kordamp.bootstrapfx.BootstrapFX;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -43,11 +44,16 @@ public class GameFieldService {
     public static Scene createGameScene() {
         BorderPane borderPane = new BorderPane();
         createGameBoard();
+        VBox vBox = createFormsModule();
+        BorderPane.setAlignment(vBox, Pos.CENTER);
+        BorderPane.setAlignment(borderPanesGroup, Pos.CENTER);
         borderPane.setCenter(borderPanesGroup);
-        borderPane.setRight(createFormsModule());
+        borderPane.setBottom(vBox);
 
         rootGroup.getChildren().add(borderPane);
-        return new Scene(rootGroup, 1200, 1000, Color.GRAY);
+        Scene scene = new Scene(rootGroup, 1000, 1000, Color.GRAY);
+        scene.getStylesheets().add(BootstrapFX.bootstrapFXStylesheet());
+        return scene;
     }
 
     public static void createGameBoard() {
@@ -61,28 +67,32 @@ public class GameFieldService {
     public static VBox createFormsModule() {
         VBox vBox = new VBox();
         vBox.getChildren().add(createButtons());
-        for (int i = 0; i < 10; i++) {
-            vBox.getChildren().add(createComboBox(i));
-        }
+//        for (int i = 0; i < 10; i++) {
+//            vBox.getChildren().add(createComboBox(i));
+//        }
         return vBox;
     }
 
 
     public static HBox createButtons() {
+
         EventHandler<MouseEvent> onStartGame = GameFieldService::onStartGame;
         Button startGame = new Button("Start game");
         startGame.addEventHandler(MouseEvent.MOUSE_CLICKED, onStartGame);
-//        startGame.setStyle("-fx-border-color: #04AA6D; -fx-color-label-visible: green; -fx-background-color: white; -fx-cursor: hand");
+        startGame.getStyleClass().setAll("btn-lg", "btn-success");
+
         EventHandler<MouseEvent> onClearField = GameFieldService::onClearField;
         Button clearField = new Button("Clear field");
         clearField.addEventHandler(MouseEvent.MOUSE_CLICKED, onClearField);
+        clearField.getStyleClass().setAll("btn-lg", "btn-danger");
 
         EventHandler<MouseEvent> onFigureAttacks = GameFieldService::onFigureAttacks;
         Button figureAttacks = new Button("Figure attacks");
         figureAttacks.addEventHandler(MouseEvent.MOUSE_CLICKED, onFigureAttacks);
+        figureAttacks.getStyleClass().setAll("btn-lg", "btn-warning");
+
         HBox hBox = new HBox(10, startGame, clearField, figureAttacks);
         hBox.setPadding(new Insets(20, 0, 0, 20));
-//        hBox.getStylesheets().add("css/chessGame.css");
         return hBox;
     }
 
