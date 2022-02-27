@@ -2,33 +2,24 @@ package com.chess.chessgame.domain.board;
 
 import com.chess.chessgame.domain.figures.ChessFigure;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ChessBoard {
     private List<ChessFigure> figures;
-    private List<List<BoardCell>> cellMatrix;
+    private Map<ChessFigure, List<ChessFigure>> chessFigureMap = new HashMap<>();
     private int[][] chessMatrix;
 
     public ChessBoard() {
     }
 
-    public ChessBoard(List<ChessFigure> figures, List<List<BoardCell>> cellMatrix, int[][] chessMatrix) {
-        this.figures = figures;
-        this.cellMatrix = cellMatrix;
-        this.chessMatrix = chessMatrix;
+    public Map<ChessFigure, List<ChessFigure>> getChessFigureMap() {
+        return chessFigureMap;
     }
 
-    public ChessBoard(List<ChessFigure> figures, int[][] chessMatrix) {
-        this.figures = figures;
-        this.chessMatrix = chessMatrix;
-    }
-
-    public List<List<BoardCell>> getCellMatrix() {
-        return cellMatrix;
-    }
-
-    public void setCellMatrix(List<List<BoardCell>> cellMatrix) {
-        this.cellMatrix = cellMatrix;
+    public void setChessFigureMap(Map<ChessFigure, List<ChessFigure>> chessFigureMap) {
+        this.chessFigureMap = chessFigureMap;
     }
 
     public List<ChessFigure> getFigures() {

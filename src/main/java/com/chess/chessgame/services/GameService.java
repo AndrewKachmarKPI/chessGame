@@ -8,9 +8,8 @@ import com.chess.chessgame.enums.FigureColor;
 import com.chess.chessgame.enums.FigureName;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 public class GameService {
@@ -19,6 +18,7 @@ public class GameService {
     public static void initGame() {
         createGame();
         paintFigures();
+        createFigurePassingMap();
     }
 
     private static void createGame() {
@@ -28,6 +28,7 @@ public class GameService {
             String line;
             List<ChessFigure> figures = new ArrayList<>();
             int[][] matrix = new int[8][8];
+            Map<ChessFigure, List<ChessFigure>> chessFigureMap = new HashMap<>();
             while ((line = bufferedReader.readLine()) != null && figures.size() <= 10) {
                 line = line.trim();
                 String color = line.split(" ")[0];
@@ -36,6 +37,7 @@ public class GameService {
                 ChessFigure chessFigure = new ChessFigure(FigureName.valueOf(name.toUpperCase(Locale.ROOT)),
                         FigureColor.valueOf(color.toUpperCase(Locale.ROOT)), position);
                 figures.add(chessFigure);
+                chessFigureMap.put(chessFigure, new ArrayList<>());
                 for (int i = 0; i < 8; i++) {
                     for (int j = 0; j < 8; j++) {
                         if (chessFigure.getPosition().getyPosition() == i && chessFigure.getPosition().getxPosition() == j) {
@@ -45,11 +47,54 @@ public class GameService {
                     }
                 }
             }
+            chessBoard.setChessFigureMap(chessFigureMap);
             chessBoard.setFigures(figures);
             chessBoard.setChessMatrix(matrix);
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private static void createFigurePassingMap() {
+        List<ChessFigure> chessFigures = chessBoard.getFigures();
+        Map<ChessFigure, List<ChessFigure>> chessFigureMap = chessBoard.getChessFigureMap();
+
+        chessFigures.forEach(chessFigure -> {
+            List<ChessFigure> passedFigures = checkForPassing(chessFigure);
+            chessFigureMap.put(chessFigure, passedFigures);
+        });
+    }
+
+    private static List<ChessFigure> checkForPassing(ChessFigure chessFigure) {
+        List<Position> figurePositions = new ArrayList<>();
+        int[][] figureMatrix = getFigureTrajectory(chessFigure);
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                if (figureMatrix[i][j] == 1) {
+                    figurePositions.add(new Position(i, j));
+                }
+            }
+        }
+        List<Position> matchedPositions = new ArrayList<>();
+        List<Position> boardFiguresPositions = chessBoard.getFigures().stream().map(ChessFigure::getPosition).collect(Collectors.toList());
+
+        figurePositions.forEach(position -> {
+            boardFiguresPositions.forEach(boardPosition -> {
+                if (position.equals(boardPosition)) {
+                    matchedPositions.add(boardPosition);
+                }
+            });
+        });
+
+        List<ChessFigure> matchedFigures = new ArrayList<>();
+        matchedPositions.forEach(position -> {
+            chessBoard.getFigures().forEach(figure -> {
+                if (position.equals(figure.getPosition())) {
+                    matchedFigures.add(figure);
+                }
+            });
+        });
+        return matchedFigures;
     }
 
     private static void paintFigures() {
@@ -75,6 +120,12 @@ public class GameService {
             }
         }
         return 0;
+    }
+
+    public static List<Position> getPassedPositions(ChessFigure chessFigure) {
+        ChessFigure figure = chessBoard.getFigures().stream().filter(chessFigure1 -> chessFigure1.getName().equals(chessFigure.getName()))
+                .findFirst().orElse(new ChessFigure());
+        return chessBoard.getChessFigureMap().get(figure).stream().map(ChessFigure::getPosition).collect(Collectors.toList());
     }
 
     public static int[][] getFigureTrajectory(ChessFigure chessFigure) {
@@ -118,9 +169,9 @@ public class GameService {
                 finalMatrix[i][j] = gameMatrix[i][j];
                 if (figureMatrix[i][j] == 1) {
                     finalMatrix[i][j] = 1;
-                    if (gameMatrix[i][j] > 1) {
-                        finalMatrix[i][j] = 10;
-                    }
+//                    if (gameMatrix[i][j] > 1) {
+//                        finalMatrix[i][j] = 10;
+//                    }
                 }
             }
         }

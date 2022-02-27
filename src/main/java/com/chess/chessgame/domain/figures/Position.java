@@ -1,5 +1,7 @@
 package com.chess.chessgame.domain.figures;
 
+import java.util.Objects;
+
 public class Position {
     private int xPosition;
     private int yPosition;
@@ -35,5 +37,18 @@ public class Position {
                 "xPosition=" + xPosition +
                 ", yPosition=" + yPosition +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Position position = (Position) o;
+        return xPosition == position.xPosition && yPosition == position.yPosition;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(xPosition, yPosition);
     }
 }
