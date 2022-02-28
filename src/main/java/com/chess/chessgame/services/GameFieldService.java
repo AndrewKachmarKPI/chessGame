@@ -4,12 +4,10 @@ import com.chess.chessgame.domain.board.SelectedCells;
 import com.chess.chessgame.domain.figures.*;
 import com.chess.chessgame.enums.FigureColor;
 import com.chess.chessgame.enums.FigureName;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
@@ -18,6 +16,7 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -121,6 +120,13 @@ public class GameFieldService {
                 EventHandler<MouseEvent> unselectFigure = GameFieldService::onUnHooverFigure;
                 borderPane.addEventHandler(MouseEvent.MOUSE_ENTERED_TARGET, selectFigure);
                 borderPane.addEventHandler(MouseEvent.MOUSE_EXITED_TARGET, unselectFigure);
+                borderPane.addEventHandler(MouseEvent.MOUSE_CLICKED, mouseEvent -> {
+                    if (mouseEvent.getButton() == MouseButton.SECONDARY) {
+                        BorderPane selectedPane = findBorderPaneById(((BorderPane) mouseEvent.getSource()).getId());
+                        ContextMenu contextMenu = openAvailableFiguresMenu(selectedPane);
+                        contextMenu.show(rectangle, mouseEvent.getScreenX(), mouseEvent.getScreenY());
+                    }
+                });
                 group.getChildren().add(borderPane);
                 isSecond = !isSecond;
             }
@@ -160,23 +166,18 @@ public class GameFieldService {
     }
 
     public static void setFigureOnBoard(ChessFigure chessFigure) {
-        try {
-            ImageView imageView = loadFigureImage(chessFigure.getColor(), chessFigure.getName());
-            imageView.setId(chessFigure.getColor().toString().toUpperCase(Locale.ROOT) + "-" + chessFigure.getName());
-            imageView.setX(50);
-            imageView.setY(50);
+        ImageView imageView = loadFigureImage(chessFigure.getColor(), chessFigure.getName());
+        imageView.setId(chessFigure.getColor().toString().toUpperCase(Locale.ROOT) + "-" + chessFigure.getName());
+        imageView.setX(50);
+        imageView.setY(50);
 
-            List<BorderPane> borderPanes = getAllBorderPanes();
-            for (BorderPane pane : borderPanes) {
-                String paneId = "BorderPane-" + chessFigure.getPosition().getyPosition() + "" + chessFigure.getPosition().getxPosition();
-                if (!isCellOccupied(pane) && pane.getId().equals(paneId)) {
-                    pane.setCenter(imageView);
-                    break;
-                }
+        List<BorderPane> borderPanes = getAllBorderPanes();
+        for (BorderPane pane : borderPanes) {
+            String paneId = "BorderPane-" + chessFigure.getPosition().getyPosition() + "" + chessFigure.getPosition().getxPosition();
+            if (!isCellOccupied(pane) && pane.getId().equals(paneId)) {
+                pane.setCenter(imageView);
+                break;
             }
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         }
     }
 
@@ -220,12 +221,17 @@ public class GameFieldService {
         return rectangle.get();
     }
 
-    public static ImageView loadFigureImage(FigureColor figureColor, FigureName figureName) throws FileNotFoundException {
+    public static ImageView loadFigureImage(FigureColor figureColor, FigureName figureName) {
         String path = "D:\\PROJECTS\\chessGame\\src\\main\\resources\\images\\" + figureColor.toString().toLowerCase(Locale.ROOT)
                 + figureName.toString().substring(0, 1).toUpperCase(Locale.ROOT)
                 + figureName.toString().substring(1).toLowerCase(Locale.ROOT) + ".png";
-        File file = new File(path);
-        Image image = new Image(new FileInputStream(file));
+        Image image = null;
+        try {
+            File file = new File(path);
+            image = new Image(new FileInputStream(file));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
         ImageView imageView = new ImageView();
         imageView.setImage(image);
         return imageView;
@@ -383,24 +389,20 @@ public class GameFieldService {
         VBox figuresList = new VBox();
         chessFigureListMap.forEach((chessFigure, chessFigures) -> {
             if (chessFigures.size() > 0) {
-                try {
-                    Label label = new Label(chessFigure.getName() + "- (" + chessFigure.getPosition().getxPosition() + "," + chessFigure.getPosition().getyPosition() + ")");
-                    ImageView imageView = loadFigureImage(chessFigure.getColor(), chessFigure.getName());
+                Label label = new Label(chessFigure.getName() + "- (" + chessFigure.getPosition().getxPosition() + "," + chessFigure.getPosition().getyPosition() + ")");
+                ImageView imageView = loadFigureImage(chessFigure.getColor(), chessFigure.getName());
 
-                    BorderPane figureBox = new BorderPane();
-                    BorderPane.setAlignment(label, Pos.CENTER);
-                    BorderPane.setAlignment(imageView, Pos.CENTER);
-                    figureBox.setCenter(imageView);
-                    figureBox.setBottom(label);
-                    figureBox.setStyle("-fx-border-style: solid; -fx-border-width : 0 0 4; -fx-border-color: #28a745;");
+                BorderPane figureBox = new BorderPane();
+                BorderPane.setAlignment(label, Pos.CENTER);
+                BorderPane.setAlignment(imageView, Pos.CENTER);
+                figureBox.setCenter(imageView);
+                figureBox.setBottom(label);
+                figureBox.setStyle("-fx-border-style: solid; -fx-border-width : 0 0 4; -fx-border-color: #28a745;");
 
-                    HBox mainRow = new HBox(10, figureBox, loadNestedFigures(chessFigures));
-                    mainRow.setStyle("-fx-border-style: solid; -fx-border-width : 0 0 2; -fx-border-color: #gray;");
-                    mainRow.setPadding(new Insets(10, 10, 10, 10));
-                    figuresList.getChildren().add(mainRow);
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
+                HBox mainRow = new HBox(10, figureBox, loadNestedFigures(chessFigures));
+                mainRow.setStyle("-fx-border-style: solid; -fx-border-width : 0 0 2; -fx-border-color: #gray;");
+                mainRow.setPadding(new Insets(10, 10, 10, 10));
+                figuresList.getChildren().add(mainRow);
             }
         });
         return figuresList;
@@ -412,19 +414,46 @@ public class GameFieldService {
             BorderPane figureBox = new BorderPane();
             figureBox.setStyle("-fx-border-style: solid; -fx-border-width : 0 0 4; -fx-border-color: red;");
             Label label = new Label(chessFigure.getName() + "- (" + chessFigure.getPosition().getxPosition() + "," + chessFigure.getPosition().getyPosition() + ")");
-            try {
-                ImageView imageView = loadFigureImage(chessFigure.getColor(), chessFigure.getName());
-                BorderPane.setAlignment(imageView, Pos.CENTER);
-                figureBox.setCenter(imageView);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
+
+            ImageView imageView = loadFigureImage(chessFigure.getColor(), chessFigure.getName());
+            BorderPane.setAlignment(imageView, Pos.CENTER);
+            figureBox.setCenter(imageView);
+
             BorderPane.setAlignment(label, Pos.CENTER);
             figureBox.setBottom(label);
             hBox.getChildren().add(figureBox);
             hBox.setSpacing(10);
         });
         return hBox;
+    }
+
+    public static ContextMenu openAvailableFiguresMenu(BorderPane borderPane) {
+        System.out.println("hererrrrrrr" + borderPane.toString());
+        List<ChessFigure> availableFigures = GameService.getAvailableFigures();
+        ContextMenu contextMenu = new ContextMenu();
+        availableFigures.forEach(chessFigure -> {
+            if (!isCellOccupied(borderPane)) {
+                ImageView imageView = loadFigureImage(chessFigure.getColor(), chessFigure.getName());
+                String label = chessFigure.getColor().toString() + "-" + chessFigure.getName();
+                MenuItem menuItem = new MenuItem(label, imageView);
+
+                menuItem.setOnAction(actionEvent -> onSelectContextMenuItem(actionEvent, chessFigure, borderPane));
+                contextMenu.getItems().add(menuItem);
+            }
+        });
+        if (contextMenu.getItems().size() == 0) {
+            File file = new File("D:\\PROJECTS\\chessGame\\src\\main\\resources\\images\\sadSmile.png");
+            try {
+                ImageView imageView = new ImageView(new Image(new FileInputStream(file)));
+                imageView.setFitWidth(60);
+                imageView.setFitHeight(60);
+                MenuItem menuItem = new MenuItem("No available figures for cell", imageView);
+                contextMenu.getItems().add(menuItem);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+        return contextMenu;
     }
 
     //ACTIONS
@@ -482,4 +511,15 @@ public class GameFieldService {
         }
     }
 
+    public static void onSelectContextMenuItem(ActionEvent e, ChessFigure chessFigure, BorderPane borderPane) {
+        Position position = new Position();
+        if (borderPane != null) {
+            position.setxPosition(Integer.parseInt(borderPane.getId().split("-")[1].split("")[0]));
+            position.setyPosition(Integer.parseInt(borderPane.getId().split("-")[1].split("")[1]));
+        }
+        chessFigure.setPosition(position);
+        GameService.writeFigureToFile(chessFigure);
+        GameService.initGame();
+        gameStarted = true;
+    }
 }

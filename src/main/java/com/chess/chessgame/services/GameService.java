@@ -31,18 +31,20 @@ public class GameService {
             Map<ChessFigure, List<ChessFigure>> chessFigureMap = new HashMap<>();
             while ((line = bufferedReader.readLine()) != null && figures.size() <= 10) {
                 line = line.trim();
-                String color = line.split(" ")[0];
-                String name = line.split(" ")[1];
-                Position position = new Position(Integer.parseInt(line.split(" ")[2]), Integer.parseInt(line.split(" ")[3]));
-                ChessFigure chessFigure = new ChessFigure(FigureName.valueOf(name.toUpperCase(Locale.ROOT)),
-                        FigureColor.valueOf(color.toUpperCase(Locale.ROOT)), position);
-                figures.add(chessFigure);
-                chessFigureMap.put(chessFigure, new ArrayList<>());
-                for (int i = 0; i < 8; i++) {
-                    for (int j = 0; j < 8; j++) {
-                        if (chessFigure.getPosition().getyPosition() == i && chessFigure.getPosition().getxPosition() == j) {
-                            matrix[i][j] = getFigureNumber(chessFigure);
-                            break;
+                if (!line.isEmpty()) {
+                    String color = line.split(" ")[0];
+                    String name = line.split(" ")[1];
+                    Position position = new Position(Integer.parseInt(line.split(" ")[2]), Integer.parseInt(line.split(" ")[3]));
+                    ChessFigure chessFigure = new ChessFigure(FigureName.valueOf(name.toUpperCase(Locale.ROOT)),
+                            FigureColor.valueOf(color.toUpperCase(Locale.ROOT)), position);
+                    figures.add(chessFigure);
+                    chessFigureMap.put(chessFigure, new ArrayList<>());
+                    for (int i = 0; i < 8; i++) {
+                        for (int j = 0; j < 8; j++) {
+                            if (chessFigure.getPosition().getyPosition() == i && chessFigure.getPosition().getxPosition() == j) {
+                                matrix[i][j] = getFigureNumber(chessFigure);
+                                break;
+                            }
                         }
                     }
                 }
@@ -208,5 +210,27 @@ public class GameService {
             e.printStackTrace();
         }
         return false;
+    }
+
+    public static List<ChessFigure> getAvailableFigures() {
+        List<ChessFigure> allFigures = new ArrayList<>();
+        try {
+            File file = new File("D:\\PROJECTS\\chessGame\\src\\main\\resources\\game\\allFigures.txt");
+            BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                line = line.trim();
+                String color = line.split(" ")[0];
+                String name = line.split(" ")[1];
+                allFigures.add(new ChessFigure(FigureName.valueOf(name.toUpperCase(Locale.ROOT)), FigureColor.valueOf(color.toUpperCase(Locale.ROOT))));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        List<ChessFigure> usedFigures = chessBoard.getFigures();
+        usedFigures.forEach(usedFigure -> {
+            allFigures.removeIf(figure -> figure.getName().equals(usedFigure.getName()) && figure.getColor().equals(usedFigure.getColor()));
+        });
+        return allFigures;
     }
 }

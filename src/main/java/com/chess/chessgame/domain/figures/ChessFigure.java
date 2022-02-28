@@ -16,7 +16,10 @@ public class ChessFigure {
     public ChessFigure() {
 
     }
-
+    public ChessFigure(FigureName name, FigureColor color) {
+        this.name = name;
+        this.color = color;
+    }
     public ChessFigure(FigureName name, FigureColor color, Position position) {
         this.name = name;
         this.color = color;

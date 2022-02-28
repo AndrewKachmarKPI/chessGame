@@ -1,0 +1,10 @@
+white king
+white queen
+white rook
+white bishop
+white knight
+black king
+black queen
+black rook
+black bishop
+black knight
