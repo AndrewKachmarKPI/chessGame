@@ -10,7 +10,9 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.Group;
+import javafx.scene.ImageCursor;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -74,7 +76,6 @@ public class GameFieldService {
 
 
     public static HBox createButtons() {
-
         EventHandler<MouseEvent> onStartGame = GameFieldService::onStartGame;
         Button startGame = new Button("Start game");
         startGame.addEventHandler(MouseEvent.MOUSE_CLICKED, onStartGame);
@@ -113,15 +114,16 @@ public class GameFieldService {
                     rectangle.setFill(Color.web("#ecedd1"));
                 }
                 borderPane.setId("BorderPane-" + i + j);
-                borderPane.setStyle("-fx-cursor: hand;");
+                if (gameStarted) {
+                    borderPane.setCursor(Cursor.HAND);
+                }
                 borderPane.getChildren().add(rectangle);
-
                 EventHandler<MouseEvent> selectFigure = GameFieldService::onHoverFigure;
                 EventHandler<MouseEvent> unselectFigure = GameFieldService::onUnHooverFigure;
                 borderPane.addEventHandler(MouseEvent.MOUSE_ENTERED_TARGET, selectFigure);
                 borderPane.addEventHandler(MouseEvent.MOUSE_EXITED_TARGET, unselectFigure);
                 borderPane.addEventHandler(MouseEvent.MOUSE_CLICKED, mouseEvent -> {
-                    if (mouseEvent.getButton() == MouseButton.SECONDARY) {
+                    if (mouseEvent.getButton() == MouseButton.SECONDARY && gameStarted) {
                         BorderPane selectedPane = findBorderPaneById(((BorderPane) mouseEvent.getSource()).getId());
                         ContextMenu contextMenu = openAvailableFiguresMenu(selectedPane);
                         contextMenu.show(rectangle, mouseEvent.getScreenX(), mouseEvent.getScreenY());
@@ -219,6 +221,17 @@ public class GameFieldService {
             }
         });
         return rectangle.get();
+    }
+
+    public static Image loadImageByPath(String path) {
+        Image image = null;
+        try {
+            File file = new File(path);
+            image = new Image(new FileInputStream(file));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return image;
     }
 
     public static ImageView loadFigureImage(FigureColor figureColor, FigureName figureName) {
@@ -372,7 +385,7 @@ public class GameFieldService {
         BorderPane.setAlignment(scrollPane, Pos.CENTER);
         borderPane.setTop(headerText);
         borderPane.setCenter(scrollPane);
-        borderPane.setPrefHeight(600);
+        borderPane.setMaxHeight(600);
 
         ButtonType okButton = new ButtonType("Close", ButtonBar.ButtonData.OK_DONE);
         DialogPane dialogPane = new DialogPane();
@@ -382,7 +395,6 @@ public class GameFieldService {
         dialog.setDialogPane(dialogPane);
 
         dialog.show();
-//        Optional<ButtonType> option = dialog.showAndWait();
     }
 
     public static VBox loadFigureList(Map<ChessFigure, List<ChessFigure>> chessFigureListMap) {
@@ -405,6 +417,24 @@ public class GameFieldService {
                 figuresList.getChildren().add(mainRow);
             }
         });
+        if (figuresList.getChildren().size() == 0) {
+            File file = new File("D:\\PROJECTS\\chessGame\\src\\main\\resources\\images\\sadSmile.png");
+            try {
+                Text text = new Text("No attacks was found");
+                text.setFont(Font.font("Verdana", 20));
+                ImageView imageView = new ImageView(new Image(new FileInputStream(file)));
+                imageView.setFitWidth(120);
+                imageView.setFitHeight(120);
+                BorderPane borderPane = new BorderPane();
+                BorderPane.setAlignment(imageView, Pos.CENTER);
+                BorderPane.setAlignment(text, Pos.CENTER);
+                borderPane.setCenter(imageView);
+                borderPane.setBottom(text);
+                figuresList.getChildren().add(borderPane);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
         return figuresList;
     }
 
@@ -428,7 +458,6 @@ public class GameFieldService {
     }
 
     public static ContextMenu openAvailableFiguresMenu(BorderPane borderPane) {
-        System.out.println("hererrrrrrr" + borderPane.toString());
         List<ChessFigure> availableFigures = GameService.getAvailableFigures();
         ContextMenu contextMenu = new ContextMenu();
         availableFigures.forEach(chessFigure -> {
@@ -456,11 +485,20 @@ public class GameFieldService {
         return contextMenu;
     }
 
+    public static void createHoverEffects(BorderPane borderPane) {
+        if (!gameStarted) {
+            ImageCursor imageCursor = new ImageCursor(loadImageByPath("D:\\PROJECTS\\chessGame\\src\\main\\resources\\images\\stopCursor.png"));
+            borderPane.setCursor(imageCursor);
+        } else {
+            borderPane.setCursor(Cursor.HAND);
+        }
+    }
+
     //ACTIONS
     public static void onHoverFigure(MouseEvent e) {
         if (!isCellSelected) {
             BorderPane borderPane = findBorderPaneById(((BorderPane) e.getSource()).getId());
-            System.out.println(borderPane);
+            createHoverEffects(borderPane);
             if (borderPane.getCenter() instanceof ImageView) {
                 isCellSelected = true;
                 Rectangle rectangle = getRectangleOfBorderPane(borderPane);
@@ -481,6 +519,7 @@ public class GameFieldService {
     public static void onUnHooverFigure(MouseEvent e) {
         if (isCellSelected) {
             BorderPane borderPane = findBorderPaneById(((BorderPane) e.getSource()).getId());
+            createHoverEffects(borderPane);
             if (borderPane.getCenter() instanceof ImageView) {
                 isCellSelected = false;
                 Rectangle rectangle = getRectangleOfBorderPane(borderPane);
@@ -508,6 +547,8 @@ public class GameFieldService {
             selectedCells = new ArrayList<>();
             GameService.clearGameField();
             clearBoard();
+            gameStarted = true;
+            GameService.initGame();
         }
     }
 

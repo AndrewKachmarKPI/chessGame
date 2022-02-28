@@ -233,4 +233,8 @@ public class GameService {
         });
         return allFigures;
     }
+
+    public static void updateGame(){
+        createFigurePassingMap();
+    }
 }
