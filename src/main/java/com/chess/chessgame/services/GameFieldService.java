@@ -385,7 +385,7 @@ public class GameFieldService {
         BorderPane.setAlignment(scrollPane, Pos.CENTER);
         borderPane.setTop(headerText);
         borderPane.setCenter(scrollPane);
-        borderPane.setMaxHeight(600);
+        borderPane.setPrefHeight(600);
 
         ButtonType okButton = new ButtonType("Close", ButtonBar.ButtonData.OK_DONE);
         DialogPane dialogPane = new DialogPane();
@@ -471,15 +471,19 @@ public class GameFieldService {
             }
         });
         if (contextMenu.getItems().size() == 0) {
-            File file = new File("D:\\PROJECTS\\chessGame\\src\\main\\resources\\images\\sadSmile.png");
-            try {
-                ImageView imageView = new ImageView(new Image(new FileInputStream(file)));
+            if (isCellOccupied(borderPane)) {
+                ImageView imageView = new ImageView(loadImageByPath("D:\\PROJECTS\\chessGame\\src\\main\\resources\\images\\trash.png"));
+                imageView.setFitWidth(20);
+                imageView.setFitHeight(20);
+                MenuItem menuItem = new MenuItem("Remove figure", imageView);
+                menuItem.setOnAction(actionEvent -> onDeleteFigureFromBoard(actionEvent, borderPane));
+                contextMenu.getItems().add(menuItem);
+            } else {
+                ImageView imageView = new ImageView(loadImageByPath("D:\\PROJECTS\\chessGame\\src\\main\\resources\\images\\sadSmile.png"));
                 imageView.setFitWidth(60);
                 imageView.setFitHeight(60);
                 MenuItem menuItem = new MenuItem("No available figures for cell", imageView);
                 contextMenu.getItems().add(menuItem);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
             }
         }
         return contextMenu;
@@ -560,6 +564,14 @@ public class GameFieldService {
         }
         chessFigure.setPosition(position);
         GameService.writeFigureToFile(chessFigure);
+        GameService.initGame();
+        gameStarted = true;
+    }
+
+    public static void onDeleteFigureFromBoard(ActionEvent actionEvent, BorderPane borderPane) {
+        Position position = new Position(Integer.parseInt(borderPane.getId().split("-")[1].split("")[1]),
+                Integer.parseInt(borderPane.getId().split("-")[1].split("")[0]));
+        GameService.removeFigure(position);
         GameService.initGame();
         gameStarted = true;
     }

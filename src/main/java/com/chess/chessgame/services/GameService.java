@@ -8,6 +8,8 @@ import com.chess.chessgame.enums.FigureColor;
 import com.chess.chessgame.enums.FigureName;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -194,7 +196,6 @@ public class GameService {
 
     public static boolean writeFigureToFile(ChessFigure chessFigure) {
         try {
-
             String fileName = "D:\\PROJECTS\\chessGame\\src\\main\\resources\\game\\init.txt";
             FileWriter fileWriter = new FileWriter(fileName, true);
             BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
@@ -234,7 +235,37 @@ public class GameService {
         return allFigures;
     }
 
-    public static void updateGame(){
-        createFigurePassingMap();
+    public static void removeFigureFromFile(ChessFigure chessFigure) {
+        String removeChessLine = chessFigure.getColor().toString().toLowerCase(Locale.ROOT) + " " +
+                chessFigure.getName().toString().toLowerCase(Locale.ROOT) + " " +
+                chessFigure.getPosition().getxPosition() + " " +
+                chessFigure.getPosition().getyPosition();
+        try {
+            String readFrom = "D:\\PROJECTS\\chessGame\\src\\main\\resources\\game\\init.txt";
+            String writeTo = "D:\\PROJECTS\\chessGame\\src\\main\\resources\\game\\temp.txt";
+            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(writeTo, true));
+            BufferedReader bufferedReader = new BufferedReader(new FileReader(readFrom));
+
+            String currentLine;
+            while ((currentLine = bufferedReader.readLine()) != null) {
+                if (!currentLine.trim().equals(removeChessLine.trim())) {
+                    bufferedWriter.write(currentLine);
+                    bufferedWriter.newLine();
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void removeFigure(Position position) {
+        ChessFigure chessFigure = chessBoard.getFigures().stream().filter(chessFigure1 -> chessFigure1.getPosition().getxPosition() == position.getxPosition() &&
+                        chessFigure1.getPosition().getyPosition() == position.getyPosition())
+                .findFirst().orElse(new ChessFigure());
+        if (chessFigure.getName() != null && !chessFigure.getName().toString().isEmpty()) {
+            chessBoard.getFigures().remove(chessFigure);
+            chessBoard.getChessFigureMap().remove(chessFigure);
+            removeFigureFromFile(chessFigure);
+        }
     }
 }
