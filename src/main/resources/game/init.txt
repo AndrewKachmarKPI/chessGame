@@ -1,2 +1,5 @@
 white queen 3 4
 white king 4 4
+black king 5 2
+black knight 4 2
+black bishop 2 2

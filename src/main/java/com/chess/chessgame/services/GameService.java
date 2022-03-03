@@ -70,15 +70,7 @@ public class GameService {
     }
 
     private static List<ChessFigure> checkForPassing(ChessFigure chessFigure) {
-        List<Position> figurePositions = new ArrayList<>();
-        int[][] figureMatrix = getFigureTrajectory(chessFigure);
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
-                if (figureMatrix[i][j] == 1) {
-                    figurePositions.add(new Position(i, j));
-                }
-            }
-        }
+        List<Position> figurePositions = convertMatrixToFigureList(getFigureTrajectory(chessFigure));
         List<Position> matchedPositions = new ArrayList<>();
         List<Position> boardFiguresPositions = chessBoard.getFigures().stream().map(ChessFigure::getPosition).collect(Collectors.toList());
 
@@ -99,6 +91,18 @@ public class GameService {
             });
         });
         return matchedFigures;
+    }
+
+    private static List<Position> convertMatrixToFigureList(int[][] figureMatrix) {
+        List<Position> figurePositions = new ArrayList<>();
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                if (figureMatrix[i][j] == 1) {
+                    figurePositions.add(new Position(i, j));
+                }
+            }
+        }
+        return figurePositions;
     }
 
     private static void paintFigures() {
