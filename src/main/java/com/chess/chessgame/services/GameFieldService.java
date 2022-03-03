@@ -47,35 +47,25 @@ public class GameFieldService {
     public static Scene createGameScene() {
         BorderPane borderPane = new BorderPane();
         createGameBoard();
-        VBox vBox = createFormsModule();
-        BorderPane.setAlignment(vBox, Pos.CENTER);
+        Group hBox = new Group(createButtons());
+        BorderPane.setAlignment(hBox, Pos.BOTTOM_CENTER);
         BorderPane.setAlignment(borderPanesGroup, Pos.CENTER);
         borderPane.setCenter(borderPanesGroup);
-        borderPane.setBottom(vBox);
-
+        borderPane.setBottom(hBox);
         rootGroup.getChildren().add(borderPane);
-        Scene scene = new Scene(rootGroup, 1000, 1000, Color.GRAY);
+        Scene scene = new Scene(rootGroup, Color.web("312e2b"));
+        scene.getStylesheets().clear();
         scene.getStylesheets().add(BootstrapFX.bootstrapFXStylesheet());
         return scene;
     }
 
     public static void createGameBoard() {
-        paintGameBoard(borderPanesGroup);
-        paintBorders(borderPanesGroup, 0, 80);
-        paintBorders(borderPanesGroup, 0, 900);
-        paintBorders(borderPanesGroup, 80, 0);
-        paintBorders(borderPanesGroup, 900, 0);
+        paintGameBoard();
+        paintBorders(0, 80);
+        paintBorders(0, 900);
+        paintBorders(80, 0);
+        paintBorders(900, 0);
     }
-
-    public static VBox createFormsModule() {
-        VBox vBox = new VBox();
-        vBox.getChildren().add(createButtons());
-//        for (int i = 0; i < 10; i++) {
-//            vBox.getChildren().add(createComboBox(i));
-//        }
-        return vBox;
-    }
-
 
     public static HBox createButtons() {
         EventHandler<MouseEvent> onStartGame = GameFieldService::onStartGame;
@@ -94,11 +84,11 @@ public class GameFieldService {
         figureAttacks.getStyleClass().setAll("btn-lg", "btn-warning");
 
         HBox hBox = new HBox(10, startGame, clearField, figureAttacks);
-        hBox.setPadding(new Insets(20, 0, 0, 20));
+        hBox.setPadding(new Insets(20, 20, 20, 20));
         return hBox;
     }
 
-    public static void paintGameBoard(Group group) {
+    public static void paintGameBoard() {
         boolean isSecond = false;
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
@@ -134,26 +124,28 @@ public class GameFieldService {
                         contextMenu.show(rectangle, mouseEvent.getScreenX(), mouseEvent.getScreenY());
                     }
                 });
-                group.getChildren().add(borderPane);
+                borderPanesGroup.getChildren().add(borderPane);
                 isSecond = !isSecond;
             }
             isSecond = !isSecond;
         }
     }
 
-    public static void paintBorders(Group group, int x, int y) {
+    public static void paintBorders(int x, int y) {
         if (y != 0) {
             for (int i = 0; i < 8; i++) {
                 StackPane stack = new StackPane();
                 stack.setLayoutX((i * 100) + 100);
                 stack.setLayoutY(y);
                 Rectangle rectangle = new Rectangle();
-                rectangle.setFill(Color.WHITE);
+                rectangle.setFill(Color.web("26211b"));
                 rectangle.setWidth(100);
                 rectangle.setHeight(20);
                 Text text = new Text(String.valueOf(i + 1));
+                text.setFont(Font.font("Verdana", 15));
+                text.setFill(Color.WHITE);
                 stack.getChildren().addAll(rectangle, text);
-                group.getChildren().add(stack);
+                borderPanesGroup.getChildren().add(stack);
             }
         }
         if (x != 0) {
@@ -162,12 +154,14 @@ public class GameFieldService {
                 stack.setLayoutX(x);
                 stack.setLayoutY((i * 100) + 100);
                 Rectangle rectangle = new Rectangle();
-                rectangle.setFill(Color.WHITE);
+                rectangle.setFill(Color.web("26211b"));
                 rectangle.setWidth(20);
                 rectangle.setHeight(100);
                 Text text = new Text(String.valueOf(i + 1));
+                text.setFont(Font.font("Verdana", 15));
+                text.setFill(Color.WHITE);
                 stack.getChildren().addAll(rectangle, text);
-                group.getChildren().add(stack);
+                borderPanesGroup.getChildren().add(stack);
             }
         }
     }
@@ -371,10 +365,13 @@ public class GameFieldService {
     public static void openDialogWindow() {
         Map<ChessFigure, List<ChessFigure>> chessFigureListMap = GameService.getAttackMap();
         VBox vBox = loadFigureList(chessFigureListMap);
+        vBox.setStyle("-fx-background-color: #312e2b");
 
         ScrollPane scrollPane = new ScrollPane();
         scrollPane.setContent(vBox);
         scrollPane.setPannable(true);
+        scrollPane.getStyleClass().add("bg-none");
+        scrollPane.setStyle("-fx-background-color: #312e2b");
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
 
@@ -386,22 +383,37 @@ public class GameFieldService {
         stage.getIcons().add(loadImageByPath("D:\\PROJECTS\\chessGame\\src\\main\\resources\\images\\mainIcon.png"));
 
         Text headerText = new Text("Figure attacks");
+        headerText.setFill(Color.WHITE);
         headerText.setFont(Font.font("Verdana", 20));
         BorderPane borderPane = new BorderPane();
         BorderPane.setAlignment(headerText, Pos.CENTER);
         BorderPane.setAlignment(scrollPane, Pos.CENTER);
         borderPane.setTop(headerText);
         borderPane.setCenter(scrollPane);
+        BorderPane.setMargin(headerText, new Insets(0, 0, 10, 0));
         borderPane.setPrefHeight(600);
 
-        ButtonType okButton = new ButtonType("Close", ButtonBar.ButtonData.OK_DONE);
+        ButtonType okButton = new ButtonType("Close", ButtonBar.ButtonData.CANCEL_CLOSE);
         DialogPane dialogPane = new DialogPane();
         dialogPane.setContentText("All figures attacks");
         dialogPane.setContent(borderPane);
+        dialogPane.setStyle("-fx-background-color: #26211b");
         dialogPane.getButtonTypes().add(okButton);
         dialog.setDialogPane(dialogPane);
 
         dialog.show();
+    }
+
+    public static VBox getLabelBox(ChessFigure chessFigure) {
+        Label nameLabel = new Label(chessFigure.getName().toString());
+        nameLabel.setTextFill(Color.WHITE);
+        nameLabel.setStyle("-fx-font-weight: bold");
+        Label positionLabel = new Label("(" + chessFigure.getPosition().getxPosition() + "," + chessFigure.getPosition().getyPosition() + ")");
+        positionLabel.setTextFill(Color.WHITE);
+        positionLabel.setStyle("-fx-font-weight: bold");
+        VBox labelBox = new VBox(nameLabel, positionLabel);
+        labelBox.setAlignment(Pos.CENTER);
+        return labelBox;
     }
 
     public static VBox loadFigureList(Map<ChessFigure, List<ChessFigure>> chessFigureListMap) {
@@ -409,18 +421,20 @@ public class GameFieldService {
 
         chessFigureListMap.forEach((chessFigure, chessFigures) -> {
             if (chessFigures.size() > 0) {
-                Label label = new Label(chessFigure.getName() + "- (" + chessFigure.getPosition().getxPosition() + "," + chessFigure.getPosition().getyPosition() + ")");
+                VBox labelBox = getLabelBox(chessFigure);
                 ImageView imageView = loadFigureImage(chessFigure.getColor(), chessFigure.getName());
 
                 BorderPane figureBox = new BorderPane();
-                BorderPane.setAlignment(label, Pos.CENTER);
+                figureBox.setPrefHeight(80);
+                figureBox.setPrefWidth(70);
+                BorderPane.setAlignment(labelBox, Pos.CENTER);
                 BorderPane.setAlignment(imageView, Pos.CENTER);
                 figureBox.setCenter(imageView);
-                figureBox.setBottom(label);
-                figureBox.setStyle("-fx-border-style: solid; -fx-border-width : 0 0 4; -fx-border-color: #28a745;");
+                figureBox.setBottom(labelBox);
+                figureBox.setStyle("-fx-background-color: #789655");
 
                 HBox mainRow = new HBox(10, figureBox, loadNestedFigures(chessFigures));
-                mainRow.setStyle("-fx-border-style: solid; -fx-border-width : 0 0 2; -fx-border-color: #gray;");
+                mainRow.setStyle("-fx-border-style: solid; -fx-border-width : 0 0 2; -fx-border-color: white;");
                 mainRow.setPadding(new Insets(10, 10, 10, 10));
                 figuresList.getChildren().add(mainRow);
             }
@@ -448,19 +462,21 @@ public class GameFieldService {
 
     public static HBox loadNestedFigures(List<ChessFigure> chessFigures) {
         HBox hBox = new HBox();
+        hBox.setStyle("-fx-background-color: #dc3545bd");
+        hBox.setSpacing(20);
         chessFigures.forEach(chessFigure -> {
+            VBox labelBox = getLabelBox(chessFigure);
             BorderPane figureBox = new BorderPane();
-            figureBox.setStyle("-fx-border-style: solid; -fx-border-width : 0 0 4; -fx-border-color: red;");
-            Label label = new Label(chessFigure.getName() + "- (" + chessFigure.getPosition().getxPosition() + "," + chessFigure.getPosition().getyPosition() + ")");
+            figureBox.setPrefHeight(80);
+            figureBox.setPrefWidth(70);
 
             ImageView imageView = loadFigureImage(chessFigure.getColor(), chessFigure.getName());
             BorderPane.setAlignment(imageView, Pos.CENTER);
             figureBox.setCenter(imageView);
 
-            BorderPane.setAlignment(label, Pos.CENTER);
-            figureBox.setBottom(label);
+            BorderPane.setAlignment(labelBox, Pos.CENTER);
+            figureBox.setBottom(labelBox);
             hBox.getChildren().add(figureBox);
-            hBox.setSpacing(10);
         });
         return hBox;
     }
