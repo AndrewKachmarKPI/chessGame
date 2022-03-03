@@ -23,6 +23,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -109,6 +110,9 @@ public class GameFieldService {
                 Rectangle rectangle = new Rectangle();
                 rectangle.setWidth(100);
                 rectangle.setHeight(100);
+                rectangle.setStrokeWidth(2);
+                rectangle.setStrokeType(StrokeType.CENTERED);
+                rectangle.setStroke(Color.BLACK);
                 if (isSecond) {
                     rectangle.setFill(Color.web("#789655"));
                 } else {
