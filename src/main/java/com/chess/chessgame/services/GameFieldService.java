@@ -25,6 +25,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
 import org.kordamp.bootstrapfx.BootstrapFX;
 
 import java.io.File;
@@ -377,6 +378,8 @@ public class GameFieldService {
         dialog.setTitle("Figure attacks");
         dialog.setHeaderText(null);
         dialog.setGraphic(null);
+        Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
+        stage.getIcons().add(loadImageByPath("D:\\PROJECTS\\chessGame\\src\\main\\resources\\images\\mainIcon.png"));
 
         Text headerText = new Text("Figure attacks");
         headerText.setFont(Font.font("Verdana", 20));
@@ -399,6 +402,7 @@ public class GameFieldService {
 
     public static VBox loadFigureList(Map<ChessFigure, List<ChessFigure>> chessFigureListMap) {
         VBox figuresList = new VBox();
+
         chessFigureListMap.forEach((chessFigure, chessFigures) -> {
             if (chessFigures.size() > 0) {
                 Label label = new Label(chessFigure.getName() + "- (" + chessFigure.getPosition().getxPosition() + "," + chessFigure.getPosition().getyPosition() + ")");

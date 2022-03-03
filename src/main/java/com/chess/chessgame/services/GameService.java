@@ -17,8 +17,8 @@ public class GameService {
 
     public static void initGame() {
         loadFigures();
-        loadFiguresOnBoard();
         fillFigureMap();
+        loadFiguresOnBoard();
     }
 
     private static void loadFigures() {
