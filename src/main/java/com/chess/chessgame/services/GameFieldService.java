@@ -355,7 +355,7 @@ public class GameFieldService {
             chessFigure.setPosition(new Position(Integer.parseInt(xPosition.getText()), Integer.parseInt(yPosition.getText())));
             chessFigure.setName(FigureName.valueOf(figureNameBox.getValue()));
             chessFigure.setColor(FigureColor.valueOf(figureColorsBox.getValue()));
-            GameService.writeFigureToFile(chessFigure);
+            GameService.addNewFigure(chessFigure);
         });
         HBox hBox = new HBox(10, figureNameBox, figureColorsBox, xPosition, yPosition, button);
         hBox.setPadding(new Insets(20, 0, 0, 20));
@@ -364,7 +364,7 @@ public class GameFieldService {
     }
 
     public static void openDialogWindow() {
-        Map<ChessFigure, List<ChessFigure>> chessFigureListMap = GameService.getPassMap();
+        Map<ChessFigure, List<ChessFigure>> chessFigureListMap = GameService.getAttackMap();
         VBox vBox = loadFigureList(chessFigureListMap);
 
         ScrollPane scrollPane = new ScrollPane();
@@ -549,7 +549,7 @@ public class GameFieldService {
             gameStarted = false;
             isCellSelected = false;
             selectedCells = new ArrayList<>();
-            GameService.clearGameField();
+            GameService.clearGameBoard();
             clearBoard();
             gameStarted = true;
             GameService.initGame();
@@ -563,7 +563,7 @@ public class GameFieldService {
             position.setyPosition(Integer.parseInt(borderPane.getId().split("-")[1].split("")[1]));
         }
         chessFigure.setPosition(position);
-        GameService.writeFigureToFile(chessFigure);
+        GameService.addNewFigure(chessFigure);
         GameService.initGame();
         gameStarted = true;
     }

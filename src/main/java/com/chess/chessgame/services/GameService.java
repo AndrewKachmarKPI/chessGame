@@ -1,75 +1,57 @@
 package com.chess.chessgame.services;
 
-import com.chess.chessgame.domain.board.BoardCell;
 import com.chess.chessgame.domain.board.ChessBoard;
-import com.chess.chessgame.domain.board.InitChessBoard;
 import com.chess.chessgame.domain.figures.*;
 import com.chess.chessgame.enums.FigureColor;
 import com.chess.chessgame.enums.FigureName;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.chess.chessgame.services.GameFileService.*;
 
 
 public class GameService {
     public static ChessBoard chessBoard = new ChessBoard();
 
     public static void initGame() {
-        createGame();
-        paintFigures();
-        createFigurePassingMap();
+        loadFigures();
+        loadFiguresOnBoard();
+        fillFigureMap();
     }
 
-    private static void createGame() {
-        File file = new File("D:\\PROJECTS\\chessGame\\src\\main\\resources\\game\\init.txt");
-        try {
-            BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
-            String line;
-            List<ChessFigure> figures = new ArrayList<>();
-            int[][] matrix = new int[8][8];
-            Map<ChessFigure, List<ChessFigure>> chessFigureMap = new HashMap<>();
-            while ((line = bufferedReader.readLine()) != null && figures.size() <= 10) {
-                line = line.trim();
-                if (!line.isEmpty()) {
-                    String color = line.split(" ")[0];
-                    String name = line.split(" ")[1];
-                    Position position = new Position(Integer.parseInt(line.split(" ")[2]), Integer.parseInt(line.split(" ")[3]));
-                    ChessFigure chessFigure = new ChessFigure(FigureName.valueOf(name.toUpperCase(Locale.ROOT)),
-                            FigureColor.valueOf(color.toUpperCase(Locale.ROOT)), position);
-                    figures.add(chessFigure);
-                    chessFigureMap.put(chessFigure, new ArrayList<>());
-                    for (int i = 0; i < 8; i++) {
-                        for (int j = 0; j < 8; j++) {
-                            if (chessFigure.getPosition().getyPosition() == i && chessFigure.getPosition().getxPosition() == j) {
-                                matrix[i][j] = getFigureNumber(chessFigure);
-                                break;
-                            }
-                        }
+    private static void loadFigures() {
+        List<ChessFigure> figures = getFiguresFromInitFile();
+        int[][] matrix = new int[8][8];
+        Map<ChessFigure, List<ChessFigure>> chessFigureMap = new HashMap<>();
+        figures.forEach(chessFigure -> {
+            chessFigureMap.put(chessFigure, new ArrayList<>());
+            for (int i = 0; i < 8; i++) {
+                for (int j = 0; j < 8; j++) {
+                    if (chessFigure.getPosition().getyPosition() == i && chessFigure.getPosition().getxPosition() == j) {
+                        matrix[i][j] = getFigureNumber(chessFigure);
+                        break;
                     }
                 }
             }
-            chessBoard.setChessFigureMap(chessFigureMap);
-            chessBoard.setFigures(figures);
-            chessBoard.setChessMatrix(matrix);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        });
+        chessBoard.setChessFigureMap(chessFigureMap);
+        chessBoard.setFigures(figures);
+        chessBoard.setChessMatrix(matrix);
     }
 
-    private static void createFigurePassingMap() {
+    private static void fillFigureMap() {
         List<ChessFigure> chessFigures = chessBoard.getFigures();
         Map<ChessFigure, List<ChessFigure>> chessFigureMap = chessBoard.getChessFigureMap();
 
         chessFigures.forEach(chessFigure -> {
-            List<ChessFigure> passedFigures = checkForPassing(chessFigure);
+            List<ChessFigure> passedFigures = getAttackedFigures(chessFigure);
             chessFigureMap.put(chessFigure, passedFigures);
         });
     }
 
-    private static List<ChessFigure> checkForPassing(ChessFigure chessFigure) {
+    private static List<ChessFigure> getAttackedFigures(ChessFigure chessFigure) {
         List<Position> figurePositions = convertMatrixToFigureList(getFigureTrajectory(chessFigure));
         List<Position> matchedPositions = new ArrayList<>();
         List<Position> boardFiguresPositions = chessBoard.getFigures().stream().map(ChessFigure::getPosition).collect(Collectors.toList());
@@ -105,7 +87,7 @@ public class GameService {
         return figurePositions;
     }
 
-    private static void paintFigures() {
+    private static void loadFiguresOnBoard() {
         chessBoard.getFigures().forEach(GameFieldService::setFigureOnBoard);
     }
 
@@ -130,7 +112,7 @@ public class GameService {
         return 0;
     }
 
-    public static Map<ChessFigure, List<ChessFigure>> getPassMap() {
+    public static Map<ChessFigure, List<ChessFigure>> getAttackMap() {
         return chessBoard.getChessFigureMap();
     }
 
@@ -139,34 +121,34 @@ public class GameService {
         switch (chessFigure.getName()) {
             case KING: {
                 King king = new King(chessFigure);
-                matrix = checkForPassing(king.getMoveDirection());
+                matrix = getAttackedFigures(king.getMoveDirection());
                 break;
             }
             case QUEEN: {
                 Queen queen = new Queen(chessFigure);
-                matrix = checkForPassing(queen.getMoveDirection());
+                matrix = getAttackedFigures(queen.getMoveDirection());
                 break;
             }
             case ROOK: {
                 Rook rook = new Rook(chessFigure);
-                matrix = checkForPassing(rook.getMoveDirection());
+                matrix = getAttackedFigures(rook.getMoveDirection());
                 break;
             }
             case BISHOP: {
                 Bishop bishop = new Bishop(chessFigure);
-                matrix = checkForPassing(bishop.getMoveDirection());
+                matrix = getAttackedFigures(bishop.getMoveDirection());
                 break;
             }
             case KNIGHT: {
                 Knight knight = new Knight(chessFigure);
-                matrix = checkForPassing(knight.getMoveDirection());
+                matrix = getAttackedFigures(knight.getMoveDirection());
                 break;
             }
         }
         return matrix;
     }
 
-    private static int[][] checkForPassing(int[][] figureMatrix) {
+    private static int[][] getAttackedFigures(int[][] figureMatrix) {
         int[][] finalMatrix = new int[8][8];
         int[][] gameMatrix = chessBoard.getChessMatrix();
 
@@ -184,54 +166,24 @@ public class GameService {
         return finalMatrix;
     }
 
-    public static void clearGameField() {
+    public static void clearGameBoard() {
         chessBoard = new ChessBoard();
-        try {
-            File file = new File("D:\\PROJECTS\\chessGame\\src\\main\\resources\\game\\init.txt");
-            PrintWriter writer = new PrintWriter(file);
-            writer.print("");
-            writer.close();
-            createGame();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+        if (clearFiguresFile()) {
+            loadFigures();
         }
     }
 
 
-    public static boolean writeFigureToFile(ChessFigure chessFigure) {
-        try {
-            String fileName = "D:\\PROJECTS\\chessGame\\src\\main\\resources\\game\\init.txt";
-            FileWriter fileWriter = new FileWriter(fileName, true);
-            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
-            String chessPath = chessFigure.getColor().toString().toLowerCase(Locale.ROOT) + " " +
-                    chessFigure.getName().toString().toLowerCase(Locale.ROOT) + " " +
-                    chessFigure.getPosition().getyPosition() + " " +
-                    chessFigure.getPosition().getxPosition();
-            bufferedWriter.write(chessPath);
-            bufferedWriter.newLine();
-            bufferedWriter.close();
-            return true;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return false;
+    public static boolean addNewFigure(ChessFigure chessFigure) {
+        String chessPath = chessFigure.getColor().toString().toLowerCase(Locale.ROOT) + " " +
+                chessFigure.getName().toString().toLowerCase(Locale.ROOT) + " " +
+                chessFigure.getPosition().getyPosition() + " " +
+                chessFigure.getPosition().getxPosition();
+        return writeFigureToFile(chessPath);
     }
 
     public static List<ChessFigure> getAvailableFigures() {
-        List<ChessFigure> allFigures = new ArrayList<>();
-        try {
-            File file = new File("D:\\PROJECTS\\chessGame\\src\\main\\resources\\game\\allFigures.txt");
-            BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
-            String line;
-            while ((line = bufferedReader.readLine()) != null) {
-                line = line.trim();
-                String color = line.split(" ")[0];
-                String name = line.split(" ")[1];
-                allFigures.add(new ChessFigure(FigureName.valueOf(name.toUpperCase(Locale.ROOT)), FigureColor.valueOf(color.toUpperCase(Locale.ROOT))));
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        List<ChessFigure> allFigures = getAllFigures();
         List<ChessFigure> usedFigures = chessBoard.getFigures();
         usedFigures.forEach(usedFigure -> {
             allFigures.removeIf(figure -> figure.getName().equals(usedFigure.getName()) && figure.getColor().equals(usedFigure.getColor()));
@@ -239,7 +191,7 @@ public class GameService {
         return allFigures;
     }
 
-    public static void removeFigureFromFile(ChessFigure chessFigure) {
+    public static void removeFigureFromFile(ChessFigure chessFigure) { //TODO NOT FINISHED FEATURE
         String removeChessLine = chessFigure.getColor().toString().toLowerCase(Locale.ROOT) + " " +
                 chessFigure.getName().toString().toLowerCase(Locale.ROOT) + " " +
                 chessFigure.getPosition().getxPosition() + " " +

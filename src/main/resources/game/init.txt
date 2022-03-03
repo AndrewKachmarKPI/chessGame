@@ -3,3 +3,5 @@ white king 4 4
 black king 5 2
 black knight 4 2
 black bishop 2 2
+white bishop 6 6
+white rook 6 3
