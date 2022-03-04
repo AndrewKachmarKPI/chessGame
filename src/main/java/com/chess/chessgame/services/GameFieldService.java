@@ -177,7 +177,7 @@ public class GameFieldService {
 
         List<BorderPane> borderPanes = getAllBorderPanes();
         for (BorderPane pane : borderPanes) {
-            String paneId = "BorderPane-" + chessFigure.getPosition().getyPosition() + "" + chessFigure.getPosition().getxPosition();
+            String paneId = "BorderPane-" + chessFigure.getPosition().getxPosition() + "" + chessFigure.getPosition().getyPosition();
             if (!isCellOccupied(pane) && pane.getId().equals(paneId)) {
                 pane.setCenter(imageView);
                 break;
@@ -586,8 +586,8 @@ public class GameFieldService {
     public static void onSelectContextMenuItem(ActionEvent e, ChessFigure chessFigure, BorderPane borderPane) {
         Position position = new Position();
         if (borderPane != null) {
-            position.setxPosition(Integer.parseInt(borderPane.getId().split("-")[1].split("")[0]));
-            position.setyPosition(Integer.parseInt(borderPane.getId().split("-")[1].split("")[1]));
+            position.setyPosition(Integer.parseInt(borderPane.getId().split("-")[1].split("")[0]));
+            position.setxPosition(Integer.parseInt(borderPane.getId().split("-")[1].split("")[1]));
         }
         chessFigure.setPosition(position);
         GameService.addNewFigure(chessFigure);

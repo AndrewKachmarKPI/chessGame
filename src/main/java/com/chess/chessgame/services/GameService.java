@@ -129,7 +129,7 @@ public class GameService {
             }
             case ROOK: {
                 Rook rook = new Rook(chessFigure);
-                matrix = rook.removeDuplicates(getAttackedFigures(rook.getMoveDirection()), chessBoard.getChessMatrix());
+                matrix = getAttackedFigures(rook.getMoveDirection());
                 break;
             }
             case BISHOP: {
