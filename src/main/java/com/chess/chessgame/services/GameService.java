@@ -129,7 +129,7 @@ public class GameService {
             }
             case ROOK: {
                 Rook rook = new Rook(chessFigure);
-                matrix = getAttackedFigures(rook.getMoveDirection());
+                matrix = rook.removeDuplicates(getAttackedFigures(rook.getMoveDirection()), chessBoard.getChessMatrix());
                 break;
             }
             case BISHOP: {
@@ -155,9 +155,9 @@ public class GameService {
                 finalMatrix[i][j] = gameMatrix[i][j];
                 if (figureMatrix[i][j] == 1) {
                     finalMatrix[i][j] = 1;
-                    if (gameMatrix[i][j] > 1) {
-                        finalMatrix[i][j] = 9;
-                    }
+//                    if (gameMatrix[i][j] > 1) {
+//                        finalMatrix[i][j] = 9;
+//                    }
                 }
             }
         }

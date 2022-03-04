@@ -31,7 +31,7 @@ public class Rook extends ChessFigure {
         return matrix;
     }
 
-    public int[][] removeDuplicates(int[][] matrix) {
+    public int[][] removeDuplicates(int[][] matrix, int[][] gameMatrix) {
 //        for (int i = 0; i < this.getPosition().getxPosition(); i++) {
 //            if (matrix[i][this.getPosition().getyPosition()] == 9) {
 //                if (this.getPosition().getyPosition() != 0) {
@@ -47,42 +47,48 @@ public class Rook extends ChessFigure {
 //            }
 //        }
         int[] horizontal = matrix[this.getPosition().getxPosition()];
+        int[] horizontalGame = gameMatrix[this.getPosition().getxPosition()];
         int[] vertical = new int[8];
         for (int i = 0; i < 8; i++) {
             vertical[i] = matrix[i][this.getPosition().getyPosition()];
         }
+        int[] verticalGame = new int[8];
+        for (int i = 0; i < 8; i++) {
+            verticalGame[i] = gameMatrix[i][this.getPosition().getyPosition()];
+        }
 
         boolean isMatch = false;
-        for (int i = this.getPosition().getyPosition()+1; i < 8; i++) {
-            if (vertical[i] == 9 && !isMatch) {
+        for (int i = this.getPosition().getyPosition() + 1; i < 8; i++) {
+            if (verticalGame[i] > 1 && !isMatch) {
                 isMatch = true;
             } else {
                 vertical[i] = 0;
             }
         }
         isMatch = false;
-        for (int i = this.getPosition().getyPosition()-1; i >= 0; i--) {
-            if (vertical[i] == 9 && !isMatch) {
+        for (int i = this.getPosition().getyPosition() - 1; i >= 0; i--) {
+            if (verticalGame[i] > 1 && !isMatch) {
                 isMatch = true;
             } else {
                 vertical[i] = 0;
             }
         }
 
+
         isMatch = false;
-        for (int i = this.getPosition().getxPosition()+1; i < 8; i++) {
-            if (vertical[i] == 9 && !isMatch) {
+        for (int i = this.getPosition().getxPosition() + 1; i < 8; i++) {
+            if (horizontalGame[i] > 1 && !isMatch) {
                 isMatch = true;
             } else {
-                vertical[i] = 0;
+                horizontal[i] = 0;
             }
         }
         isMatch = false;
-        for (int i = this.getPosition().getxPosition()-1; i >= 0; i--) {
-            if (vertical[i] == 9 && !isMatch) {
+        for (int i = this.getPosition().getxPosition() - 1; i >= 0; i--) {
+            if (horizontalGame[i] > 1 && !isMatch) {
                 isMatch = true;
             } else {
-                vertical[i] = 0;
+                horizontal[i] = 0;
             }
         }
 
