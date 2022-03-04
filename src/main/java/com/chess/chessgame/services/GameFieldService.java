@@ -56,6 +56,9 @@ public class GameFieldService {
         Scene scene = new Scene(rootGroup, Color.web("312e2b"));
         scene.getStylesheets().clear();
         scene.getStylesheets().add(BootstrapFX.bootstrapFXStylesheet());
+//        black rook 3 5
+        Rook rook = new Rook(FigureName.ROOK, FigureColor.BLACK, new Position(3, 5));
+        rook.getMoveDirection();
         return scene;
     }
 

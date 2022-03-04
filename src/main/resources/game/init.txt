@@ -1,6 +1,5 @@
 white king 3 3
 white knight 4 3
-black rook 3 5
 black knight 3 1
 white rook 2 3
 white queen 6 6

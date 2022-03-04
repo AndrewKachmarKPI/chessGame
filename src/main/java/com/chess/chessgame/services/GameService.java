@@ -29,7 +29,7 @@ public class GameService {
             chessFigureMap.put(chessFigure, new ArrayList<>());
             for (int i = 0; i < 8; i++) {
                 for (int j = 0; j < 8; j++) {
-                    if (chessFigure.getPosition().getyPosition() == i && chessFigure.getPosition().getxPosition() == j) {
+                    if (chessFigure.getPosition().getxPosition() == i && chessFigure.getPosition().getyPosition() == j) {
                         matrix[i][j] = getFigureNumber(chessFigure);
                         break;
                     }
@@ -67,7 +67,7 @@ public class GameService {
         List<ChessFigure> matchedFigures = new ArrayList<>();
         matchedPositions.forEach(position -> {
             chessBoard.getFigures().forEach(figure -> {
-                if (position.equals(figure.getPosition())) {
+                if (position.equals(figure.getPosition()) && !figure.getColor().equals(chessFigure.getColor())) {
                     matchedFigures.add(figure);
                 }
             });
@@ -131,7 +131,7 @@ public class GameService {
             }
             case ROOK: {
                 Rook rook = new Rook(chessFigure);
-                matrix = getAttackedFigures(rook.getMoveDirection());
+                matrix = rook.removeDuplicates(getAttackedFigures(rook.getMoveDirection()), chessBoard.getChessMatrix());
                 break;
             }
             case BISHOP: {
@@ -177,8 +177,8 @@ public class GameService {
     public static boolean addNewFigure(ChessFigure chessFigure) {
         String chessPath = chessFigure.getColor().toString().toLowerCase(Locale.ROOT) + " " +
                 chessFigure.getName().toString().toLowerCase(Locale.ROOT) + " " +
-                chessFigure.getPosition().getyPosition() + " " +
-                chessFigure.getPosition().getxPosition();
+                chessFigure.getPosition().getxPosition() + " " +
+                chessFigure.getPosition().getyPosition();
         return writeFigureToFile(chessPath);
     }
 
