@@ -2,8 +2,6 @@ package com.chess.chessgame.services;
 
 import com.chess.chessgame.domain.board.ChessBoard;
 import com.chess.chessgame.domain.figures.*;
-import com.chess.chessgame.enums.FigureColor;
-import com.chess.chessgame.enums.FigureName;
 
 import java.io.*;
 import java.util.*;
@@ -29,7 +27,7 @@ public class GameService {
             chessFigureMap.put(chessFigure, new ArrayList<>());
             for (int i = 0; i < 8; i++) {
                 for (int j = 0; j < 8; j++) {
-                    if (chessFigure.getPosition().getxPosition() == i && chessFigure.getPosition().getyPosition() == j) {
+                    if (chessFigure.getPosition().getyPosition() == i && chessFigure.getPosition().getxPosition() == j) {
                         matrix[i][j] = getFigureNumber(chessFigure);
                         break;
                     }
@@ -52,7 +50,7 @@ public class GameService {
     }
 
     private static List<ChessFigure> getAttackedFigures(ChessFigure chessFigure) {
-        List<Position> figurePositions = convertMatrixToFigureList(getFigureTrajectory(chessFigure));
+        List<Position> figurePositions = convertMatrixToPositionList(getFigureTrajectory(chessFigure));
         List<Position> matchedPositions = new ArrayList<>();
         List<Position> boardFiguresPositions = chessBoard.getFigures().stream().map(ChessFigure::getPosition).collect(Collectors.toList());
 
@@ -75,7 +73,7 @@ public class GameService {
         return matchedFigures;
     }
 
-    private static List<Position> convertMatrixToFigureList(int[][] figureMatrix) {
+    private static List<Position> convertMatrixToPositionList(int[][] figureMatrix) {
         List<Position> figurePositions = new ArrayList<>();
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
@@ -177,8 +175,8 @@ public class GameService {
     public static boolean addNewFigure(ChessFigure chessFigure) {
         String chessPath = chessFigure.getColor().toString().toLowerCase(Locale.ROOT) + " " +
                 chessFigure.getName().toString().toLowerCase(Locale.ROOT) + " " +
-                chessFigure.getPosition().getxPosition() + " " +
-                chessFigure.getPosition().getyPosition();
+                chessFigure.getPosition().getyPosition() + " " +
+                chessFigure.getPosition().getxPosition();
         return writeFigureToFile(chessPath);
     }
 

@@ -31,20 +31,34 @@ public class Rook extends ChessFigure {
     }
 
     public int[][] removeDuplicates(int[][] matrix, int[][] gameMatrix) {
-        List<Position> positionsForRemove = new ArrayList<>();
-        List<Position> horizontalPositions = new ArrayList<>();
-        List<Position> verticalPositions = new ArrayList<>();
 
-        for (int i = 0; i < 8; i++) {
+        int xpos = 0;
+        int ypos = 0;
+        for (int i = this.getPosition().getyPosition(); i < 8; i++) {
             if (gameMatrix[this.getPosition().getxPosition()][i] > 1) {
-                verticalPositions.add(new Position(i, this.getPosition().getxPosition()));
+                xpos = i;
+                ypos = this.getPosition().getxPosition();
             }
         }
-        for (int i = 0; i < 8; i++) {
-            if (gameMatrix[i][this.getPosition().getyPosition()] > 1) {
-                horizontalPositions.add(new Position(this.getPosition().getyPosition(), i));
+        for (int i = ypos; i < 8; i++) {
+            for (int j = xpos + 1; j < 8; j++) {
+                matrix[i][j] = 0;
             }
         }
+//
+//        xpos = 0;
+//        ypos = 0;
+//        for (int i = this.getPosition().getyPosition(); i < 8; i++) {
+//            if (gameMatrix[this.getPosition().getxPosition()][i] > 1) {
+//                xpos = i;
+//                ypos = this.getPosition().getxPosition();
+//            }
+//        }
+//        for (int i = ypos; i < 8; i++) {
+//            for (int j = xpos + 1; j < 8; j++) {
+//                matrix[i][j] = 0;
+//            }
+//        }
         return matrix;
     }
 
