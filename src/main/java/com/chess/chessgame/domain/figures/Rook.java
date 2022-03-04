@@ -5,6 +5,7 @@ import com.chess.chessgame.enums.FigureName;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 public class Rook extends ChessFigure {
     public Rook() {
@@ -30,35 +31,62 @@ public class Rook extends ChessFigure {
         return matrix;
     }
 
-    public int[][] removeDuplicates(int[][] matrix, int[][] gameMatrix) {
+    public int[][] removeDuplicates(int[][] matrix) {
+//        for (int i = 0; i < this.getPosition().getxPosition(); i++) {
+//            if (matrix[i][this.getPosition().getyPosition()] == 9) {
+//                if (this.getPosition().getyPosition() != 0) {
+//                    matrix[i - 1][this.getPosition().getyPosition()] = 0;
+//                }
+//            }
+//        }
+//        for (int i = 8; i > this.getPosition().getxPosition(); i--) {
+//            if (matrix[i-1][this.getPosition().getyPosition()] == 9) {
+//                if (i != this.getPosition().getyPosition()) {
+//                    matrix[i - 1][this.getPosition().getyPosition()] = 0;
+//                }
+//            }
+//        }
+        int[] horizontal = matrix[this.getPosition().getxPosition()];
+        int[] vertical = new int[8];
+        for (int i = 0; i < 8; i++) {
+            vertical[i] = matrix[i][this.getPosition().getyPosition()];
+        }
 
-        int xpos = 0;
-        int ypos = 0;
-        for (int i = this.getPosition().getyPosition(); i < 8; i++) {
-            if (gameMatrix[this.getPosition().getxPosition()][i] > 1) {
-                xpos = i;
-                ypos = this.getPosition().getxPosition();
+        boolean isMatch = false;
+        for (int i = this.getPosition().getyPosition()+1; i < 8; i++) {
+            if (vertical[i] == 9 && !isMatch) {
+                isMatch = true;
+            } else {
+                vertical[i] = 0;
             }
         }
-        for (int i = ypos; i < 8; i++) {
-            for (int j = xpos + 1; j < 8; j++) {
-                matrix[i][j] = 0;
+        isMatch = false;
+        for (int i = this.getPosition().getyPosition()-1; i >= 0; i--) {
+            if (vertical[i] == 9 && !isMatch) {
+                isMatch = true;
+            } else {
+                vertical[i] = 0;
             }
         }
-//
-//        xpos = 0;
-//        ypos = 0;
-//        for (int i = this.getPosition().getyPosition(); i < 8; i++) {
-//            if (gameMatrix[this.getPosition().getxPosition()][i] > 1) {
-//                xpos = i;
-//                ypos = this.getPosition().getxPosition();
-//            }
-//        }
-//        for (int i = ypos; i < 8; i++) {
-//            for (int j = xpos + 1; j < 8; j++) {
-//                matrix[i][j] = 0;
-//            }
-//        }
+
+        isMatch = false;
+        for (int i = this.getPosition().getxPosition()+1; i < 8; i++) {
+            if (vertical[i] == 9 && !isMatch) {
+                isMatch = true;
+            } else {
+                vertical[i] = 0;
+            }
+        }
+        isMatch = false;
+        for (int i = this.getPosition().getxPosition()-1; i >= 0; i--) {
+            if (vertical[i] == 9 && !isMatch) {
+                isMatch = true;
+            } else {
+                vertical[i] = 0;
+            }
+        }
+
+        matrix[this.getPosition().getxPosition()][this.getPosition().getyPosition()] = 4;
         return matrix;
     }
 
