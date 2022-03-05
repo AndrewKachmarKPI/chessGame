@@ -16,7 +16,6 @@ public class Knight extends ChessFigure {
 
     public int[][] getMoveDirection() {
         int[][] matrix = new int[8][8];
-
         for (int i = 0; i < 8; i++) {
             if (i == this.getPosition().getyPosition() - 2 || i == this.getPosition().getyPosition() + 2) {
                 if (this.getPosition().getxPosition()-1 >= 0) {
@@ -25,8 +24,6 @@ public class Knight extends ChessFigure {
                     matrix[this.getPosition().getxPosition()][i] = 0;
                 }
             }
-        }
-        for (int i = 0; i < 8; i++) {
             if (i == this.getPosition().getxPosition() - 2 || i == this.getPosition().getxPosition() + 2) {
                 if (this.getPosition().getyPosition()-1 >= 0) {
                     matrix[i][this.getPosition().getyPosition() - 1] = 1;
@@ -44,8 +41,6 @@ public class Knight extends ChessFigure {
                     matrix[this.getPosition().getxPosition()][i] = 0;
                 }
             }
-        }
-        for (int i = 0; i < 8; i++) {
             if (i == this.getPosition().getxPosition() - 2 || i == this.getPosition().getxPosition() + 2) {
                 if (this.getPosition().getyPosition()+1 <= 7) {
                     matrix[i][this.getPosition().getyPosition() + 1] = 1;

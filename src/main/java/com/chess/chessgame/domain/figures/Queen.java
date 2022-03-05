@@ -26,11 +26,6 @@ public class Queen extends ChessFigure{
                 if (i+this.getPosition().getyPosition() == j+this.getPosition().getxPosition()) {
                     matrix[i][j] = 1;
                 }
-            }
-        }
-
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
                 if (i+(8-this.getPosition().getyPosition()) + j - this.getPosition().getxPosition() == 8) {
                     matrix[i][j] = 1;
                 }
