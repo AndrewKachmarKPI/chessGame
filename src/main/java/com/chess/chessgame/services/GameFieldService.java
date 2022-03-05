@@ -10,6 +10,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.ImageCursor;
@@ -26,6 +27,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.kordamp.bootstrapfx.BootstrapFX;
 
@@ -51,9 +53,18 @@ public class GameFieldService {
         BorderPane.setAlignment(hBox, Pos.BOTTOM_CENTER);
         BorderPane.setAlignment(borderPanesGroup, Pos.CENTER);
         borderPane.setCenter(borderPanesGroup);
+        borderPane.setStyle("-fx-background-color: #312e2b");
         borderPane.setBottom(hBox);
         rootGroup.getChildren().add(borderPane);
-        Scene scene = new Scene(rootGroup, Color.web("312e2b"));
+
+        ScrollPane scrollPane = new ScrollPane();
+        scrollPane.setContent(rootGroup);
+        scrollPane.setPannable(true);
+        scrollPane.setStyle("-fx-background-color: #312e2b");
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        Rectangle2D bounds = Screen.getPrimary().getBounds();
+        Scene scene = new Scene(scrollPane, 840, bounds.getHeight() - 100, Color.web("312e2b"));
         scene.getStylesheets().clear();
         scene.getStylesheets().add(BootstrapFX.bootstrapFXStylesheet());
 //        black rook 3 5
@@ -369,6 +380,7 @@ public class GameFieldService {
         Map<ChessFigure, List<ChessFigure>> chessFigureListMap = GameService.getAttackMap();
         VBox vBox = loadFigureList(chessFigureListMap);
         vBox.setStyle("-fx-background-color: #312e2b");
+        vBox.setAlignment(Pos.CENTER);
 
         ScrollPane scrollPane = new ScrollPane();
         scrollPane.setContent(vBox);
@@ -376,7 +388,7 @@ public class GameFieldService {
         scrollPane.getStyleClass().add("bg-none");
         scrollPane.setStyle("-fx-background-color: #312e2b");
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
         Dialog<String> dialog = new Dialog<>();
         dialog.setTitle("Figure attacks");
@@ -389,21 +401,24 @@ public class GameFieldService {
         headerText.setFill(Color.WHITE);
         headerText.setFont(Font.font("Verdana", 20));
         BorderPane borderPane = new BorderPane();
+        borderPane.setStyle("-fx-background-color: #26211b");
         BorderPane.setAlignment(headerText, Pos.CENTER);
         BorderPane.setAlignment(scrollPane, Pos.CENTER);
         borderPane.setTop(headerText);
         borderPane.setCenter(scrollPane);
         BorderPane.setMargin(headerText, new Insets(0, 0, 10, 0));
-        borderPane.setPrefHeight(600);
+        borderPane.setStyle("-fx-max-height: 600");
 
         ButtonType okButton = new ButtonType("Close", ButtonBar.ButtonData.CANCEL_CLOSE);
         DialogPane dialogPane = new DialogPane();
         dialogPane.setContentText("All figures attacks");
         dialogPane.setContent(borderPane);
+        dialogPane.setMaxHeight(600);
         dialogPane.setStyle("-fx-background-color: #26211b");
         dialogPane.getButtonTypes().add(okButton);
         dialog.setDialogPane(dialogPane);
-
+        dialog.setX(0);
+        dialog.setY(0);
         dialog.show();
     }
 
@@ -421,6 +436,7 @@ public class GameFieldService {
 
     public static VBox loadFigureList(Map<ChessFigure, List<ChessFigure>> chessFigureListMap) {
         VBox figuresList = new VBox();
+        figuresList.setStyle("-fx-background-color: #312e2b");
 
         chessFigureListMap.forEach((chessFigure, chessFigures) -> {
             if (chessFigures.size() > 0) {
@@ -446,11 +462,13 @@ public class GameFieldService {
             File file = new File("D:\\PROJECTS\\chessGame\\src\\main\\resources\\images\\sadSmile.png");
             try {
                 Text text = new Text("No attacks was found");
+                text.setFill(Color.WHITE);
                 text.setFont(Font.font("Verdana", 20));
                 ImageView imageView = new ImageView(new Image(new FileInputStream(file)));
                 imageView.setFitWidth(120);
                 imageView.setFitHeight(120);
                 BorderPane borderPane = new BorderPane();
+                borderPane.setStyle("-fx-background-color: #312e2b");
                 BorderPane.setAlignment(imageView, Pos.CENTER);
                 BorderPane.setAlignment(text, Pos.CENTER);
                 borderPane.setCenter(imageView);
