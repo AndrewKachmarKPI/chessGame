@@ -13,11 +13,11 @@ import static com.chess.chessgame.services.GameFieldService.loadImageByPath;
 
 public class ChessGameApplication extends Application {
     @Override
-    public void start(Stage stage) throws IOException {
+    public void start(Stage stage) {
         stage.setTitle("Chess game!");
         stage.setScene(GameFieldService.createGameScene());
         stage.getIcons().add(loadImageByPath("D:\\PROJECTS\\chessGame\\src\\main\\resources\\images\\mainIcon.png"));
-        stage.setFullScreen(true);
+//        stage.setFullScreen(true);
         stage.show();
     }
 

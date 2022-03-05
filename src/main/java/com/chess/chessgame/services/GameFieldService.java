@@ -67,7 +67,7 @@ public class GameFieldService {
         Scene scene = new Scene(scrollPane, 840, bounds.getHeight() - 100, Color.web("312e2b"));
         scene.getStylesheets().clear();
         scene.getStylesheets().add(BootstrapFX.bootstrapFXStylesheet());
-//        black rook 3 5
+
         Rook rook = new Rook(FigureName.ROOK, FigureColor.BLACK, new Position(3, 5));
         rook.getMoveDirection();
         return scene;
@@ -521,7 +521,7 @@ public class GameFieldService {
                 imageView.setFitWidth(20);
                 imageView.setFitHeight(20);
                 MenuItem menuItem = new MenuItem("Remove figure", imageView);
-                menuItem.setOnAction(actionEvent -> onDeleteFigureFromBoard(actionEvent, borderPane));
+                menuItem.setOnAction(actionEvent -> onDeleteFigureFromBoard(borderPane));
                 contextMenu.getItems().add(menuItem);
             } else {
                 ImageView imageView = new ImageView(loadImageByPath("D:\\PROJECTS\\chessGame\\src\\main\\resources\\images\\sadSmile.png"));
@@ -613,7 +613,7 @@ public class GameFieldService {
         gameStarted = true;
     }
 
-    public static void onDeleteFigureFromBoard(ActionEvent actionEvent, BorderPane borderPane) {
+    public static void onDeleteFigureFromBoard(BorderPane borderPane) {
         Position position = new Position(Integer.parseInt(borderPane.getId().split("-")[1].split("")[1]),
                 Integer.parseInt(borderPane.getId().split("-")[1].split("")[0]));
         GameService.removeFigure(position);
