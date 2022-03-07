@@ -124,7 +124,7 @@ public class GameService {
             }
             case QUEEN: {
                 Queen queen = new Queen(chessFigure);
-                matrix = getAttackedFigures(queen.getMoveDirection());
+                matrix = getAttackedFigures(queen.getMoveDirection(chessBoard.getChessMatrix()));
                 break;
             }
             case ROOK: {

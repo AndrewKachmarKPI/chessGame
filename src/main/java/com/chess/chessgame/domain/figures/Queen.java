@@ -3,17 +3,19 @@ package com.chess.chessgame.domain.figures;
 import com.chess.chessgame.enums.FigureColor;
 import com.chess.chessgame.enums.FigureName;
 
-public class Queen extends ChessFigure{
+public class Queen extends ChessFigure {
     public Queen() {
     }
+
     public Queen(ChessFigure chessFigure) {
         super(chessFigure.getName(), chessFigure.getColor(), chessFigure.getPosition());
     }
+
     public Queen(FigureName name, FigureColor color, Position position) {
         super(name, color, position);
     }
 
-    public int[][] getMoveDirection() {
+    public int[][] getMoveDirection(int[][] gameMatrix) {
         int[][] matrix = new int[8][8];
         for (int i = 0; i < 8; i++) {
             matrix[this.getPosition().getxPosition()][i] = 1;
@@ -23,15 +25,27 @@ public class Queen extends ChessFigure{
         }
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                if (i+this.getPosition().getyPosition() == j+this.getPosition().getxPosition()) {
+                if (i + this.getPosition().getyPosition() == j + this.getPosition().getxPosition()) {
                     matrix[i][j] = 1;
                 }
-                if (i+(8-this.getPosition().getyPosition()) + j - this.getPosition().getxPosition() == 8) {
+                if (i + (8 - this.getPosition().getyPosition()) + j - this.getPosition().getxPosition() == 8) {
                     matrix[i][j] = 1;
                 }
             }
         }
         matrix[this.getPosition().getxPosition()][this.getPosition().getyPosition()] = 3;
+        return removeDuplicates(matrix, gameMatrix);
+    }
+
+    @Override
+    public int[][] removeDuplicates(int[][] matrix, int[][] gameMatrix) {
+        int[] horizontalFigureSplice = matrix[this.getPosition().getxPosition()];
+        int[] horizontalGameSplice = gameMatrix[this.getPosition().getxPosition()];
+        int[] verticalFigureSplice = getVerticalSplice(matrix);
+        int[] verticalGameSplice = getVerticalSplice(gameMatrix);
+
+        matrix[this.getPosition().getxPosition()] = processSpliceHorizontal(horizontalFigureSplice, horizontalGameSplice);
+        matrix = setVerticalSplice(matrix, processSpliceVertical(verticalFigureSplice, verticalGameSplice));
         return matrix;
     }
 }

@@ -1,4 +1,3 @@
-white rook 7 7
-white knight 5 7
-black rook 7 4
-white bishop 2 2
+white queen 0 0
+black king 0 2
+white rook 3 0
