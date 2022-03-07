@@ -18,6 +18,7 @@ public class ChessGameApplication extends Application {
         stage.setScene(GameFieldService.createGameScene());
         stage.getIcons().add(loadImageByPath("D:\\PROJECTS\\chessGame\\src\\main\\resources\\images\\mainIcon.png"));
 //        stage.setFullScreen(true);
+        stage.setResizable(false);
         stage.show();
     }
 

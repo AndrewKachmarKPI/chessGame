@@ -57,14 +57,15 @@ public class GameFieldService {
         borderPane.setBottom(hBox);
         rootGroup.getChildren().add(borderPane);
 
-        ScrollPane scrollPane = new ScrollPane();
-        scrollPane.setContent(rootGroup);
-        scrollPane.setPannable(true);
-        scrollPane.setStyle("-fx-background-color: #312e2b");
-        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        Rectangle2D bounds = Screen.getPrimary().getBounds();
-        Scene scene = new Scene(scrollPane, 840, bounds.getHeight() - 100, Color.web("312e2b"));
+//        ScrollPane scrollPane = new ScrollPane();
+//        scrollPane.setId("mainScroll");
+//        scrollPane.setContent(rootGroup);
+//        scrollPane.setPannable(true);
+//        scrollPane.setStyle("-fx-background-color: #312e2b");
+//        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+//        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+
+        Scene scene = new Scene(rootGroup, Color.web("312e2b"));
         scene.getStylesheets().clear();
         scene.getStylesheets().add(BootstrapFX.bootstrapFXStylesheet());
 
@@ -413,12 +414,12 @@ public class GameFieldService {
         DialogPane dialogPane = new DialogPane();
         dialogPane.setContentText("All figures attacks");
         dialogPane.setContent(borderPane);
-        dialogPane.setMaxHeight(600);
+        dialogPane.setPrefHeight(600);
         dialogPane.setStyle("-fx-background-color: #26211b");
         dialogPane.getButtonTypes().add(okButton);
         dialog.setDialogPane(dialogPane);
-        dialog.setX(0);
-        dialog.setY(0);
+//        dialog.setX(0);
+//        dialog.setY(0);
         dialog.show();
     }
 
