@@ -77,7 +77,7 @@ public class GameService {
         List<Position> figurePositions = new ArrayList<>();
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                if (figureMatrix[i][j] == 1) {
+                if (figureMatrix[i][j] == 10) {
                     figurePositions.add(new Position(i, j));
                 }
             }
