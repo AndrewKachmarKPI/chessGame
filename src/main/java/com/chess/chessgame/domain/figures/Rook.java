@@ -15,7 +15,7 @@ public class Rook extends ChessFigure {
         super(name, color, position);
     }
 
-    public int[][] getMoveDirection() {
+    public int[][] getMoveDirection(int[][] gameMatrix) {
         int[][] matrix = new int[8][8];
         for (int i = 0; i < 8; i++) {
             matrix[this.getPosition().getxPosition()][i] = 1;
@@ -24,7 +24,7 @@ public class Rook extends ChessFigure {
             matrix[i][this.getPosition().getyPosition()] = 1;
         }
         matrix[this.getPosition().getxPosition()][this.getPosition().getyPosition()] = 4;
-        return matrix;
+        return removeDuplicates(matrix, gameMatrix);
     }
 
     public int[][] removeDuplicates(int[][] matrix, int[][] gameMatrix) {
@@ -40,7 +40,7 @@ public class Rook extends ChessFigure {
 
     public int[] processSpliceHorizontal(int[] figureArray, int[] gameArray) {
         boolean isFound = false;
-        for (int i = this.getPosition().getyPosition()+1; i < 8; i++) {
+        for (int i = this.getPosition().getyPosition() + 1; i < 8; i++) {
             if (gameArray[i] > 1 && !isFound) {
                 figureArray[i] = 10;
                 isFound = true;
@@ -51,7 +51,7 @@ public class Rook extends ChessFigure {
             }
         }
         isFound = false;
-        for (int i = this.getPosition().getyPosition()-1; i+1 > 0; i--) {
+        for (int i = this.getPosition().getyPosition() - 1; i + 1 > 0; i--) {
             if (gameArray[i] > 1 && !isFound) {
                 figureArray[i] = 10;
                 isFound = true;
@@ -63,9 +63,10 @@ public class Rook extends ChessFigure {
         }
         return figureArray;
     }
+
     public int[] processSpliceVertical(int[] figureArray, int[] gameArray) {
         boolean isFound = false;
-        for (int i = this.getPosition().getxPosition()+1; i < 8; i++) {
+        for (int i = this.getPosition().getxPosition() + 1; i < 8; i++) {
             if (gameArray[i] > 1 && !isFound) {
                 figureArray[i] = 10;
                 isFound = true;
@@ -76,7 +77,7 @@ public class Rook extends ChessFigure {
             }
         }
         isFound = false;
-        for (int i = this.getPosition().getxPosition()-1; i+1 > 0; i--) {
+        for (int i = this.getPosition().getxPosition() - 1; i + 1 > 0; i--) {
             if (gameArray[i] > 1 && !isFound) {
                 figureArray[i] = 10;
                 isFound = true;
@@ -103,16 +104,4 @@ public class Rook extends ChessFigure {
         }
         return matrix;
     }
-
-    public boolean isPositionMatch(Position position) {
-        int[][] possibleMoves = getMoveDirection();
-        boolean isMatch = false;
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
-                isMatch = possibleMoves[i][j] == 1 && position.getxPosition() == j && position.getyPosition() == i;
-            }
-        }
-        return isMatch;
-    }
-
 }

@@ -18,12 +18,6 @@ public class SelectedCells {
         this.rectangle = rectangle;
     }
 
-    public SelectedCells(Integer id, Color color, Rectangle rectangle) {
-        this.id = id;
-        this.color = color;
-        this.rectangle = rectangle;
-    }
-
     @Override
     public String toString() {
         return "SelectedCells{" +
