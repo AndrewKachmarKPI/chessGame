@@ -2,24 +2,26 @@ package com.chess.chessgame.domain.board;
 
 import com.chess.chessgame.domain.figures.Position;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 
 public class SelectedCells {
     private Integer id;
     private Color color;
-    private Position position;
+    private Rectangle rectangle;
 
     public SelectedCells() {
 
     }
 
-    public SelectedCells(Integer id, Position position) {
-        this.id = id;
-        this.position = position;
+    public SelectedCells(Color color, Rectangle rectangle) {
+        this.color = color;
+        this.rectangle = rectangle;
     }
 
-    public SelectedCells(Color color, Position position) {
+    public SelectedCells(Integer id, Color color, Rectangle rectangle) {
+        this.id = id;
         this.color = color;
-        this.position = position;
+        this.rectangle = rectangle;
     }
 
     @Override
@@ -27,7 +29,7 @@ public class SelectedCells {
         return "SelectedCells{" +
                 "id=" + id +
                 ", color=" + color +
-                ", position=" + position +
+                ", rectangle=" + rectangle +
                 '}';
     }
 
@@ -47,11 +49,11 @@ public class SelectedCells {
         this.color = color;
     }
 
-    public Position getPosition() {
-        return position;
+    public Rectangle getRectangle() {
+        return rectangle;
     }
 
-    public void setPosition(Position position) {
-        this.position = position;
+    public void setRectangle(Rectangle rectangle) {
+        this.rectangle = rectangle;
     }
 }

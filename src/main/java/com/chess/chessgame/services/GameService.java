@@ -27,7 +27,7 @@ public class GameService {
             chessFigureMap.put(chessFigure, new ArrayList<>());
             for (int i = 0; i < 8; i++) {
                 for (int j = 0; j < 8; j++) {
-                    if (chessFigure.getPosition().getyPosition() == i && chessFigure.getPosition().getxPosition() == j) {
+                    if (chessFigure.getPosition().getxPosition() == i && chessFigure.getPosition().getyPosition() == j) {
                         matrix[i][j] = getFigureNumber(chessFigure);
                         break;
                     }
@@ -150,18 +150,18 @@ public class GameService {
         int[][] finalMatrix = new int[8][8];
         int[][] gameMatrix = chessBoard.getChessMatrix();
 
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
-                finalMatrix[i][j] = gameMatrix[i][j];
-                if (figureMatrix[i][j] == 1) {
-                    finalMatrix[i][j] = 1;
-//                    if (gameMatrix[i][j] > 1) {
-//                        finalMatrix[i][j] = 9;
-//                    }
-                }
-            }
-        }
-        return finalMatrix;
+//        for (int i = 0; i < 8; i++) {
+//            for (int j = 0; j < 8; j++) {
+//                finalMatrix[i][j] = gameMatrix[i][j];
+//                if (figureMatrix[i][j] == 1) {
+//                    finalMatrix[i][j] = 1;
+////                    if (gameMatrix[i][j] > 1) {
+////                        finalMatrix[i][j] = 9;
+////                    }
+//                }
+//            }
+//        }
+        return figureMatrix;
     }
 
     public static void clearGameBoard() {

@@ -3,10 +3,6 @@ package com.chess.chessgame.domain.figures;
 import com.chess.chessgame.enums.FigureColor;
 import com.chess.chessgame.enums.FigureName;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Stack;
-
 public class Rook extends ChessFigure {
     public Rook() {
     }
@@ -32,67 +28,79 @@ public class Rook extends ChessFigure {
     }
 
     public int[][] removeDuplicates(int[][] matrix, int[][] gameMatrix) {
-//        for (int i = 0; i < this.getPosition().getxPosition(); i++) {
-//            if (matrix[i][this.getPosition().getyPosition()] == 9) {
-//                if (this.getPosition().getyPosition() != 0) {
-//                    matrix[i - 1][this.getPosition().getyPosition()] = 0;
-//                }
-//            }
-//        }
-//        for (int i = 8; i > this.getPosition().getxPosition(); i--) {
-//            if (matrix[i-1][this.getPosition().getyPosition()] == 9) {
-//                if (i != this.getPosition().getyPosition()) {
-//                    matrix[i - 1][this.getPosition().getyPosition()] = 0;
-//                }
-//            }
-//        }
-        int[] horizontal = matrix[this.getPosition().getxPosition()];
-        int[] horizontalGame = gameMatrix[this.getPosition().getxPosition()];
-        int[] vertical = new int[8];
+        int[] horizontalFigureSplice = matrix[this.getPosition().getxPosition()];
+        int[] horizontalGameSplice = gameMatrix[this.getPosition().getxPosition()];
+        int[] verticalFigureSplice = getVerticalSplice(matrix);
+        int[] verticalGameSplice = getVerticalSplice(gameMatrix);
+
+        matrix[this.getPosition().getxPosition()] = processSpliceHorizontal(horizontalFigureSplice, horizontalGameSplice);
+        matrix = setVerticalSplice(matrix, processSpliceVertical(verticalFigureSplice, verticalGameSplice));
+        return matrix;
+    }
+
+    public int[] processSpliceHorizontal(int[] figureArray, int[] gameArray) {
+        boolean isFound = false;
+        for (int i = this.getPosition().getyPosition()+1; i < 8; i++) {
+            if (gameArray[i] > 1 && !isFound) {
+                figureArray[i] = 10;
+                isFound = true;
+            } else {
+                if (isFound) {
+                    figureArray[i] = 0;
+                }
+            }
+        }
+        isFound = false;
+        for (int i = this.getPosition().getyPosition()-1; i+1 > 0; i--) {
+            if (gameArray[i] > 1 && !isFound) {
+                figureArray[i] = 10;
+                isFound = true;
+            } else {
+                if (isFound) {
+                    figureArray[i] = 0;
+                }
+            }
+        }
+        return figureArray;
+    }
+    public int[] processSpliceVertical(int[] figureArray, int[] gameArray) {
+        boolean isFound = false;
+        for (int i = this.getPosition().getxPosition()+1; i < 8; i++) {
+            if (gameArray[i] > 1 && !isFound) {
+                figureArray[i] = 10;
+                isFound = true;
+            } else {
+                if (isFound) {
+                    figureArray[i] = 0;
+                }
+            }
+        }
+        isFound = false;
+        for (int i = this.getPosition().getxPosition()-1; i+1 > 0; i--) {
+            if (gameArray[i] > 1 && !isFound) {
+                figureArray[i] = 10;
+                isFound = true;
+            } else {
+                if (isFound) {
+                    figureArray[i] = 0;
+                }
+            }
+        }
+        return figureArray;
+    }
+
+    public int[] getVerticalSplice(int[][] matrix) {
+        int[] verticalSplice = new int[8];
         for (int i = 0; i < 8; i++) {
-            vertical[i] = matrix[i][this.getPosition().getyPosition()];
+            verticalSplice[i] = matrix[i][this.getPosition().getyPosition()];
         }
-        int[] verticalGame = new int[8];
+        return verticalSplice;
+    }
+
+    public int[][] setVerticalSplice(int[][] matrix, int[] splice) {
         for (int i = 0; i < 8; i++) {
-            verticalGame[i] = gameMatrix[i][this.getPosition().getyPosition()];
+            matrix[i][this.getPosition().getyPosition()] = splice[i];
         }
-
-        boolean isMatch = false;
-        for (int i = this.getPosition().getyPosition() + 1; i < 8; i++) {
-            if (verticalGame[i] > 1 && !isMatch) {
-                isMatch = true;
-            } else {
-                vertical[i] = 0;
-            }
-        }
-        isMatch = false;
-        for (int i = this.getPosition().getyPosition() - 1; i >= 0; i--) {
-            if (verticalGame[i] > 1 && !isMatch) {
-                isMatch = true;
-            } else {
-                vertical[i] = 0;
-            }
-        }
-
-
-        isMatch = false;
-        for (int i = this.getPosition().getxPosition() + 1; i < 8; i++) {
-            if (horizontalGame[i] > 1 && !isMatch) {
-                isMatch = true;
-            } else {
-                horizontal[i] = 0;
-            }
-        }
-        isMatch = false;
-        for (int i = this.getPosition().getxPosition() - 1; i >= 0; i--) {
-            if (horizontalGame[i] > 1 && !isMatch) {
-                isMatch = true;
-            } else {
-                horizontal[i] = 0;
-            }
-        }
-
-        matrix[this.getPosition().getxPosition()][this.getPosition().getyPosition()] = 4;
         return matrix;
     }
 

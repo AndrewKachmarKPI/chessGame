@@ -288,23 +288,14 @@ public class GameFieldService {
             String borderPaneId = "BorderPane-" + x + "" + y;
             if (borderPane.getId().equals(borderPaneId)) {
                 Rectangle rectangle = getRectangleOfBorderPane(borderPane);
-                selectedCells.add(new SelectedCells((Color) rectangle.getFill(), new Position(x, y)));
+                selectedCells.add(new SelectedCells((Color) rectangle.getFill(), rectangle));
                 rectangle.setFill(color);
             }
         });
     }
 
     public static void unPaintRectangle() {
-        selectedCells.forEach(selected -> {
-            List<BorderPane> borderPanes = getAllBorderPanes();
-            borderPanes.forEach(borderPane -> {
-                String borderPaneId = "BorderPane-" + selected.getPosition().getxPosition() + "" + selected.getPosition().getyPosition();
-                if (borderPane.getId().equals(borderPaneId)) {
-                    Rectangle rectangle = getRectangleOfBorderPane(borderPane);
-                    rectangle.setFill(selected.getColor());
-                }
-            });
-        });
+        selectedCells.forEach(selected -> selected.getRectangle().setFill(selected.getColor()));
     }
 
     public static void clearBoard() {
