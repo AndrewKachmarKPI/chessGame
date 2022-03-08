@@ -1,3 +1,0 @@
-black rook 7 0
-white rook 0 0
-white queen 0 7
