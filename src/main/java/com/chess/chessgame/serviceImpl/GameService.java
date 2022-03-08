@@ -119,49 +119,31 @@ public class GameService {
         switch (chessFigure.getName()) {
             case KING: {
                 King king = new King(chessFigure);
-                matrix = getAttackedFigures(king.getMoveDirection());
+                matrix = king.getMoveDirection(chessBoard.getChessMatrix());
                 break;
             }
             case QUEEN: {
                 Queen queen = new Queen(chessFigure);
-                matrix = getAttackedFigures(queen.getMoveDirection(chessBoard.getChessMatrix()));
+                matrix = queen.getMoveDirection(chessBoard.getChessMatrix());
                 break;
             }
             case ROOK: {
                 Rook rook = new Rook(chessFigure);
-                matrix = getAttackedFigures(rook.getMoveDirection(chessBoard.getChessMatrix()));
+                matrix = rook.getMoveDirection(chessBoard.getChessMatrix());
                 break;
             }
             case BISHOP: {
                 Bishop bishop = new Bishop(chessFigure);
-                matrix = getAttackedFigures(bishop.getMoveDirection(chessBoard.getChessMatrix()));
+                matrix = bishop.getMoveDirection(chessBoard.getChessMatrix());
                 break;
             }
             case KNIGHT: {
                 Knight knight = new Knight(chessFigure);
-                matrix = getAttackedFigures(knight.getMoveDirection(chessBoard.getChessMatrix()));
+                matrix = knight.getMoveDirection(chessBoard.getChessMatrix());
                 break;
             }
         }
         return matrix;
-    }
-
-    private static int[][] getAttackedFigures(int[][] figureMatrix) {
-        int[][] finalMatrix = new int[8][8];
-        int[][] gameMatrix = chessBoard.getChessMatrix();
-
-//        for (int i = 0; i < 8; i++) {
-//            for (int j = 0; j < 8; j++) {
-//                finalMatrix[i][j] = gameMatrix[i][j];
-//                if (figureMatrix[i][j] == 1) {
-//                    finalMatrix[i][j] = 1;
-////                    if (gameMatrix[i][j] > 1) {
-////                        finalMatrix[i][j] = 9;
-////                    }
-//                }
-//            }
-//        }
-        return figureMatrix;
     }
 
     public static void clearGameBoard() {

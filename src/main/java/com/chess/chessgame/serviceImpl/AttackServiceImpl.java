@@ -4,7 +4,10 @@ import com.chess.chessgame.domain.figures.Position;
 import com.chess.chessgame.services.AttackService;
 import javafx.geometry.Pos;
 
+import java.util.Arrays;
+
 public class AttackServiceImpl implements AttackService {
+    @Override
     public int[] getVerticalSplice(int[][] matrix, int position) {
         int[] verticalSplice = new int[8];
         for (int i = 0; i < 8; i++) {
@@ -13,6 +16,7 @@ public class AttackServiceImpl implements AttackService {
         return verticalSplice;
     }
 
+    @Override
     public int[][] setVerticalSplice(int[][] matrix, int[] splice, int position) {
         for (int i = 0; i < 8; i++) {
             matrix[i][position] = splice[i];
@@ -20,6 +24,7 @@ public class AttackServiceImpl implements AttackService {
         return matrix;
     }
 
+    @Override
     public int[] processSpliceHorizontal(int[] figureArray, int[] gameArray, int position) {
         boolean isFound = false;
         for (int i = position + 1; i < figureArray.length; i++) {
@@ -46,6 +51,7 @@ public class AttackServiceImpl implements AttackService {
         return figureArray;
     }
 
+    @Override
     public int[] processSpliceVertical(int[] figureArray, int[] gameArray, int xPosition) {
         boolean isFound = false;
         for (int i = xPosition + 1; i < figureArray.length; i++) {
@@ -72,9 +78,10 @@ public class AttackServiceImpl implements AttackService {
         return figureArray;
     }
 
+    @Override
     public int[] processSpliceDiagonal(int[] figureArray, int[] gameArray, int figureNumber) {
         boolean isFound = false;
-        for (int i = getPosOfElement(figureArray,figureNumber) + 1; i < figureArray.length; i++) {
+        for (int i = getPosOfElement(figureArray, figureNumber) + 1; i < figureArray.length; i++) {
             if (gameArray.length > 1 && gameArray[i] > 1 && !isFound) {
                 figureArray[i] = 10;
                 isFound = true;
@@ -85,7 +92,7 @@ public class AttackServiceImpl implements AttackService {
             }
         }
         isFound = false;
-        for (int i = getPosOfElement(figureArray,figureNumber) - 1; i+1 >0; i--) {
+        for (int i = getPosOfElement(figureArray, figureNumber) - 1; i + 1 > 0; i--) {
             if (gameArray.length > 1 && gameArray[i] > 1 && !isFound) {
                 figureArray[i] = 10;
                 isFound = true;
@@ -98,6 +105,7 @@ public class AttackServiceImpl implements AttackService {
         return figureArray;
     }
 
+    @Override
     public int[][] setDiagonalSplice(int[][] matrix, int[] splice, boolean isMain, Position position) {
         int k = 0;
         for (int i = 0; i < 8; i++) {
@@ -118,6 +126,7 @@ public class AttackServiceImpl implements AttackService {
         return matrix;
     }
 
+    @Override
     public int[] getDiagonalSplice(int[][] matrix, boolean isMain, Position position) {
         int[] splice = {};
 
@@ -137,6 +146,7 @@ public class AttackServiceImpl implements AttackService {
         return splice;
     }
 
+    @Override
     public int getPosOfElement(int[] array, int figureNumber) {
         int pos = 0;
         for (int i = 0; i < array.length; i++) {
