@@ -6,12 +6,9 @@ import com.chess.chessgame.enums.FigureName;
 import java.util.Objects;
 
 public class ChessFigure {
-    private Integer id;
     private FigureName name;
     private FigureColor color;
     private Position position;
-    private String image;
-
 
     public ChessFigure() {
 
@@ -52,22 +49,6 @@ public class ChessFigure {
         this.position = position;
     }
 
-    public String getImage() {
-        return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
     public int[] getVerticalSplice(int[][] matrix) {
         int[] verticalSplice = new int[8];
         for (int i = 0; i < 8; i++) {
@@ -85,7 +66,7 @@ public class ChessFigure {
 
     public int[] processSpliceHorizontal(int[] figureArray, int[] gameArray) {
         boolean isFound = false;
-        for (int i = this.getPosition().getyPosition() + 1; i < 8; i++) {
+        for (int i = this.getPosition().getyPosition() + 1; i < figureArray.length; i++) {
             if (gameArray[i] > 1 && !isFound) {
                 figureArray[i] = 10;
                 isFound = true;
@@ -97,7 +78,7 @@ public class ChessFigure {
         }
         isFound = false;
         for (int i = this.getPosition().getyPosition() - 1; i + 1 > 0; i--) {
-            if (gameArray[i] > 1 && !isFound) {
+            if (gameArray.length > 1 && gameArray[i] > 1 && !isFound) {
                 figureArray[i] = 10;
                 isFound = true;
             } else {
@@ -111,7 +92,7 @@ public class ChessFigure {
 
     public int[] processSpliceVertical(int[] figureArray, int[] gameArray) {
         boolean isFound = false;
-        for (int i = this.getPosition().getxPosition() + 1; i < 8; i++) {
+        for (int i = this.getPosition().getxPosition() + 1; i < figureArray.length; i++) {
             if (gameArray[i] > 1 && !isFound) {
                 figureArray[i] = 10;
                 isFound = true;
@@ -123,7 +104,7 @@ public class ChessFigure {
         }
         isFound = false;
         for (int i = this.getPosition().getxPosition() - 1; i + 1 > 0; i--) {
-            if (gameArray[i] > 1 && !isFound) {
+            if (gameArray.length > 1 && gameArray[i] > 1 && !isFound) {
                 figureArray[i] = 10;
                 isFound = true;
             } else {
@@ -142,11 +123,9 @@ public class ChessFigure {
     @Override
     public String toString() {
         return "ChessFigure{" +
-                "id=" + id +
                 ", name=" + name +
                 ", color=" + color +
                 ", position=" + position +
-                ", image='" + image + '\'' +
                 '}';
     }
 
@@ -155,11 +134,11 @@ public class ChessFigure {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ChessFigure that = (ChessFigure) o;
-        return Objects.equals(id, that.id) && name == that.name && color == that.color && Objects.equals(position, that.position) && Objects.equals(image, that.image);
+        return name == that.name && color == that.color && Objects.equals(position, that.position);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, color, position, image);
+        return Objects.hash(name, color, position);
     }
 }

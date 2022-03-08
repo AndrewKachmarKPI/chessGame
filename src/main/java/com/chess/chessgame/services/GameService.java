@@ -134,7 +134,7 @@ public class GameService {
             }
             case BISHOP: {
                 Bishop bishop = new Bishop(chessFigure);
-                matrix = getAttackedFigures(bishop.getMoveDirection());
+                matrix = getAttackedFigures(bishop.getMoveDirection(chessBoard.getChessMatrix()));
                 break;
             }
             case KNIGHT: {
