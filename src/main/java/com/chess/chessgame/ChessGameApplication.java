@@ -1,15 +1,10 @@
 package com.chess.chessgame;
 
-import com.chess.chessgame.services.GameFieldService;
+import com.chess.chessgame.serviceImpl.GameFieldService;
 import javafx.application.Application;
-import javafx.geometry.Rectangle2D;
-import javafx.scene.image.Image;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 
-import java.io.IOException;
-
-import static com.chess.chessgame.services.GameFieldService.loadImageByPath;
+import static com.chess.chessgame.serviceImpl.GameFieldService.loadImageByPath;
 
 public class ChessGameApplication extends Application {
     @Override

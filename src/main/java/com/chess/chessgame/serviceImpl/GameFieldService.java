@@ -1,4 +1,4 @@
-package com.chess.chessgame.services;
+package com.chess.chessgame.serviceImpl;
 
 import com.chess.chessgame.domain.board.SelectedCells;
 import com.chess.chessgame.domain.figures.*;
@@ -10,7 +10,6 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.ImageCursor;
@@ -27,7 +26,6 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.kordamp.bootstrapfx.BootstrapFX;
 
@@ -144,6 +142,7 @@ public class GameFieldService {
     }
 
     public static void paintBorders(int x, int y) {
+        char[] characters = {'a','b','c','d','e','f','g','h'};
         if (y != 0) {
             for (int i = 0; i < 8; i++) {
                 StackPane stack = new StackPane();
@@ -153,7 +152,7 @@ public class GameFieldService {
                 rectangle.setFill(Color.web("26211b"));
                 rectangle.setWidth(100);
                 rectangle.setHeight(20);
-                Text text = new Text(String.valueOf(i + 1));
+                Text text = new Text(String.valueOf(characters[i]));
                 text.setFont(Font.font("Verdana", 15));
                 text.setFill(Color.WHITE);
                 stack.getChildren().addAll(rectangle, text);

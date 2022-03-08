@@ -2,8 +2,11 @@ package com.chess.chessgame.domain.figures;
 
 import com.chess.chessgame.enums.FigureColor;
 import com.chess.chessgame.enums.FigureName;
+import com.chess.chessgame.serviceImpl.AttackServiceImpl;
+import com.chess.chessgame.services.AttackService;
 
 public class Rook extends ChessFigure {
+
     public Rook() {
     }
 
@@ -29,13 +32,15 @@ public class Rook extends ChessFigure {
 
     @Override
     public int[][] removeDuplicates(int[][] matrix, int[][] gameMatrix) {
+        AttackService attackService = new AttackServiceImpl();
         int[] horizontalFigureSplice = matrix[this.getPosition().getxPosition()];
         int[] horizontalGameSplice = gameMatrix[this.getPosition().getxPosition()];
-        int[] verticalFigureSplice = getVerticalSplice(matrix);
-        int[] verticalGameSplice = getVerticalSplice(gameMatrix);
+        int[] verticalFigureSplice = attackService.getVerticalSplice(matrix, this.getPosition().getyPosition());
+        int[] verticalGameSplice = attackService.getVerticalSplice(gameMatrix, this.getPosition().getyPosition());
 
-        matrix[this.getPosition().getxPosition()] = processSpliceHorizontal(horizontalFigureSplice, horizontalGameSplice);
-        matrix = setVerticalSplice(matrix, processSpliceVertical(verticalFigureSplice, verticalGameSplice));
+        matrix[this.getPosition().getxPosition()] = attackService.processSpliceHorizontal(horizontalFigureSplice, horizontalGameSplice, this.getPosition().getyPosition());
+        matrix = attackService.setVerticalSplice(matrix, attackService.processSpliceVertical(verticalFigureSplice,
+                verticalGameSplice, this.getPosition().getxPosition()), this.getPosition().getyPosition());
         return matrix;
     }
 }

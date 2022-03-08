@@ -1,4 +1,4 @@
-package com.chess.chessgame.services;
+package com.chess.chessgame.serviceImpl;
 
 import com.chess.chessgame.domain.board.ChessBoard;
 import com.chess.chessgame.domain.figures.*;
@@ -7,7 +7,7 @@ import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.chess.chessgame.services.GameFileService.*;
+import static com.chess.chessgame.serviceImpl.GameFileService.*;
 
 
 public class GameService {

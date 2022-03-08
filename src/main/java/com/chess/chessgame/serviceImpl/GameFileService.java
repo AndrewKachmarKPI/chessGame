@@ -1,4 +1,4 @@
-package com.chess.chessgame.services;
+package com.chess.chessgame.serviceImpl;
 
 import com.chess.chessgame.domain.figures.ChessFigure;
 import com.chess.chessgame.domain.figures.Position;
