@@ -139,7 +139,7 @@ public class GameService {
             }
             case KNIGHT: {
                 Knight knight = new Knight(chessFigure);
-                matrix = getAttackedFigures(knight.getMoveDirection());
+                matrix = getAttackedFigures(knight.getMoveDirection(chessBoard.getChessMatrix()));
                 break;
             }
         }

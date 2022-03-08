@@ -15,7 +15,7 @@ public class Knight extends ChessFigure {
         super(name, color, position);
     }
 
-    public int[][] getMoveDirection() {
+    public int[][] getMoveDirection(int[][] gameMatrix) {
         int[][] matrix = new int[8][8];
         for (int i = 0; i < 8; i++) {
             if (i == this.getPosition().getyPosition() - 2 || i == this.getPosition().getyPosition() + 2) {
@@ -51,14 +51,14 @@ public class Knight extends ChessFigure {
             }
         }
         matrix[this.getPosition().getxPosition()][this.getPosition().getyPosition()] = 6;
-        return matrix;
+        return removeDuplicates(matrix, gameMatrix);
     }
 
     @Override
     public int[][] removeDuplicates(int[][] matrix, int[][] gameMatrix) {
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                if (gameMatrix[i][j] > 1 && matrix[i][j] == 1){
+                if (gameMatrix[i][j] > 1 && matrix[i][j] == 1) {
                     matrix[i][j] = 10;
                 }
             }
