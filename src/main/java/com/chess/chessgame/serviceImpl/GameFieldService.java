@@ -56,6 +56,11 @@ public class GameFieldService {
         rootGroup.getChildren().add(borderPane);
 
 //        ScrollPane scrollPane = new ScrollPane();
+//        scrollPane.setPannable(true);
+//        scrollPane.setContent(rootGroup);
+//        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+//        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+//        ScrollPane scrollPane = new ScrollPane();
 //        scrollPane.setId("mainScroll");
 //        scrollPane.setContent(rootGroup);
 //        scrollPane.setPannable(true);
@@ -71,10 +76,10 @@ public class GameFieldService {
 
     public static void createGameBoard() {
         paintGameBoard();
-        paintBorders(0, 80);
-        paintBorders(0, 900);
-        paintBorders(80, 0);
-        paintBorders(900, 0);
+        paintBorders(0, 60);
+        paintBorders(0, 720);
+        paintBorders(60, 0);
+        paintBorders(720, 0);
     }
 
     public static HBox createButtons() {
@@ -103,13 +108,13 @@ public class GameFieldService {
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
                 BorderPane borderPane = new BorderPane();
-                borderPane.setMinWidth(100);
-                borderPane.setMinHeight(100);
-                borderPane.setLayoutX((j * 100) + 100);
-                borderPane.setLayoutY((i * 100) + 100);
+                borderPane.setMinWidth(80);
+                borderPane.setMinHeight(80);
+                borderPane.setLayoutX((j * 80) + 80);
+                borderPane.setLayoutY((i * 80) + 80);
                 Rectangle rectangle = new Rectangle();
-                rectangle.setWidth(100);
-                rectangle.setHeight(100);
+                rectangle.setWidth(80);
+                rectangle.setHeight(80);
                 rectangle.setStrokeWidth(2);
                 rectangle.setStrokeType(StrokeType.CENTERED);
                 rectangle.setStroke(Color.BLACK);
@@ -142,15 +147,15 @@ public class GameFieldService {
     }
 
     public static void paintBorders(int x, int y) {
-        char[] characters = {'a','b','c','d','e','f','g','h'};
+        char[] characters = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'};
         if (y != 0) {
             for (int i = 0; i < 8; i++) {
                 StackPane stack = new StackPane();
-                stack.setLayoutX((i * 100) + 100);
+                stack.setLayoutX((i * 80) + 80);
                 stack.setLayoutY(y);
                 Rectangle rectangle = new Rectangle();
                 rectangle.setFill(Color.web("26211b"));
-                rectangle.setWidth(100);
+                rectangle.setWidth(80);
                 rectangle.setHeight(20);
                 Text text = new Text(String.valueOf(characters[i]));
                 text.setFont(Font.font("Verdana", 15));
@@ -163,11 +168,11 @@ public class GameFieldService {
             for (int i = 0; i < 8; i++) {
                 StackPane stack = new StackPane();
                 stack.setLayoutX(x);
-                stack.setLayoutY((i * 100) + 100);
+                stack.setLayoutY((i * 80) + 80);
                 Rectangle rectangle = new Rectangle();
                 rectangle.setFill(Color.web("26211b"));
                 rectangle.setWidth(20);
-                rectangle.setHeight(100);
+                rectangle.setHeight(80);
                 Text text = new Text(String.valueOf(i + 1));
                 text.setFont(Font.font("Verdana", 15));
                 text.setFill(Color.WHITE);
@@ -224,13 +229,13 @@ public class GameFieldService {
     }
 
     public static ImageView getImageOfBorderPane(BorderPane borderPane) {
-        AtomicReference<ImageView> rectangle = new AtomicReference<>(new ImageView());
+        AtomicReference<ImageView> imageView = new AtomicReference<>(new ImageView());
         borderPane.getChildren().forEach(content -> {
             if (content instanceof ImageView) {
-                rectangle.set((ImageView) content);
+                imageView.set((ImageView) content);
             }
         });
-        return rectangle.get();
+        return imageView.get();
     }
 
     public static Image loadImageByPath(String path) {
@@ -265,29 +270,31 @@ public class GameFieldService {
         return borderPanes.stream().filter(borderPane -> borderPane.getId().equals(borderPaneId)).findFirst().orElse(new BorderPane());
     }
 
-    public static void paintFigurePath(int[][] matrix) {
+    public static void paintFigurePath(int[][] matrix, ChessFigure chessFigure) {
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
                 if (matrix[i][j] == 1) {
-                    paintRectangle(i, j, Color.web("#f6f87a"));
+                    paintRectangle(i, j, Color.web("#f6f87a"), chessFigure.getColor(), false);
                 }
                 if (matrix[i][j] == 10) {
-                    paintRectangle(i, j, Color.RED);
+                    paintRectangle(i, j, Color.RED, chessFigure.getColor(), true);
                 }
             }
         }
     }
 
-    public static void paintRectangle(int x, int y, Color color) {
-        List<BorderPane> borderPanes = getAllBorderPanes();
-        borderPanes.forEach(borderPane -> {
-            String borderPaneId = "BorderPane-" + x + "" + y;
-            if (borderPane.getId().equals(borderPaneId)) {
-                Rectangle rectangle = getRectangleOfBorderPane(borderPane);
-                selectedCells.add(new SelectedCells((Color) rectangle.getFill(), rectangle));
-                rectangle.setFill(color);
+    public static void paintRectangle(int x, int y, Color color, FigureColor figureColor, boolean isAttack) {
+        BorderPane borderPane = findBorderPaneById("BorderPane-" + x + "" + y);
+        Rectangle rectangle = getRectangleOfBorderPane(borderPane);
+        if (isAttack) {
+            ImageView imageView = getImageOfBorderPane(borderPane);
+            String cellFigureColor = imageView.getId().split("-")[0];
+            if (cellFigureColor.equals(figureColor.toString().toUpperCase(Locale.ROOT))) {
+                color = (Color) rectangle.getFill();
             }
-        });
+        }
+        selectedCells.add(new SelectedCells((Color) rectangle.getFill(), rectangle));
+        rectangle.setFill(color);
     }
 
     public static void unPaintRectangle() {
@@ -547,7 +554,7 @@ public class GameFieldService {
                 String figureId = getImageOfBorderPane(borderPane).getId();
                 ChessFigure chessFigure = new ChessFigure(FigureName.valueOf(figureId.split("-")[1]), FigureColor.valueOf(figureId.split("-")[0]), position);
                 int[][] figureTrajectory = GameService.getFigureTrajectory(chessFigure);
-                paintFigurePath(figureTrajectory);
+                paintFigurePath(figureTrajectory, chessFigure);
                 System.out.println(figureId);
             }
         }

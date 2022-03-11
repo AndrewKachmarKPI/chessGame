@@ -14,6 +14,8 @@ public class ChessGameApplication extends Application {
         stage.getIcons().add(loadImageByPath("D:\\PROJECTS\\chessGame\\src\\main\\resources\\images\\mainIcon.png"));
 //        stage.setFullScreen(true);
         stage.setResizable(false);
+//        stage.setMaxWidth(720);
+//        stage.setMaxHeight(1000);
         stage.show();
     }
 
