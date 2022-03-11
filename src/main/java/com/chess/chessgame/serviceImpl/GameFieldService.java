@@ -26,7 +26,9 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 import org.kordamp.bootstrapfx.BootstrapFX;
 
 import java.io.File;
@@ -71,6 +73,7 @@ public class GameFieldService {
         Scene scene = new Scene(rootGroup, Color.web("312e2b"));
         scene.getStylesheets().clear();
         scene.getStylesheets().add(BootstrapFX.bootstrapFXStylesheet());
+        scene.getStylesheets().add("page.css");
         return scene;
     }
 
@@ -401,19 +404,26 @@ public class GameFieldService {
         BorderPane.setAlignment(scrollPane, Pos.CENTER);
         borderPane.setTop(headerText);
         borderPane.setCenter(scrollPane);
+        borderPane.getCenter().setStyle("-fx-background-color: #312e2b");
         BorderPane.setMargin(headerText, new Insets(0, 0, 10, 0));
-        borderPane.setStyle("-fx-max-height: 600");
 
         ButtonType okButton = new ButtonType("Close", ButtonBar.ButtonData.CANCEL_CLOSE);
         DialogPane dialogPane = new DialogPane();
+        dialogPane.setMaxHeight(600);
         dialogPane.setContentText("All figures attacks");
         dialogPane.setContent(borderPane);
-        dialogPane.setPrefHeight(600);
         dialogPane.setStyle("-fx-background-color: #26211b");
         dialogPane.getButtonTypes().add(okButton);
+
+
+        if (!chessFigureListMap.isEmpty()) {
+            if (chessFigureListMap.size() < 5) {
+                dialogPane.setPrefHeight(chessFigureListMap.size() * 100);
+            } else {
+                dialogPane.setPrefHeight(600);
+            }
+        }
         dialog.setDialogPane(dialogPane);
-//        dialog.setX(0);
-//        dialog.setY(0);
         dialog.show();
     }
 
@@ -433,10 +443,15 @@ public class GameFieldService {
         VBox figuresList = new VBox();
         figuresList.setStyle("-fx-background-color: #312e2b");
 
+
         chessFigureListMap.forEach((chessFigure, chessFigures) -> {
             if (chessFigures.size() > 0) {
                 VBox labelBox = getLabelBox(chessFigure);
                 ImageView imageView = loadFigureImage(chessFigure.getColor(), chessFigure.getName());
+                ImageView attackArrow = new ImageView(loadImageByPath("D:\\PROJECTS\\chessGame\\src\\main\\resources\\images\\attackArrow1.png"));
+                attackArrow.getStyleClass().add("attackIcon");
+
+                StackPane attackArrowPane = new StackPane(attackArrow);
 
                 BorderPane figureBox = new BorderPane();
                 figureBox.setPrefHeight(80);
@@ -447,7 +462,7 @@ public class GameFieldService {
                 figureBox.setBottom(labelBox);
                 figureBox.setStyle("-fx-background-color: #789655");
 
-                HBox mainRow = new HBox(10, figureBox, loadNestedFigures(chessFigures));
+                HBox mainRow = new HBox(10, figureBox, attackArrowPane, loadNestedFigures(chessFigures));
                 mainRow.setStyle("-fx-border-style: solid; -fx-border-width : 0 0 2; -fx-border-color: white;");
                 mainRow.setPadding(new Insets(10, 10, 10, 10));
                 figuresList.getChildren().add(mainRow);
@@ -500,12 +515,14 @@ public class GameFieldService {
     public static ContextMenu openAvailableFiguresMenu(BorderPane borderPane) {
         List<ChessFigure> availableFigures = GameService.getAvailableFigures();
         ContextMenu contextMenu = new ContextMenu();
+        contextMenu.getStyleClass().add("contextMenu");
         availableFigures.forEach(chessFigure -> {
             if (!isCellOccupied(borderPane)) {
                 ImageView imageView = loadFigureImage(chessFigure.getColor(), chessFigure.getName());
-                String label = chessFigure.getColor().toString() + "-" + chessFigure.getName();
-                MenuItem menuItem = new MenuItem(label, imageView);
-
+                imageView.setFitHeight(40);
+                imageView.setFitWidth(40);
+                MenuItem menuItem = new MenuItem(chessFigure.getName().toString(), imageView);
+                menuItem.getStyleClass().add("menu-item");
                 menuItem.setOnAction(actionEvent -> onSelectContextMenuItem(actionEvent, chessFigure, borderPane));
                 contextMenu.getItems().add(menuItem);
             }

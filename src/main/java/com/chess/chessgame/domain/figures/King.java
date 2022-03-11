@@ -59,6 +59,13 @@ public class King extends ChessFigure {
 
     @Override
     public int[][] removeDuplicates(int[][] matrix, int[][] gameMatrix) {
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                if (matrix[i][j] == 1 && gameMatrix[i][j] > 1) {
+                    matrix[i][j] = 10;
+                }
+            }
+        }
         return matrix;
     }
 }

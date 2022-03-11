@@ -1,0 +1,35 @@
+.contextMenu {
+    -fx-background-color: #ecedd1;
+}
+
+.menu-item .label {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.menu-item {
+    -fx-background-color: #789655;
+    -fx-border-style: solid solid none solid;
+    -fx-border-width: 2;
+    -fx-border-color: #ecedd1;
+}
+
+.menu-item:focused .label {
+    -fx-text-fill: black;
+}
+
+.menu-item:focused {
+    -fx-background-color: #ecedd1;
+    -fx-cursor: hand;
+}
+
+.attackIcon {
+    -fx-pref-width: 60;
+    -fx-pref-height: 60;
+}
+
+.attackBoxBorder {
+    -fx-border-style: solid;
+    -fx-border-width: 0 0 2;
+    -fx-border-color: white;
+}
