@@ -26,9 +26,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
-import javafx.stage.Window;
 import org.kordamp.bootstrapfx.BootstrapFX;
 
 import java.io.File;
@@ -38,15 +36,19 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static com.chess.chessgame.serviceImpl.GameFileService.loadImageByPath;
+import static com.chess.chessgame.serviceImpl.GameService.*;
+
 public class GameFieldService {
-    public static Group rootGroup = new Group();
     public static Group borderPanesGroup = new Group();
     public static boolean isCellSelected = false;
     public static Color selectedCellColor;
     public static List<SelectedCells> selectedCells = new ArrayList<>();
     public static boolean gameStarted = false;
+    public static boolean isMenuOpened = false;
 
     public static Scene createGameScene() {
+        Group rootGroup = new Group();
         BorderPane borderPane = new BorderPane();
         createGameBoard();
         Group hBox = new Group(createButtons());
@@ -241,30 +243,12 @@ public class GameFieldService {
         return imageView.get();
     }
 
-    public static Image loadImageByPath(String path) {
-        Image image = null;
-        try {
-            File file = new File(path);
-            image = new Image(new FileInputStream(file));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        return image;
-    }
-
     public static ImageView loadFigureImage(FigureColor figureColor, FigureName figureName) {
-        String path = "D:\\PROJECTS\\chessGame\\src\\main\\resources\\images\\" + figureColor.toString().toLowerCase(Locale.ROOT)
+        String path = "images/" + figureColor.toString().toLowerCase(Locale.ROOT)
                 + figureName.toString().substring(0, 1).toUpperCase(Locale.ROOT)
                 + figureName.toString().substring(1).toLowerCase(Locale.ROOT) + ".png";
-        Image image = null;
-        try {
-            File file = new File(path);
-            image = new Image(new FileInputStream(file));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
         ImageView imageView = new ImageView();
-        imageView.setImage(image);
+        imageView.setImage(loadImageByPath(path));
         return imageView;
     }
 
@@ -366,7 +350,7 @@ public class GameFieldService {
             chessFigure.setPosition(new Position(Integer.parseInt(xPosition.getText()), Integer.parseInt(yPosition.getText())));
             chessFigure.setName(FigureName.valueOf(figureNameBox.getValue()));
             chessFigure.setColor(FigureColor.valueOf(figureColorsBox.getValue()));
-            GameService.addNewFigure(chessFigure);
+            addNewFigure(chessFigure);
         });
         HBox hBox = new HBox(10, figureNameBox, figureColorsBox, xPosition, yPosition, button);
         hBox.setPadding(new Insets(20, 0, 0, 20));
@@ -393,7 +377,7 @@ public class GameFieldService {
         dialog.setHeaderText(null);
         dialog.setGraphic(null);
         Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
-        stage.getIcons().add(loadImageByPath("D:\\PROJECTS\\chessGame\\src\\main\\resources\\images\\mainIcon.png"));
+        stage.getIcons().add(loadImageByPath("images/mainIcon.png"));
 
         Text headerText = new Text("Figure attacks");
         headerText.setFill(Color.WHITE);
@@ -448,7 +432,7 @@ public class GameFieldService {
             if (chessFigures.size() > 0) {
                 VBox labelBox = getLabelBox(chessFigure);
                 ImageView imageView = loadFigureImage(chessFigure.getColor(), chessFigure.getName());
-                ImageView attackArrow = new ImageView(loadImageByPath("D:\\PROJECTS\\chessGame\\src\\main\\resources\\images\\attackArrow1.png"));
+                ImageView attackArrow = new ImageView(loadImageByPath("images/attackArrow1.png"));
                 attackArrow.getStyleClass().add("attackIcon");
 
                 StackPane attackArrowPane = new StackPane(attackArrow);
@@ -469,7 +453,7 @@ public class GameFieldService {
             }
         });
         if (figuresList.getChildren().size() == 0) {
-            File file = new File("D:\\PROJECTS\\chessGame\\src\\main\\resources\\images\\sadSmile.png");
+            File file = new File("images/sadSmile.png");
             try {
                 Text text = new Text("No attacks was found");
                 text.setFill(Color.WHITE);
@@ -529,14 +513,14 @@ public class GameFieldService {
         });
         if (contextMenu.getItems().size() == 0) {
             if (isCellOccupied(borderPane)) {
-                ImageView imageView = new ImageView(loadImageByPath("D:\\PROJECTS\\chessGame\\src\\main\\resources\\images\\trash.png"));
+                ImageView imageView = new ImageView(loadImageByPath("images/trash.png"));
                 imageView.setFitWidth(20);
                 imageView.setFitHeight(20);
                 MenuItem menuItem = new MenuItem("Remove figure", imageView);
                 menuItem.setOnAction(actionEvent -> onDeleteFigureFromBoard(borderPane));
                 contextMenu.getItems().add(menuItem);
             } else {
-                ImageView imageView = new ImageView(loadImageByPath("D:\\PROJECTS\\chessGame\\src\\main\\resources\\images\\sadSmile.png"));
+                ImageView imageView = new ImageView(loadImageByPath("images/sadSmile.png"));
                 imageView.setFitWidth(60);
                 imageView.setFitHeight(60);
                 MenuItem menuItem = new MenuItem("No available figures for cell", imageView);
@@ -548,7 +532,7 @@ public class GameFieldService {
 
     public static void createHoverEffects(BorderPane borderPane) {
         if (!gameStarted) {
-            ImageCursor imageCursor = new ImageCursor(loadImageByPath("D:\\PROJECTS\\chessGame\\src\\main\\resources\\images\\stopCursor.png"));
+            ImageCursor imageCursor = new ImageCursor(loadImageByPath("images/stopCursor.png"));
             borderPane.setCursor(imageCursor);
         } else {
             borderPane.setCursor(Cursor.HAND);
@@ -572,7 +556,6 @@ public class GameFieldService {
                 ChessFigure chessFigure = new ChessFigure(FigureName.valueOf(figureId.split("-")[1]), FigureColor.valueOf(figureId.split("-")[0]), position);
                 int[][] figureTrajectory = GameService.getFigureTrajectory(chessFigure);
                 paintFigurePath(figureTrajectory, chessFigure);
-                System.out.println(figureId);
             }
         }
     }
@@ -592,7 +575,7 @@ public class GameFieldService {
 
     public static void onStartGame(MouseEvent e) {
         gameStarted = true;
-        GameService.initGame();
+        initGame();
     }
 
     public static void onFigureAttacks(MouseEvent e) {
@@ -606,10 +589,8 @@ public class GameFieldService {
             gameStarted = false;
             isCellSelected = false;
             selectedCells = new ArrayList<>();
-            GameService.clearGameBoard();
-            clearBoard();
-            gameStarted = true;
-            GameService.initGame();
+            clearGameBoard();
+            refreshGame();
         }
     }
 
@@ -620,16 +601,21 @@ public class GameFieldService {
             position.setxPosition(Integer.parseInt(borderPane.getId().split("-")[1].split("")[1]));
         }
         chessFigure.setPosition(position);
-        GameService.addNewFigure(chessFigure);
-        GameService.initGame();
+        addNewFigure(chessFigure);
+        initGame();
         gameStarted = true;
     }
 
     public static void onDeleteFigureFromBoard(BorderPane borderPane) {
-        Position position = new Position(Integer.parseInt(borderPane.getId().split("-")[1].split("")[1]),
-                Integer.parseInt(borderPane.getId().split("-")[1].split("")[0]));
-        GameService.removeFigure(position);
-        GameService.initGame();
+        Position position = new Position(Integer.parseInt(borderPane.getId().split("-")[1].split("")[0]),
+                Integer.parseInt(borderPane.getId().split("-")[1].split("")[1]));
+        removeFigure(position);
+        refreshGame();
+    }
+
+    private static void refreshGame(){
+        clearBoard();
         gameStarted = true;
+        initGame();
     }
 }

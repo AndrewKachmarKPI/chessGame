@@ -77,7 +77,6 @@
                 <version>0.0.6</version>
                 <executions>
                     <execution>
-                        <!-- Default configuration for running with: mvn clean javafx:run -->
                         <id>default-cli</id>
                         <configuration>
                             <mainClass>com.chess.chessgame/com.chess.chessgame.ChessGameApplication</mainClass>
