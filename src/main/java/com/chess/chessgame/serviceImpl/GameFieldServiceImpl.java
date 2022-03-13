@@ -231,9 +231,7 @@ public class GameFieldServiceImpl implements GameFieldService {
     }
 
     private static ImageView loadFigureImage(FigureColor figureColor, FigureName figureName) {
-        String path = "images/" + figureColor.toString().toLowerCase(Locale.ROOT)
-                + figureName.toString().substring(0, 1).toUpperCase(Locale.ROOT)
-                + figureName.toString().substring(1).toLowerCase(Locale.ROOT) + ".png";
+        String path = "images/" + figureColor.toString().toLowerCase(Locale.ROOT) + "-" + figureName.toString().toLowerCase() + ".png";
         return new ImageView(gameFileService.loadImageByPath(path));
     }
 
@@ -377,21 +375,24 @@ public class GameFieldServiceImpl implements GameFieldService {
         BorderPane.setMargin(headerText, new Insets(0, 0, 10, 0));
 
         DialogPane dialogPane = new DialogPane();
-        dialogPane.setMaxHeight(600);
+        dialogPane.getStyleClass().add("availableDialog");
         dialogPane.setContentText("All figures attacks");
         dialogPane.setContent(borderPane);
+        dialogPane.setPrefHeight(600);
         dialogPane.setStyle("-fx-background-color: #26211b");
         ButtonType okButton = new ButtonType("Close", ButtonBar.ButtonData.CANCEL_CLOSE);
         dialogPane.getButtonTypes().add(okButton);
 
-        if (!chessFigureListMap.isEmpty()) { //TODO fix empty space
-            if (chessFigureListMap.size() < 5) {
-                dialogPane.setPrefHeight(chessFigureListMap.size() * 100);
-            } else {
-                dialogPane.setPrefHeight(600);
-            }
-        }
+//        if (!chessFigureListMap.isEmpty()) { //TODO fix empty space
+//            if (chessFigureListMap.size() < 5) {
+//                dialogPane.setPrefHeight(chessFigureListMap.size() * 100);
+//            } else {
+//                dialogPane.setPrefHeight(600);
+//            }
+//        }
+        dialog.setHeight(600);
         dialog.setDialogPane(dialogPane);
+        dialog.setResizable(true);
         dialog.show();
     }
 
@@ -446,6 +447,8 @@ public class GameFieldServiceImpl implements GameFieldService {
             imageView.setFitHeight(120);
             BorderPane borderPane = new BorderPane();
             borderPane.setStyle("-fx-background-color: #312e2b");
+            borderPane.setMinHeight(Region.USE_PREF_SIZE);
+            borderPane.setMinWidth(Region.USE_PREF_SIZE);
             BorderPane.setAlignment(imageView, Pos.CENTER);
             BorderPane.setAlignment(text, Pos.CENTER);
             borderPane.setCenter(imageView);

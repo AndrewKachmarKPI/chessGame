@@ -29,3 +29,4 @@ public class ChessGameApplication extends Application {
         launch(args);
     }
 }
+//TODO DISABLE KING MOVE UNDER OTHER FIGURE TRAJECTORY

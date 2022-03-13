@@ -36,3 +36,6 @@
 .btn-lg{
     -fx-cursor: hand;
 }
+.availableDialog{
+    -fx-pref-height: 100px;
+}
