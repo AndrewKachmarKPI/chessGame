@@ -19,7 +19,7 @@ public class GameFileService {
         try {
             BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
             String line;
-            while ((line = bufferedReader.readLine()) != null && figures.size() <= 10) {
+            while ((line = bufferedReader.readLine()) != null) { //&& figures.size() <= 10
                 line = line.trim();
                 if (!line.isEmpty()) {
                     String color = line.split(" ")[0];

@@ -415,7 +415,8 @@ public class GameFieldService {
         Label nameLabel = new Label(chessFigure.getName().toString());
         nameLabel.setTextFill(Color.WHITE);
         nameLabel.setStyle("-fx-font-weight: bold");
-        Label positionLabel = new Label("(" + chessFigure.getPosition().getxPosition() + "," + chessFigure.getPosition().getyPosition() + ")");
+        char[] characters = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'};
+        Label positionLabel = new Label("(" + (chessFigure.getPosition().getxPosition() + 1) + "," + characters[chessFigure.getPosition().getyPosition()] + ")");
         positionLabel.setTextFill(Color.WHITE);
         positionLabel.setStyle("-fx-font-weight: bold");
         VBox labelBox = new VBox(nameLabel, positionLabel);
@@ -453,24 +454,19 @@ public class GameFieldService {
             }
         });
         if (figuresList.getChildren().size() == 0) {
-            File file = new File("images/sadSmile.png");
-            try {
-                Text text = new Text("No attacks was found");
-                text.setFill(Color.WHITE);
-                text.setFont(Font.font("Verdana", 20));
-                ImageView imageView = new ImageView(new Image(new FileInputStream(file)));
-                imageView.setFitWidth(120);
-                imageView.setFitHeight(120);
-                BorderPane borderPane = new BorderPane();
-                borderPane.setStyle("-fx-background-color: #312e2b");
-                BorderPane.setAlignment(imageView, Pos.CENTER);
-                BorderPane.setAlignment(text, Pos.CENTER);
-                borderPane.setCenter(imageView);
-                borderPane.setBottom(text);
-                figuresList.getChildren().add(borderPane);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
+            Text text = new Text("No attacks was found");
+            text.setFill(Color.WHITE);
+            text.setFont(Font.font("Verdana", 20));
+            ImageView imageView = new ImageView(loadImageByPath("images/sadSmile.png"));
+            imageView.setFitWidth(120);
+            imageView.setFitHeight(120);
+            BorderPane borderPane = new BorderPane();
+            borderPane.setStyle("-fx-background-color: #312e2b");
+            BorderPane.setAlignment(imageView, Pos.CENTER);
+            BorderPane.setAlignment(text, Pos.CENTER);
+            borderPane.setCenter(imageView);
+            borderPane.setBottom(text);
+            figuresList.getChildren().add(borderPane);
         }
         return figuresList;
     }
@@ -613,7 +609,7 @@ public class GameFieldService {
         refreshGame();
     }
 
-    private static void refreshGame(){
+    private static void refreshGame() {
         clearBoard();
         gameStarted = true;
         initGame();
