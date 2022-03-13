@@ -4,6 +4,7 @@ import com.chess.chessgame.domain.figures.ChessFigure;
 import com.chess.chessgame.domain.figures.Position;
 import com.chess.chessgame.enums.FigureColor;
 import com.chess.chessgame.enums.FigureName;
+import com.chess.chessgame.services.GameFileService;
 import javafx.scene.image.Image;
 
 import java.io.*;
@@ -12,8 +13,9 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
 
-public class GameFileService {
-    public static List<ChessFigure> getFiguresFromInitFile() {
+public class GameFileServiceImpl implements GameFileService {
+    @Override
+    public List<ChessFigure> getFiguresFromInitFile() {
         List<ChessFigure> figures = new ArrayList<>();
         File file = new File("src/main/resources/game/init.txt");
         try {
@@ -36,7 +38,9 @@ public class GameFileService {
         }
         return figures;
     }
-    public static void removeFigureFromFile(ChessFigure chessFigure) {
+
+    @Override
+    public void removeFigureFromFile(ChessFigure chessFigure) {
         String removeChessLine = chessFigure.getColor().toString().toLowerCase(Locale.ROOT) + " " +
                 chessFigure.getName().toString().toLowerCase(Locale.ROOT) + " " +
                 chessFigure.getPosition().getxPosition() + " " +
@@ -63,7 +67,8 @@ public class GameFileService {
         }
     }
 
-    public static List<ChessFigure> getAllFigures() {
+    @Override
+    public List<ChessFigure> getAllFigures() {
         List<ChessFigure> figures = new ArrayList<>();
         try {
             File file = new File("src/main/resources/game/allFigures.txt");
@@ -82,7 +87,8 @@ public class GameFileService {
         return figures;
     }
 
-    public static boolean clearFiguresFile() {
+    @Override
+    public boolean clearFiguresFile() {
         try {
             File file = new File("src/main/resources/game/init.txt");
             PrintWriter writer = new PrintWriter(file);
@@ -95,7 +101,8 @@ public class GameFileService {
         return false;
     }
 
-    public static boolean writeFigureToFile(String figureLine) {
+    @Override
+    public boolean writeFigureToFile(String figureLine) {
         try {
             String fileName = "src/main/resources/game/init.txt";
             FileWriter fileWriter = new FileWriter(fileName, true);
@@ -110,7 +117,8 @@ public class GameFileService {
         return false;
     }
 
-    public static Image loadImageByPath(String path) {
+    @Override
+    public Image loadImageByPath(String path) {
         Image image = null;
         try {
             File file = new File("src/main/resources/" + path);

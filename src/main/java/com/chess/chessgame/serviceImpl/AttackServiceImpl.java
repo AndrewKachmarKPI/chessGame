@@ -2,9 +2,6 @@ package com.chess.chessgame.serviceImpl;
 
 import com.chess.chessgame.domain.figures.Position;
 import com.chess.chessgame.services.AttackService;
-import javafx.geometry.Pos;
-
-import java.util.Arrays;
 
 public class AttackServiceImpl implements AttackService {
     @Override
@@ -106,7 +103,7 @@ public class AttackServiceImpl implements AttackService {
     }
 
     @Override
-    public int[][] setDiagonalSplice(int[][] matrix, int[] splice, boolean isMain, Position position) {
+    public void setDiagonalSplice(int[][] matrix, int[] splice, boolean isMain, Position position) {
         int k = 0;
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
@@ -123,7 +120,6 @@ public class AttackServiceImpl implements AttackService {
                 }
             }
         }
-        return matrix;
     }
 
     @Override

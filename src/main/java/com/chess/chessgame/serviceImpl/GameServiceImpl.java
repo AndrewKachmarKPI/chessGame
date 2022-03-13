@@ -2,29 +2,28 @@ package com.chess.chessgame.serviceImpl;
 
 import com.chess.chessgame.domain.board.ChessBoard;
 import com.chess.chessgame.domain.figures.*;
+import com.chess.chessgame.services.GameFieldService;
+import com.chess.chessgame.services.GameFileService;
+import com.chess.chessgame.services.GameService;
 
-import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.chess.chessgame.serviceImpl.GameFileService.*;
 
-
-public class GameService {
+public class GameServiceImpl implements GameService {
+    public static GameFileService gameFileService = new GameFileServiceImpl();
     public static ChessBoard chessBoard = new ChessBoard();
 
-    public static void initGame() {
+    @Override
+    public void initGame() {
         loadFigures();
         fillFigureMap();
         loadFiguresOnBoard();
     }
 
-    private static void loadFigures() {
-        List<ChessFigure> figures = getFiguresFromInitFile();
+    @Override
+    public void loadFigures() {
+        List<ChessFigure> figures = gameFileService.getFiguresFromInitFile();
         int[][] matrix = new int[8][8];
         Map<ChessFigure, List<ChessFigure>> chessFigureMap = new HashMap<>();
         figures.forEach(chessFigure -> {
@@ -43,7 +42,8 @@ public class GameService {
         chessBoard.setChessMatrix(matrix);
     }
 
-    private static void fillFigureMap() {
+    @Override
+    public void fillFigureMap() {
         List<ChessFigure> chessFigures = chessBoard.getFigures();
         Map<ChessFigure, List<ChessFigure>> chessFigureMap = chessBoard.getChessFigureMap();
 
@@ -53,7 +53,8 @@ public class GameService {
         });
     }
 
-    private static List<ChessFigure> getAttackedFigures(ChessFigure chessFigure) {
+    @Override
+    public List<ChessFigure> getAttackedFigures(ChessFigure chessFigure) {
         List<Position> figurePositions = convertMatrixToPositionList(getFigureTrajectory(chessFigure));
         List<Position> matchedPositions = new ArrayList<>();
         List<Position> boardFiguresPositions = chessBoard.getFigures().stream().map(ChessFigure::getPosition).collect(Collectors.toList());
@@ -77,7 +78,8 @@ public class GameService {
         return matchedFigures;
     }
 
-    private static List<Position> convertMatrixToPositionList(int[][] figureMatrix) {
+    @Override
+    public List<Position> convertMatrixToPositionList(int[][] figureMatrix) {
         List<Position> figurePositions = new ArrayList<>();
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
@@ -89,11 +91,14 @@ public class GameService {
         return figurePositions;
     }
 
-    private static void loadFiguresOnBoard() {
-        chessBoard.getFigures().forEach(GameFieldService::setFigureOnBoard);
+    @Override
+    public void loadFiguresOnBoard() {
+        GameFieldService gameFieldService = new GameFieldServiceImpl();
+        chessBoard.getFigures().forEach(gameFieldService::setFigureOnBoard);
     }
 
-    private static int getFigureNumber(ChessFigure chessFigure) {
+    @Override
+    public int getFigureNumber(ChessFigure chessFigure) {
         switch (chessFigure.getName()) {
             case KING: {
                 return 2;
@@ -114,11 +119,13 @@ public class GameService {
         return 0;
     }
 
-    public static Map<ChessFigure, List<ChessFigure>> getAttackMap() {
+    @Override
+    public Map<ChessFigure, List<ChessFigure>> getAttackMap() {
         return chessBoard.getChessFigureMap();
     }
 
-    public static int[][] getFigureTrajectory(ChessFigure chessFigure) {
+    @Override
+    public int[][] getFigureTrajectory(ChessFigure chessFigure) {
         int[][] matrix = new int[8][8];
         switch (chessFigure.getName()) {
             case KING: {
@@ -150,24 +157,26 @@ public class GameService {
         return matrix;
     }
 
-    public static void clearGameBoard() {
+    @Override
+    public void clearGameBoard() {
         chessBoard = new ChessBoard();
-        if (clearFiguresFile()) {
+        if (gameFileService.clearFiguresFile()) {
             loadFigures();
         }
     }
 
-
-    public static boolean addNewFigure(ChessFigure chessFigure) {
+    @Override
+    public void addNewFigure(ChessFigure chessFigure) {
         String chessPath = chessFigure.getColor().toString().toLowerCase(Locale.ROOT) + " " +
                 chessFigure.getName().toString().toLowerCase(Locale.ROOT) + " " +
                 chessFigure.getPosition().getyPosition() + " " +
                 chessFigure.getPosition().getxPosition();
-        return writeFigureToFile(chessPath);
+        gameFileService.writeFigureToFile(chessPath);
     }
 
-    public static List<ChessFigure> getAvailableFigures() {
-        List<ChessFigure> allFigures = getAllFigures();
+    @Override
+    public List<ChessFigure> getAvailableFigures() {
+        List<ChessFigure> allFigures = gameFileService.getAllFigures();
         List<ChessFigure> usedFigures = chessBoard.getFigures();
         usedFigures.forEach(usedFigure -> {
             allFigures.removeIf(figure -> figure.getName().equals(usedFigure.getName()) && figure.getColor().equals(usedFigure.getColor()));
@@ -175,8 +184,8 @@ public class GameService {
         return allFigures;
     }
 
-
-    public static void removeFigure(Position position) {
+    @Override
+    public void removeFigure(Position position) {
         ChessFigure chessFigure = chessBoard.getFigures()
                 .stream()
                 .filter(chessFigure1 -> chessFigure1.getPosition().getxPosition() == position.getxPosition() && chessFigure1.getPosition().getyPosition() == position.getyPosition())
@@ -184,7 +193,7 @@ public class GameService {
         if (chessFigure.getName() != null) {
             chessBoard.getFigures().remove(chessFigure);
             chessBoard.getChessFigureMap().remove(chessFigure);
-            removeFigureFromFile(chessFigure);
+            gameFileService.removeFigureFromFile(chessFigure);
         }
     }
 }

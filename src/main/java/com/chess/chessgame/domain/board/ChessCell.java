@@ -1,38 +1,36 @@
 package com.chess.chessgame.domain.board;
 
-import com.chess.chessgame.domain.figures.Position;
+
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
-public class SelectedCells {
-    private Integer id;
+public class ChessCell {
     private Color color;
     private Rectangle rectangle;
+    private boolean isInFocus;
 
-    public SelectedCells() {
 
-    }
-
-    public SelectedCells(Color color, Rectangle rectangle) {
+    public ChessCell(Color color, Rectangle rectangle) {
         this.color = color;
         this.rectangle = rectangle;
     }
 
-    @Override
-    public String toString() {
-        return "SelectedCells{" +
-                "id=" + id +
-                ", color=" + color +
-                ", rectangle=" + rectangle +
-                '}';
+    public ChessCell() {
+        isInFocus = false;
     }
 
-    public Integer getId() {
-        return id;
+    public ChessCell(Color color, Rectangle rectangle, boolean isInFocus) {
+        this.color = color;
+        this.rectangle = rectangle;
+        this.isInFocus = isInFocus;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public boolean isInFocus() {
+        return isInFocus;
+    }
+
+    public void setInFocus(boolean inFocus) {
+        isInFocus = inFocus;
     }
 
     public Color getColor() {

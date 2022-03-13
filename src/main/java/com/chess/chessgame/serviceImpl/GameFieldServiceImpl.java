@@ -1,9 +1,13 @@
 package com.chess.chessgame.serviceImpl;
 
-import com.chess.chessgame.domain.board.SelectedCells;
+import com.chess.chessgame.domain.board.ChessCell;
+import com.chess.chessgame.domain.board.GameField;
 import com.chess.chessgame.domain.figures.*;
 import com.chess.chessgame.enums.FigureColor;
 import com.chess.chessgame.enums.FigureName;
+import com.chess.chessgame.services.GameFieldService;
+import com.chess.chessgame.services.GameFileService;
+import com.chess.chessgame.services.GameService;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -15,7 +19,6 @@ import javafx.scene.Group;
 import javafx.scene.ImageCursor;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
@@ -29,25 +32,21 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import org.kordamp.bootstrapfx.BootstrapFX;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static com.chess.chessgame.serviceImpl.GameFileService.loadImageByPath;
-import static com.chess.chessgame.serviceImpl.GameService.*;
 
-public class GameFieldService {
+public class GameFieldServiceImpl implements GameFieldService {
+    public static GameFileService gameFileService = new GameFileServiceImpl();
+    public static GameService gameService = new GameServiceImpl();
+    public static GameField gameField;
+
     public static Group borderPanesGroup = new Group();
-    public static boolean isCellSelected = false;
-    public static Color selectedCellColor;
-    public static List<SelectedCells> selectedCells = new ArrayList<>();
-    public static boolean gameStarted = false;
-    public static boolean isMenuOpened = false;
 
-    public static Scene createGameScene() {
+
+    public Scene createGameScene() {
+        gameField = new GameField();
         Group rootGroup = new Group();
         BorderPane borderPane = new BorderPane();
         createGameBoard();
@@ -59,18 +58,6 @@ public class GameFieldService {
         borderPane.setBottom(hBox);
         rootGroup.getChildren().add(borderPane);
 
-//        ScrollPane scrollPane = new ScrollPane();
-//        scrollPane.setPannable(true);
-//        scrollPane.setContent(rootGroup);
-//        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-//        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-//        ScrollPane scrollPane = new ScrollPane();
-//        scrollPane.setId("mainScroll");
-//        scrollPane.setContent(rootGroup);
-//        scrollPane.setPannable(true);
-//        scrollPane.setStyle("-fx-background-color: #312e2b");
-//        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-//        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
         Scene scene = new Scene(rootGroup, Color.web("312e2b"));
         scene.getStylesheets().clear();
@@ -79,7 +66,7 @@ public class GameFieldService {
         return scene;
     }
 
-    public static void createGameBoard() {
+    private static void createGameBoard() {
         paintGameBoard();
         paintBorders(0, 60);
         paintBorders(0, 720);
@@ -87,18 +74,18 @@ public class GameFieldService {
         paintBorders(720, 0);
     }
 
-    public static HBox createButtons() {
-        EventHandler<MouseEvent> onStartGame = GameFieldService::onStartGame;
+    private static HBox createButtons() {
+        EventHandler<MouseEvent> onStartGame = GameFieldServiceImpl::onStartGame;
         Button startGame = new Button("Start game");
         startGame.addEventHandler(MouseEvent.MOUSE_CLICKED, onStartGame);
         startGame.getStyleClass().setAll("btn-lg", "btn-success");
 
-        EventHandler<MouseEvent> onClearField = GameFieldService::onClearField;
+        EventHandler<MouseEvent> onClearField = GameFieldServiceImpl::onClearField;
         Button clearField = new Button("Clear field");
         clearField.addEventHandler(MouseEvent.MOUSE_CLICKED, onClearField);
         clearField.getStyleClass().setAll("btn-lg", "btn-danger");
 
-        EventHandler<MouseEvent> onFigureAttacks = GameFieldService::onFigureAttacks;
+        EventHandler<MouseEvent> onFigureAttacks = GameFieldServiceImpl::onFigureAttacks;
         Button figureAttacks = new Button("Figure attacks");
         figureAttacks.addEventHandler(MouseEvent.MOUSE_CLICKED, onFigureAttacks);
         figureAttacks.getStyleClass().setAll("btn-lg", "btn-warning");
@@ -108,7 +95,7 @@ public class GameFieldService {
         return hBox;
     }
 
-    public static void paintGameBoard() {
+    private static void paintGameBoard() {
         boolean isSecond = false;
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
@@ -129,16 +116,16 @@ public class GameFieldService {
                     rectangle.setFill(Color.web("#ecedd1"));
                 }
                 borderPane.setId("BorderPane-" + i + j);
-                if (gameStarted) {
+                if (gameField.isGameStarted()) {
                     borderPane.setCursor(Cursor.HAND);
                 }
                 borderPane.getChildren().add(rectangle);
-                EventHandler<MouseEvent> selectFigure = GameFieldService::onHoverFigure;
-                EventHandler<MouseEvent> unselectFigure = GameFieldService::onUnHooverFigure;
+                EventHandler<MouseEvent> selectFigure = GameFieldServiceImpl::onHoverFigure;
+                EventHandler<MouseEvent> unselectFigure = GameFieldServiceImpl::onUnHooverFigure;
                 borderPane.addEventHandler(MouseEvent.MOUSE_ENTERED_TARGET, selectFigure);
                 borderPane.addEventHandler(MouseEvent.MOUSE_EXITED_TARGET, unselectFigure);
                 borderPane.addEventHandler(MouseEvent.MOUSE_CLICKED, mouseEvent -> {
-                    if (mouseEvent.getButton() == MouseButton.SECONDARY && gameStarted) {
+                    if (mouseEvent.getButton() == MouseButton.SECONDARY && gameField.isGameStarted()) {
                         BorderPane selectedPane = findBorderPaneById(((BorderPane) mouseEvent.getSource()).getId());
                         ContextMenu contextMenu = openAvailableFiguresMenu(selectedPane);
                         contextMenu.show(rectangle, mouseEvent.getScreenX(), mouseEvent.getScreenY());
@@ -151,7 +138,7 @@ public class GameFieldService {
         }
     }
 
-    public static void paintBorders(int x, int y) {
+    private static void paintBorders(int x, int y) {
         char[] characters = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'};
         if (y != 0) {
             for (int i = 0; i < 8; i++) {
@@ -187,7 +174,7 @@ public class GameFieldService {
         }
     }
 
-    public static void setFigureOnBoard(ChessFigure chessFigure) {
+    public void setFigureOnBoard(ChessFigure chessFigure) {
         ImageView imageView = loadFigureImage(chessFigure.getColor(), chessFigure.getName());
         imageView.setId(chessFigure.getColor().toString().toUpperCase(Locale.ROOT) + "-" + chessFigure.getName());
         imageView.setX(50);
@@ -203,7 +190,7 @@ public class GameFieldService {
         }
     }
 
-    public static boolean isCellOccupied(BorderPane borderPane) {
+    private static boolean isCellOccupied(BorderPane borderPane) {
         AtomicBoolean isUsed = new AtomicBoolean(false);
         borderPane.getChildren().forEach(node -> {
             if (node instanceof ImageView) {
@@ -213,7 +200,7 @@ public class GameFieldService {
         return isUsed.get();
     }
 
-    public static List<BorderPane> getAllBorderPanes() {
+    private static List<BorderPane> getAllBorderPanes() {
         List<BorderPane> borderPanes = new ArrayList<>();
         borderPanesGroup.getChildren().forEach(node -> {
             if (node instanceof BorderPane) {
@@ -223,7 +210,7 @@ public class GameFieldService {
         return borderPanes;
     }
 
-    public static Rectangle getRectangleOfBorderPane(BorderPane borderPane) {
+    private static Rectangle getRectangleOfBorderPane(BorderPane borderPane) {
         AtomicReference<Rectangle> rectangle = new AtomicReference<>(new Rectangle());
         borderPane.getChildren().forEach(content -> {
             if (content instanceof Rectangle) {
@@ -233,7 +220,7 @@ public class GameFieldService {
         return rectangle.get();
     }
 
-    public static ImageView getImageOfBorderPane(BorderPane borderPane) {
+    private static ImageView getImageOfBorderPane(BorderPane borderPane) {
         AtomicReference<ImageView> imageView = new AtomicReference<>(new ImageView());
         borderPane.getChildren().forEach(content -> {
             if (content instanceof ImageView) {
@@ -243,21 +230,18 @@ public class GameFieldService {
         return imageView.get();
     }
 
-    public static ImageView loadFigureImage(FigureColor figureColor, FigureName figureName) {
+    private static ImageView loadFigureImage(FigureColor figureColor, FigureName figureName) {
         String path = "images/" + figureColor.toString().toLowerCase(Locale.ROOT)
                 + figureName.toString().substring(0, 1).toUpperCase(Locale.ROOT)
                 + figureName.toString().substring(1).toLowerCase(Locale.ROOT) + ".png";
-        ImageView imageView = new ImageView();
-        imageView.setImage(loadImageByPath(path));
-        return imageView;
+        return new ImageView(gameFileService.loadImageByPath(path));
     }
 
-    public static BorderPane findBorderPaneById(String borderPaneId) {
-        List<BorderPane> borderPanes = getAllBorderPanes();
-        return borderPanes.stream().filter(borderPane -> borderPane.getId().equals(borderPaneId)).findFirst().orElse(new BorderPane());
+    private static BorderPane findBorderPaneById(String borderPaneId) {
+        return getAllBorderPanes().stream().filter(borderPane -> borderPane.getId().equals(borderPaneId)).findFirst().orElse(new BorderPane());
     }
 
-    public static void paintFigurePath(int[][] matrix, ChessFigure chessFigure) {
+    private static void paintFigurePath(int[][] matrix, ChessFigure chessFigure) {
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
                 if (matrix[i][j] == 1) {
@@ -270,7 +254,7 @@ public class GameFieldService {
         }
     }
 
-    public static void paintRectangle(int x, int y, Color color, FigureColor figureColor, boolean isAttack) {
+    private static void paintRectangle(int x, int y, Color color, FigureColor figureColor, boolean isAttack) {
         BorderPane borderPane = findBorderPaneById("BorderPane-" + x + "" + y);
         Rectangle rectangle = getRectangleOfBorderPane(borderPane);
         if (isAttack) {
@@ -280,15 +264,15 @@ public class GameFieldService {
                 color = (Color) rectangle.getFill();
             }
         }
-        selectedCells.add(new SelectedCells((Color) rectangle.getFill(), rectangle));
+        gameField.getSelectedCells().add(new ChessCell((Color) rectangle.getFill(), rectangle));
         rectangle.setFill(color);
     }
 
-    public static void unPaintRectangle() {
-        selectedCells.forEach(selected -> selected.getRectangle().setFill(selected.getColor()));
+    private static void unPaintRectangle() {
+        gameField.getSelectedCells().forEach(selected -> selected.getRectangle().setFill(selected.getColor()));
     }
 
-    public static void clearBoard() {
+    private static void clearBoard() {
         List<BorderPane> borderPanes = getAllBorderPanes();
         for (BorderPane pane : borderPanes) {
             if (isCellOccupied(pane)) {
@@ -298,7 +282,7 @@ public class GameFieldService {
     }
 
 
-    public static HBox createComboBox(int id) {
+    private static HBox createComboBox(int id) {
         ObservableList<String> figureNameTypes = FXCollections.observableArrayList(
                 FigureName.KING.toString(),
                 FigureName.QUEEN.toString(),
@@ -350,7 +334,7 @@ public class GameFieldService {
             chessFigure.setPosition(new Position(Integer.parseInt(xPosition.getText()), Integer.parseInt(yPosition.getText())));
             chessFigure.setName(FigureName.valueOf(figureNameBox.getValue()));
             chessFigure.setColor(FigureColor.valueOf(figureColorsBox.getValue()));
-            addNewFigure(chessFigure);
+            gameService.addNewFigure(chessFigure);
         });
         HBox hBox = new HBox(10, figureNameBox, figureColorsBox, xPosition, yPosition, button);
         hBox.setPadding(new Insets(20, 0, 0, 20));
@@ -358,8 +342,8 @@ public class GameFieldService {
         return hBox;
     }
 
-    public static void openDialogWindow() {
-        Map<ChessFigure, List<ChessFigure>> chessFigureListMap = GameService.getAttackMap();
+    private static void openDialogWindow() {
+        Map<ChessFigure, List<ChessFigure>> chessFigureListMap = gameService.getAttackMap();
         VBox vBox = loadFigureList(chessFigureListMap);
         vBox.setStyle("-fx-background-color: #312e2b");
         vBox.setAlignment(Pos.CENTER);
@@ -377,11 +361,12 @@ public class GameFieldService {
         dialog.setHeaderText(null);
         dialog.setGraphic(null);
         Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
-        stage.getIcons().add(loadImageByPath("images/mainIcon.png"));
+        stage.getIcons().add(gameFileService.loadImageByPath("images/mainIcon.png"));
 
         Text headerText = new Text("Figure attacks");
         headerText.setFill(Color.WHITE);
         headerText.setFont(Font.font("Verdana", 20));
+
         BorderPane borderPane = new BorderPane();
         borderPane.setStyle("-fx-background-color: #26211b");
         BorderPane.setAlignment(headerText, Pos.CENTER);
@@ -391,16 +376,15 @@ public class GameFieldService {
         borderPane.getCenter().setStyle("-fx-background-color: #312e2b");
         BorderPane.setMargin(headerText, new Insets(0, 0, 10, 0));
 
-        ButtonType okButton = new ButtonType("Close", ButtonBar.ButtonData.CANCEL_CLOSE);
         DialogPane dialogPane = new DialogPane();
         dialogPane.setMaxHeight(600);
         dialogPane.setContentText("All figures attacks");
         dialogPane.setContent(borderPane);
         dialogPane.setStyle("-fx-background-color: #26211b");
+        ButtonType okButton = new ButtonType("Close", ButtonBar.ButtonData.CANCEL_CLOSE);
         dialogPane.getButtonTypes().add(okButton);
 
-
-        if (!chessFigureListMap.isEmpty()) {
+        if (!chessFigureListMap.isEmpty()) { //TODO fix empty space
             if (chessFigureListMap.size() < 5) {
                 dialogPane.setPrefHeight(chessFigureListMap.size() * 100);
             } else {
@@ -411,7 +395,7 @@ public class GameFieldService {
         dialog.show();
     }
 
-    public static VBox getLabelBox(ChessFigure chessFigure) {
+    private static VBox getLabelBox(ChessFigure chessFigure) {
         Label nameLabel = new Label(chessFigure.getName().toString());
         nameLabel.setTextFill(Color.WHITE);
         nameLabel.setStyle("-fx-font-weight: bold");
@@ -424,7 +408,7 @@ public class GameFieldService {
         return labelBox;
     }
 
-    public static VBox loadFigureList(Map<ChessFigure, List<ChessFigure>> chessFigureListMap) {
+    private static VBox loadFigureList(Map<ChessFigure, List<ChessFigure>> chessFigureListMap) {
         VBox figuresList = new VBox();
         figuresList.setStyle("-fx-background-color: #312e2b");
 
@@ -433,7 +417,7 @@ public class GameFieldService {
             if (chessFigures.size() > 0) {
                 VBox labelBox = getLabelBox(chessFigure);
                 ImageView imageView = loadFigureImage(chessFigure.getColor(), chessFigure.getName());
-                ImageView attackArrow = new ImageView(loadImageByPath("images/attackArrow1.png"));
+                ImageView attackArrow = new ImageView(gameFileService.loadImageByPath("images/attackArrow1.png"));
                 attackArrow.getStyleClass().add("attackIcon");
 
                 StackPane attackArrowPane = new StackPane(attackArrow);
@@ -457,7 +441,7 @@ public class GameFieldService {
             Text text = new Text("No attacks was found");
             text.setFill(Color.WHITE);
             text.setFont(Font.font("Verdana", 20));
-            ImageView imageView = new ImageView(loadImageByPath("images/sadSmile.png"));
+            ImageView imageView = new ImageView(gameFileService.loadImageByPath("images/sadSmile.png"));
             imageView.setFitWidth(120);
             imageView.setFitHeight(120);
             BorderPane borderPane = new BorderPane();
@@ -471,7 +455,7 @@ public class GameFieldService {
         return figuresList;
     }
 
-    public static HBox loadNestedFigures(List<ChessFigure> chessFigures) {
+    private static HBox loadNestedFigures(List<ChessFigure> chessFigures) {
         HBox hBox = new HBox();
         hBox.setStyle("-fx-background-color: #dc3545bd");
         hBox.setSpacing(20);
@@ -492,8 +476,8 @@ public class GameFieldService {
         return hBox;
     }
 
-    public static ContextMenu openAvailableFiguresMenu(BorderPane borderPane) {
-        List<ChessFigure> availableFigures = GameService.getAvailableFigures();
+    private static ContextMenu openAvailableFiguresMenu(BorderPane borderPane) {
+        List<ChessFigure> availableFigures = gameService.getAvailableFigures();
         ContextMenu contextMenu = new ContextMenu();
         contextMenu.getStyleClass().add("contextMenu");
         availableFigures.forEach(chessFigure -> {
@@ -509,14 +493,14 @@ public class GameFieldService {
         });
         if (contextMenu.getItems().size() == 0) {
             if (isCellOccupied(borderPane)) {
-                ImageView imageView = new ImageView(loadImageByPath("images/trash.png"));
-                imageView.setFitWidth(20);
-                imageView.setFitHeight(20);
+                ImageView imageView = new ImageView(gameFileService.loadImageByPath("images/trash.png"));
+                imageView.setFitWidth(60);
+                imageView.setFitHeight(60);
                 MenuItem menuItem = new MenuItem("Remove figure", imageView);
                 menuItem.setOnAction(actionEvent -> onDeleteFigureFromBoard(borderPane));
                 contextMenu.getItems().add(menuItem);
             } else {
-                ImageView imageView = new ImageView(loadImageByPath("images/sadSmile.png"));
+                ImageView imageView = new ImageView(gameFileService.loadImageByPath("images/sadSmile.png"));
                 imageView.setFitWidth(60);
                 imageView.setFitHeight(60);
                 MenuItem menuItem = new MenuItem("No available figures for cell", imageView);
@@ -526,9 +510,9 @@ public class GameFieldService {
         return contextMenu;
     }
 
-    public static void createHoverEffects(BorderPane borderPane) {
-        if (!gameStarted) {
-            ImageCursor imageCursor = new ImageCursor(loadImageByPath("images/stopCursor.png"));
+    private static void createHoverEffects(BorderPane borderPane) {
+        if (!gameField.isGameStarted()) {
+            ImageCursor imageCursor = new ImageCursor(gameFileService.loadImageByPath("images/stopCursor.png"));
             borderPane.setCursor(imageCursor);
         } else {
             borderPane.setCursor(Cursor.HAND);
@@ -536,82 +520,82 @@ public class GameFieldService {
     }
 
     //ACTIONS
-    public static void onHoverFigure(MouseEvent e) {
-        if (!isCellSelected) {
+    private static void onHoverFigure(MouseEvent e) {
+        ChessCell chessCell = gameField.getChessCell();
+        if (!chessCell.isInFocus()) {
             BorderPane borderPane = findBorderPaneById(((BorderPane) e.getSource()).getId());
             createHoverEffects(borderPane);
-            if (borderPane.getCenter() instanceof ImageView) {
-                isCellSelected = true;
+            if (isCellOccupied(borderPane)) {
+                chessCell.setInFocus(true);
                 Rectangle rectangle = getRectangleOfBorderPane(borderPane);
-                selectedCellColor = (Color) rectangle.getFill();
+                chessCell.setColor((Color) rectangle.getFill());
+                chessCell.setRectangle(rectangle);
                 rectangle.setFill(Color.web("#bacd33"));
 
                 Position position = new Position(Integer.parseInt(borderPane.getId().split("-")[1].split("")[0]),
                         Integer.parseInt(borderPane.getId().split("-")[1].split("")[1]));
                 String figureId = getImageOfBorderPane(borderPane).getId();
                 ChessFigure chessFigure = new ChessFigure(FigureName.valueOf(figureId.split("-")[1]), FigureColor.valueOf(figureId.split("-")[0]), position);
-                int[][] figureTrajectory = GameService.getFigureTrajectory(chessFigure);
-                paintFigurePath(figureTrajectory, chessFigure);
+                paintFigurePath(gameService.getFigureTrajectory(chessFigure), chessFigure);
             }
         }
     }
 
-    public static void onUnHooverFigure(MouseEvent e) {
-        if (isCellSelected) {
+    private static void onUnHooverFigure(MouseEvent e) {
+        ChessCell chessCell = gameField.getChessCell();
+        if (chessCell.isInFocus()) {
             BorderPane borderPane = findBorderPaneById(((BorderPane) e.getSource()).getId());
             createHoverEffects(borderPane);
-            if (borderPane.getCenter() instanceof ImageView) {
-                isCellSelected = false;
+            if (isCellOccupied(borderPane)) {
+                chessCell.setInFocus(false);
                 Rectangle rectangle = getRectangleOfBorderPane(borderPane);
-                rectangle.setFill(selectedCellColor);
+                rectangle.setFill(chessCell.getColor());
                 unPaintRectangle();
             }
         }
     }
 
-    public static void onStartGame(MouseEvent e) {
-        gameStarted = true;
-        initGame();
+    private static void onStartGame(MouseEvent e) {
+        gameField.setGameStarted(true);
+        gameService.initGame();
     }
 
-    public static void onFigureAttacks(MouseEvent e) {
-        if (gameStarted) {
+    private static void onFigureAttacks(MouseEvent e) {
+        if (gameField.isGameStarted()) {
             openDialogWindow();
         }
     }
 
-    public static void onClearField(MouseEvent e) {
-        if (gameStarted) {
-            gameStarted = false;
-            isCellSelected = false;
-            selectedCells = new ArrayList<>();
-            clearGameBoard();
+    private static void onClearField(MouseEvent e) {
+        if (gameField.isGameStarted()) {
+            gameField = new GameField();
+            gameService.clearGameBoard();
             refreshGame();
         }
     }
 
-    public static void onSelectContextMenuItem(ActionEvent e, ChessFigure chessFigure, BorderPane borderPane) {
+    private static void onSelectContextMenuItem(ActionEvent e, ChessFigure chessFigure, BorderPane borderPane) {
         Position position = new Position();
         if (borderPane != null) {
             position.setyPosition(Integer.parseInt(borderPane.getId().split("-")[1].split("")[0]));
             position.setxPosition(Integer.parseInt(borderPane.getId().split("-")[1].split("")[1]));
         }
         chessFigure.setPosition(position);
-        addNewFigure(chessFigure);
-        initGame();
-        gameStarted = true;
+        gameService.addNewFigure(chessFigure);
+        gameService.initGame();
+        gameField.setGameStarted(true);
     }
 
-    public static void onDeleteFigureFromBoard(BorderPane borderPane) {
+    private static void onDeleteFigureFromBoard(BorderPane borderPane) {
         Position position = new Position(Integer.parseInt(borderPane.getId().split("-")[1].split("")[0]),
                 Integer.parseInt(borderPane.getId().split("-")[1].split("")[1]));
-        removeFigure(position);
+        gameService.removeFigure(position);
         refreshGame();
     }
 
     private static void refreshGame() {
         clearBoard();
-        gameStarted = true;
-        initGame();
+        gameField.setGameStarted(true);
+        gameService.initGame();
     }
 }
