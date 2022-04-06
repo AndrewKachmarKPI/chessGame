@@ -103,8 +103,7 @@ public class GameFileServiceImpl implements GameFileService {
     @Override
     public boolean writeFigureToFile(String figureLine) {
         try {
-            String fileName = "src/main/resources/game/init.txt";
-            FileWriter fileWriter = new FileWriter(fileName, true);
+            FileWriter fileWriter = new FileWriter(System.getProperty("user.dir") +"\\init.txt", true);
             BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
             bufferedWriter.write(figureLine);
             bufferedWriter.newLine();
