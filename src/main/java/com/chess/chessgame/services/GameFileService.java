@@ -3,6 +3,8 @@ package com.chess.chessgame.services;
 import com.chess.chessgame.domain.figures.ChessFigure;
 import javafx.scene.image.Image;
 
+import java.io.FileNotFoundException;
+import java.net.URISyntaxException;
 import java.util.List;
 
 

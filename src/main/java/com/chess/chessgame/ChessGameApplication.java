@@ -18,10 +18,7 @@ public class ChessGameApplication extends Application {
         stage.setTitle("Chess game!");
         stage.setScene(gameFieldService.createGameScene());
         stage.getIcons().add(gameFileService.loadImageByPath("images/mainIcon.png"));
-//        stage.setFullScreen(true);
         stage.setResizable(false);
-//        stage.setMaxWidth(720);
-//        stage.setMaxHeight(1000);
         stage.show();
     }
 
@@ -29,4 +26,3 @@ public class ChessGameApplication extends Application {
         launch(args);
     }
 }
-//TODO DISABLE KING MOVE UNDER OTHER FIGURE TRAJECTORY

@@ -30,7 +30,6 @@ import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import org.kordamp.bootstrapfx.BootstrapFX;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -61,7 +60,6 @@ public class GameFieldServiceImpl implements GameFieldService {
 
         Scene scene = new Scene(rootGroup, Color.web("312e2b"));
         scene.getStylesheets().clear();
-        scene.getStylesheets().add(BootstrapFX.bootstrapFXStylesheet());
         scene.getStylesheets().add("page.css");
         return scene;
     }
@@ -78,17 +76,17 @@ public class GameFieldServiceImpl implements GameFieldService {
         EventHandler<MouseEvent> onStartGame = GameFieldServiceImpl::onStartGame;
         Button startGame = new Button("Start game");
         startGame.addEventHandler(MouseEvent.MOUSE_CLICKED, onStartGame);
-        startGame.getStyleClass().setAll("btn-lg", "btn-success");
+        startGame.getStyleClass().setAll("text", "start-game");
 
         EventHandler<MouseEvent> onClearField = GameFieldServiceImpl::onClearField;
         Button clearField = new Button("Clear field");
         clearField.addEventHandler(MouseEvent.MOUSE_CLICKED, onClearField);
-        clearField.getStyleClass().setAll("btn-lg", "btn-danger");
+        clearField.getStyleClass().setAll("text", "clear-field");
 
         EventHandler<MouseEvent> onFigureAttacks = GameFieldServiceImpl::onFigureAttacks;
         Button figureAttacks = new Button("Figure attacks");
         figureAttacks.addEventHandler(MouseEvent.MOUSE_CLICKED, onFigureAttacks);
-        figureAttacks.getStyleClass().setAll("btn-lg", "btn-warning");
+        figureAttacks.getStyleClass().setAll("text", "show-attacks");
 
         HBox hBox = new HBox(10, startGame, clearField, figureAttacks);
         hBox.setPadding(new Insets(20, 20, 20, 20));

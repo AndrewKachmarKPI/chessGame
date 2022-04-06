@@ -6,7 +6,6 @@ import com.chess.chessgame.enums.FigureColor;
 import com.chess.chessgame.enums.FigureName;
 import com.chess.chessgame.services.GameFileService;
 import javafx.scene.image.Image;
-
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -119,13 +118,16 @@ public class GameFileServiceImpl implements GameFileService {
 
     @Override
     public Image loadImageByPath(String path) {
-        Image image = null;
-        try {
-            File file = new File("src/main/resources/" + path);
-            image = new Image(new FileInputStream(file.getAbsolutePath()));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+      return new Image(getFileInputStream(path));
+    }
+
+    private InputStream getFileInputStream(String fileName) {
+        ClassLoader classLoader = getClass().getClassLoader();
+        InputStream inputStream = classLoader.getResourceAsStream(fileName);
+        if (inputStream == null) {
+            throw new IllegalArgumentException("file not found! " + fileName);
+        } else {
+            return inputStream;
         }
-        return image;
     }
 }
