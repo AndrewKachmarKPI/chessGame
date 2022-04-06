@@ -31,6 +31,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
@@ -558,6 +559,11 @@ public class GameFieldServiceImpl implements GameFieldService {
 
     private static void onStartGame(MouseEvent e) {
         gameField.setGameStarted(true);
+        try {
+            gameFileService.createWorkingFiles();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
         gameService.initGame();
     }
 
