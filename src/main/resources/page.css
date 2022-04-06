@@ -56,6 +56,7 @@
     -fx-font-size: 1.1em;
 }
 .clear-field:hover {
+    -fx-cursor: hand;
     -fx-background-color:
             linear-gradient(from 0% 93% to 0% 100%, #a34313 0%, #903b12 100%),
             #9d4024,
@@ -86,6 +87,7 @@
     -fx-font-size: 1.1em;
 }
 .start-game:hover {
+    -fx-cursor: hand;
     -fx-background-color:
             linear-gradient(from 0% 93% to 0% 100%, #13a318 0%, #129017 100%),
             #249d26,
@@ -115,6 +117,7 @@
     -fx-font-size: 1.1em;
 }
 .show-attacks:hover {
+    -fx-cursor: hand;
     -fx-background-color:
             linear-gradient(from 0% 93% to 0% 100%, #93a313 0%, #849012 100%),
             #889d24,

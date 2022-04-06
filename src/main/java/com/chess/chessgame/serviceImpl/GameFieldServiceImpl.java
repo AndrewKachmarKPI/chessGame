@@ -348,7 +348,6 @@ public class GameFieldServiceImpl implements GameFieldService {
         ScrollPane scrollPane = new ScrollPane();
         scrollPane.setContent(vBox);
         scrollPane.setPannable(true);
-        scrollPane.getStyleClass().add("bg-none");
         scrollPane.setStyle("-fx-background-color: #312e2b");
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
@@ -441,7 +440,7 @@ public class GameFieldServiceImpl implements GameFieldService {
             Text text = new Text("No attacks was found");
             text.setFill(Color.WHITE);
             text.setFont(Font.font("Verdana", 20));
-            ImageView imageView = new ImageView(gameFileService.loadImageByPath("images/sadSmile.png"));
+            ImageView imageView = new ImageView(gameFileService.loadImageByPath("images/mainIcon.png"));
             imageView.setFitWidth(120);
             imageView.setFitHeight(120);
             BorderPane borderPane = new BorderPane();
@@ -496,13 +495,13 @@ public class GameFieldServiceImpl implements GameFieldService {
         if (contextMenu.getItems().size() == 0) {
             if (isCellOccupied(borderPane)) {
                 ImageView imageView = new ImageView(gameFileService.loadImageByPath("images/trash.png"));
-                imageView.setFitWidth(60);
-                imageView.setFitHeight(60);
+                imageView.setFitWidth(20);
+                imageView.setFitHeight(20);
                 MenuItem menuItem = new MenuItem("Remove figure", imageView);
                 menuItem.setOnAction(actionEvent -> onDeleteFigureFromBoard(borderPane));
                 contextMenu.getItems().add(menuItem);
             } else {
-                ImageView imageView = new ImageView(gameFileService.loadImageByPath("images/sadSmile.png"));
+                ImageView imageView = new ImageView(gameFileService.loadImageByPath("images/mainIcon.png"));
                 imageView.setFitWidth(60);
                 imageView.setFitHeight(60);
                 MenuItem menuItem = new MenuItem("No available figures for cell", imageView);
