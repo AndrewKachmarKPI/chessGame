@@ -177,10 +177,9 @@ public class GameServiceImpl implements GameService {
     @Override
     public List<ChessFigure> getAvailableFigures() {
         List<ChessFigure> allFigures = gameFileService.getAllFigures();
-        List<ChessFigure> usedFigures = chessBoard.getFigures();
-        usedFigures.forEach(usedFigure -> {
-            allFigures.removeIf(figure -> figure.getName().equals(usedFigure.getName()) && figure.getColor().equals(usedFigure.getColor()));
-        });
+        if(chessBoard.getFigures().size()>=10){
+            allFigures = new ArrayList<>();
+        }
         return allFigures;
     }
 

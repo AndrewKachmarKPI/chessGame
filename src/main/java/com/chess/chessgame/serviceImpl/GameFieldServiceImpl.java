@@ -557,6 +557,9 @@ public class GameFieldServiceImpl implements GameFieldService {
     }
 
     private static void onStartGame(MouseEvent e) {
+        if(gameField.isGameStarted()){
+            onClearField(e);
+        }
         gameField.setGameStarted(true);
         try {
             gameFileService.createWorkingFiles();
