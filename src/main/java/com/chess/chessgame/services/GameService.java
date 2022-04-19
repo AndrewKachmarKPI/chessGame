@@ -33,4 +33,6 @@ public interface GameService {
 
 
     void removeFigure(Position position);
+
+    boolean saveGameResults();
 }

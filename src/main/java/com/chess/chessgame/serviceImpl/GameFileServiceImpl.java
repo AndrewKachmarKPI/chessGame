@@ -101,11 +101,26 @@ public class GameFileServiceImpl implements GameFileService {
     }
 
     @Override
-    public boolean writeFigureToFile(String figureLine) {
+    public boolean writeFigureToFile(String fileName, ChessFigure chessFigure) {
         try {
-            FileWriter fileWriter = new FileWriter(System.getProperty("user.dir") +"\\init.txt", true);
+            FileWriter fileWriter = new FileWriter(System.getProperty("user.dir") + "\\" + fileName, true);
             BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
-            bufferedWriter.write(figureLine);
+            bufferedWriter.write(getFigurePath(chessFigure));
+            bufferedWriter.newLine();
+            bufferedWriter.close();
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    @Override
+    public boolean writeFigureToFile(String fileName, ChessFigure chessFigure, String... args) {
+        try {
+            FileWriter fileWriter = new FileWriter(System.getProperty("user.dir") + "\\" + fileName, true);
+            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+            bufferedWriter.write(getFigurePath(chessFigure) + "->" + Arrays.toString(args));
             bufferedWriter.newLine();
             bufferedWriter.close();
             return true;
@@ -152,6 +167,33 @@ public class GameFileServiceImpl implements GameFileService {
         File initFile = new File(System.getProperty("user.dir") + "\\init.txt");
         File allFiguresTxt = new File(System.getProperty("user.dir") + "\\allFigures.txt");
         return initFile.delete() && allFiguresTxt.delete();
+    }
+
+    @Override
+    public String getFigurePath(ChessFigure chessFigure) {
+        return chessFigure.getColor().toString().toLowerCase(Locale.ROOT) + " " +
+                chessFigure.getName().toString().toLowerCase(Locale.ROOT) + " " +
+                chessFigure.getPosition().getyPosition() + " " +
+                chessFigure.getPosition().getxPosition();
+    }
+
+    public boolean saveResultFile(Map<ChessFigure, List<ChessFigure>> chessFigureListMap) throws IOException {
+        boolean isSaved = false;
+        File resultFile = new File(System.getProperty("user.dir") + "\\gameResult.txt");
+        if (resultFile.createNewFile()) {
+            chessFigureListMap.forEach((chessFigure, chessFigures) -> {
+                writeFigureToFile("gameResult.txt", chessFigure, getFormattedFigureListPath(chessFigures));
+            });
+            isSaved = true;
+        }
+        return isSaved;
+    }
+
+    private String getFormattedFigureListPath(List<ChessFigure> chessFigures) {
+        StringBuilder stringBuilder = new StringBuilder("[");
+        chessFigures.forEach(chessFigure -> stringBuilder.append(getFigurePath(chessFigure)).append("|"));
+        stringBuilder.append("]");
+        return stringBuilder.toString();
     }
 
     private void writeInitialFiles(String fileName, String defaultData) {

@@ -6,6 +6,7 @@ import com.chess.chessgame.services.GameFieldService;
 import com.chess.chessgame.services.GameFileService;
 import com.chess.chessgame.services.GameService;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -19,6 +20,7 @@ public class GameServiceImpl implements GameService {
         loadFigures();
         fillFigureMap();
         loadFiguresOnBoard();
+        saveGameResults();
     }
 
     @Override
@@ -167,17 +169,13 @@ public class GameServiceImpl implements GameService {
 
     @Override
     public void addNewFigure(ChessFigure chessFigure) {
-        String chessPath = chessFigure.getColor().toString().toLowerCase(Locale.ROOT) + " " +
-                chessFigure.getName().toString().toLowerCase(Locale.ROOT) + " " +
-                chessFigure.getPosition().getyPosition() + " " +
-                chessFigure.getPosition().getxPosition();
-        gameFileService.writeFigureToFile(chessPath);
+        gameFileService.writeFigureToFile("init.txt", chessFigure);
     }
 
     @Override
     public List<ChessFigure> getAvailableFigures() {
         List<ChessFigure> allFigures = gameFileService.getAllFigures();
-        if(chessBoard.getFigures().size()>=10){
+        if (chessBoard.getFigures().size() >= 10) {
             allFigures = new ArrayList<>();
         }
         return allFigures;
@@ -194,5 +192,16 @@ public class GameServiceImpl implements GameService {
             chessBoard.getChessFigureMap().remove(chessFigure);
             gameFileService.removeFigureFromFile(chessFigure);
         }
+    }
+
+    @Override
+    public boolean saveGameResults() {
+        boolean isSaved = false;
+        try {
+            isSaved = gameFileService.saveResultFile(chessBoard.getChessFigureMap());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return isSaved;
     }
 }

@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Map;
 
 
 public interface GameFileService {
@@ -18,10 +19,13 @@ public interface GameFileService {
 
     boolean clearFiguresFile();
 
-    boolean writeFigureToFile(String figureLine);
+    boolean writeFigureToFile(String fileName,ChessFigure chessFigure);
+    boolean writeFigureToFile(String fileName, ChessFigure chessFigure, String... args);
+    boolean saveResultFile(Map<ChessFigure, List<ChessFigure>> chessFigureListMap) throws IOException;
+
+    String getFigurePath(ChessFigure chessFigure);
 
     Image loadImageByPath(String path);
-
     void createWorkingFiles() throws IOException;
     boolean deleteWorkingFiles();
 }
