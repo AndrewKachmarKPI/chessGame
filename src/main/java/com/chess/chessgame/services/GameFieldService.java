@@ -1,10 +1,9 @@
 package com.chess.chessgame.services;
 import com.chess.chessgame.domain.figures.ChessFigure;
-import javafx.scene.Scene;
-
+import javafx.scene.Group;
 
 
 public interface GameFieldService {
-    Scene createGameScene();
+    Group createGameGroup();
     void setFigureOnBoard(ChessFigure chessFigure);
 }

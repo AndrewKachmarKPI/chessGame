@@ -45,24 +45,17 @@ public class GameFieldServiceImpl implements GameFieldService {
     public static Group borderPanesGroup = new Group();
 
 
-    public Scene createGameScene() {
+    public Group createGameGroup() {
         gameField = new GameField();
-        Group rootGroup = new Group();
-        BorderPane borderPane = new BorderPane();
         createGameBoard();
         Group hBox = new Group(createButtons());
-        BorderPane.setAlignment(hBox, Pos.BOTTOM_CENTER);
+        BorderPane.setAlignment(hBox, Pos.TOP_RIGHT);
         BorderPane.setAlignment(borderPanesGroup, Pos.CENTER);
+        BorderPane borderPane = new BorderPane();
         borderPane.setCenter(borderPanesGroup);
         borderPane.setStyle("-fx-background-color: #312e2b");
-        borderPane.setBottom(hBox);
-        rootGroup.getChildren().add(borderPane);
-
-
-        Scene scene = new Scene(rootGroup, Color.web("312e2b"));
-        scene.getStylesheets().clear();
-        scene.getStylesheets().add("page.css");
-        return scene;
+        borderPane.setRight(hBox);
+        return new Group(borderPane);
     }
 
     private static void createGameBoard() {
@@ -73,25 +66,20 @@ public class GameFieldServiceImpl implements GameFieldService {
         paintBorders(720, 0);
     }
 
-    private static HBox createButtons() {
-        EventHandler<MouseEvent> onStartGame = GameFieldServiceImpl::onStartGame;
-        Button startGame = new Button("Start game");
-        startGame.addEventHandler(MouseEvent.MOUSE_CLICKED, onStartGame);
-        startGame.getStyleClass().setAll("text", "start-game");
-
+    private static VBox createButtons() {
         EventHandler<MouseEvent> onClearField = GameFieldServiceImpl::onClearField;
         Button clearField = new Button("Clear field");
         clearField.addEventHandler(MouseEvent.MOUSE_CLICKED, onClearField);
         clearField.getStyleClass().setAll("text", "clear-field");
 
         EventHandler<MouseEvent> onFigureAttacks = GameFieldServiceImpl::onFigureAttacks;
-        Button figureAttacks = new Button("Figure attacks");
+        Button figureAttacks = new Button("Show attacks");
         figureAttacks.addEventHandler(MouseEvent.MOUSE_CLICKED, onFigureAttacks);
         figureAttacks.getStyleClass().setAll("text", "show-attacks");
 
-        HBox hBox = new HBox(10, startGame, clearField, figureAttacks);
-        hBox.setPadding(new Insets(20, 20, 20, 20));
-        return hBox;
+        VBox vBox = new VBox(10, clearField, figureAttacks);
+        vBox.setPadding(new Insets(20, 20, 20, 20));
+        return vBox;
     }
 
     private static void paintGameBoard() {
@@ -556,9 +544,11 @@ public class GameFieldServiceImpl implements GameFieldService {
         }
     }
 
-    private static void onStartGame(MouseEvent e) {
+    public void onStartGame() {
         if(gameField.isGameStarted()){
-            onClearField(e);
+            gameField = new GameField();
+            gameService.clearGameBoard();
+            refreshGame();
         }
         gameField.setGameStarted(true);
         try {
