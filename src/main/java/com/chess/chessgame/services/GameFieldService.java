@@ -5,5 +5,4 @@ import javafx.scene.Group;
 
 public interface GameFieldService {
     Group createGameGroup();
-    void setFigureOnBoard(ChessFigure chessFigure);
 }

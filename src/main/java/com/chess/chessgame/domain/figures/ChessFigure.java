@@ -2,27 +2,33 @@ package com.chess.chessgame.domain.figures;
 
 import com.chess.chessgame.enums.FigureColor;
 import com.chess.chessgame.enums.FigureName;
+import com.chess.chessgame.serviceImpl.AttackServiceImpl;
+import com.chess.chessgame.services.AttackService;
 
 import java.util.Objects;
 
-public class ChessFigure {
+public abstract class ChessFigure {
     private FigureName name;
     private FigureColor color;
     private Position position;
 
-    public ChessFigure() {
+    public AttackService attackService;
 
+    public ChessFigure() {
+        attackService = new AttackServiceImpl();
     }
 
     public ChessFigure(FigureName name, FigureColor color) {
         this.name = name;
         this.color = color;
+        attackService = new AttackServiceImpl();
     }
 
     public ChessFigure(FigureName name, FigureColor color, Position position) {
         this.name = name;
         this.color = color;
         this.position = position;
+        attackService = new AttackServiceImpl();
     }
 
     public FigureName getName() {
@@ -49,9 +55,9 @@ public class ChessFigure {
         this.position = position;
     }
 
-    public int[][] removeDuplicates(int[][] matrix, int[][] gameMatrix) {
-        return new int[8][8];
-    }
+    public abstract int[][] getMoveDirection(int[][] gameMatrix);
+
+    public abstract int[][] removeDuplicates(int[][] matrix, int[][] gameMatrix);
 
     @Override
     public String toString() {

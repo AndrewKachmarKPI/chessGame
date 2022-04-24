@@ -2,13 +2,8 @@ package com.chess.chessgame.domain.figures;
 
 import com.chess.chessgame.enums.FigureColor;
 import com.chess.chessgame.enums.FigureName;
-import com.chess.chessgame.serviceImpl.AttackServiceImpl;
-import com.chess.chessgame.services.AttackService;
 
 public class Bishop extends ChessFigure {
-    public Bishop(ChessFigure chessFigure) {
-        super(chessFigure.getName(), chessFigure.getColor(), chessFigure.getPosition());
-    }
 
     public Bishop(FigureName name, FigureColor color, Position position) {
         super(name, color, position);
@@ -32,7 +27,6 @@ public class Bishop extends ChessFigure {
 
     @Override
     public int[][] removeDuplicates(int[][] matrix, int[][] gameMatrix) {
-        AttackService attackService = new AttackServiceImpl();
         int[] mainDiagonalFigure = attackService.getDiagonalSplice(matrix, true, this.getPosition());
         int[] secondDiagonalFigure = attackService.getDiagonalSplice(matrix, false, this.getPosition());
         int[] mainDiagonalGame = attackService.getDiagonalSplice(gameMatrix, true, this.getPosition());
@@ -40,7 +34,6 @@ public class Bishop extends ChessFigure {
 
         attackService.setDiagonalSplice(matrix, attackService.processSpliceDiagonal(mainDiagonalFigure, mainDiagonalGame, 5), true, this.getPosition());
         attackService.setDiagonalSplice(matrix, attackService.processSpliceDiagonal(secondDiagonalFigure, secondDiagonalGame, 5), false, this.getPosition());
-
         return matrix;
     }
 }

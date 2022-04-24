@@ -4,22 +4,22 @@ package com.chess.chessgame.domain.board;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
-public class ChessCell {
+public class GameBoardCell {
     private Color color;
     private Rectangle rectangle;
     private boolean isInFocus;
 
 
-    public ChessCell(Color color, Rectangle rectangle) {
+    public GameBoardCell(Color color, Rectangle rectangle) {
         this.color = color;
         this.rectangle = rectangle;
     }
 
-    public ChessCell() {
+    public GameBoardCell() {
         isInFocus = false;
     }
 
-    public ChessCell(Color color, Rectangle rectangle, boolean isInFocus) {
+    public GameBoardCell(Color color, Rectangle rectangle, boolean isInFocus) {
         this.color = color;
         this.rectangle = rectangle;
         this.isInFocus = isInFocus;

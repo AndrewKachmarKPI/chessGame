@@ -6,17 +6,12 @@ import com.chess.chessgame.serviceImpl.AttackServiceImpl;
 import com.chess.chessgame.services.AttackService;
 
 public class King extends ChessFigure {
-    public King(ChessFigure chessFigure) {
-        super(chessFigure.getName(), chessFigure.getColor(), chessFigure.getPosition());
-    }
-
-    public King() {
-    }
 
     public King(FigureName name, FigureColor color, Position position) {
         super(name, color, position);
     }
 
+    @Override
     public int[][] getMoveDirection(int[][] gameMatrix) {
         int[][] matrix = new int[8][8];
         for (int i = 0; i < 8; i++) {
@@ -41,7 +36,7 @@ public class King extends ChessFigure {
         return removeDuplicates(matrix, gameMatrix);
     }
 
-    public boolean isDiagonal(int i, int j, boolean mode) {
+    private boolean isDiagonal(int i, int j, boolean mode) {
         if (mode) {
             return i + this.getPosition().getyPosition() == j + this.getPosition().getxPosition();
         } else {
@@ -49,23 +44,16 @@ public class King extends ChessFigure {
         }
     }
 
-    public boolean isNeighbourX(int x) {
+    private boolean isNeighbourX(int x) {
         return Math.abs(this.getPosition().getxPosition() - x) == 1;
     }
 
-    public boolean isNeighbourY(int y) {
+    private boolean isNeighbourY(int y) {
         return Math.abs(this.getPosition().getyPosition() - y) == 1;
     }
 
     @Override
     public int[][] removeDuplicates(int[][] matrix, int[][] gameMatrix) {
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
-                if (matrix[i][j] == 1 && gameMatrix[i][j] > 1) {
-                    matrix[i][j] = 10;
-                }
-            }
-        }
-        return matrix;
+        return attackService.removeDuplicatesSimple(matrix, gameMatrix);
     }
 }

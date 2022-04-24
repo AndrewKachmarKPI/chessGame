@@ -1,6 +1,8 @@
 package com.chess.chessgame.services;
 
 import com.chess.chessgame.domain.figures.*;
+import com.chess.chessgame.enums.FigureColor;
+import com.chess.chessgame.enums.FigureName;
 
 import java.util.*;
 
@@ -8,22 +10,13 @@ import java.util.*;
 public interface GameService {
     void initGame();
 
-    void loadFigures();
-
-    void fillFigureMap();
-
-    List<ChessFigure> getAttackedFigures(ChessFigure chessFigure);
-
-    List<Position> convertMatrixToPositionList(int[][] figureMatrix);
-
-    void loadFiguresOnBoard();
-
-    int getFigureNumber(ChessFigure chessFigure);
+    List<ChessFigure> getFiguresForSetup();
 
     Map<ChessFigure, List<ChessFigure>> getAttackMap();
 
-    int[][] getFigureTrajectory(ChessFigure chessFigure);
+    int[][] getFigureTrajectory(Position pos, FigureName figureName, FigureColor figureColor);
 
+    ChessFigure createChessFigure(Position pos, FigureName figureName, FigureColor figureColor);
     void clearGameBoard();
 
 

@@ -21,4 +21,6 @@ public interface AttackService {
     int getPosOfElement(int[] array, int figureNumber);
 
     int[] addElementToArray(int[] array, int element);
+
+    int[][] removeDuplicatesSimple(int[][] matrix, int[][] gameMatrix);
 }

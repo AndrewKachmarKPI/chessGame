@@ -153,10 +153,23 @@ public class AttackServiceImpl implements AttackService {
         return pos;
     }
 
+    @Override
     public int[] addElementToArray(int[] array, int element) {
         int[] newArray = new int[array.length + 1];
         System.arraycopy(array, 0, newArray, 0, array.length);
         newArray[array.length] = element;
         return newArray;
+    }
+
+    @Override
+    public int[][] removeDuplicatesSimple(int[][] matrix, int[][] gameMatrix) {
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                if (gameMatrix[i][j] > 1 && matrix[i][j] == 1) {
+                    matrix[i][j] = 10;
+                }
+            }
+        }
+        return matrix;
     }
 }

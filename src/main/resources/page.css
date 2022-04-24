@@ -54,7 +54,9 @@
 
 .btn-rounded {
     -fx-border-radius: 100;
+    -fx-min-width: 75px;
 }
+
 .info {
     -fx-padding: 8 15 15 15;
     -fx-background-insets: 0, 0 0 5 0, 0 0 6 0, 0 0 7 0;
@@ -87,7 +89,6 @@
     -fx-fill: white;
     -fx-effect: dropshadow(gaussian, #009ea3, 0, 0, 0, 2);
 }
-
 
 
 .danger {

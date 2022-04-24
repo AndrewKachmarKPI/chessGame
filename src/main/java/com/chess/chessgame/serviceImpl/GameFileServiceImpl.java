@@ -5,6 +5,7 @@ import com.chess.chessgame.domain.figures.Position;
 import com.chess.chessgame.enums.FigureColor;
 import com.chess.chessgame.enums.FigureName;
 import com.chess.chessgame.services.GameFileService;
+import com.chess.chessgame.services.GameService;
 import javafx.scene.image.Image;
 
 import java.io.*;
@@ -15,6 +16,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class GameFileServiceImpl implements GameFileService {
+    private static final GameService gameService = new GameServiceImpl();
+
     @Override
     public List<ChessFigure> getFiguresFromInitFile() {
         List<ChessFigure> figures = new ArrayList<>();
@@ -28,8 +31,9 @@ public class GameFileServiceImpl implements GameFileService {
                     String color = line.split(" ")[0];
                     String name = line.split(" ")[1];
                     Position position = new Position(Integer.parseInt(line.split(" ")[2]), Integer.parseInt(line.split(" ")[3]));
-                    ChessFigure chessFigure = new ChessFigure(FigureName.valueOf(name.toUpperCase(Locale.ROOT)),
-                            FigureColor.valueOf(color.toUpperCase(Locale.ROOT)), position);
+
+                    ChessFigure chessFigure = gameService.createChessFigure(position, FigureName.valueOf(name.toUpperCase(Locale.ROOT)),
+                            FigureColor.valueOf(color.toUpperCase(Locale.ROOT)));
                     figures.add(chessFigure);
                 }
             }
@@ -79,7 +83,7 @@ public class GameFileServiceImpl implements GameFileService {
                 line = line.trim();
                 String color = line.split(" ")[0];
                 String name = line.split(" ")[1];
-                figures.add(new ChessFigure(FigureName.valueOf(name.toUpperCase(Locale.ROOT)), FigureColor.valueOf(color.toUpperCase(Locale.ROOT))));
+                figures.add(gameService.createChessFigure(new Position(), FigureName.valueOf(name.toUpperCase(Locale.ROOT)), FigureColor.valueOf(color.toUpperCase(Locale.ROOT))));
             }
             bufferedReader.close();
         } catch (IOException e) {
@@ -185,7 +189,7 @@ public class GameFileServiceImpl implements GameFileService {
         File resultFile = new File(System.getProperty("user.dir") + "\\" + fileIdentifier + "-game-result.txt");
         if (resultFile.createNewFile()) {
             chessFigureListMap.forEach((chessFigure, chessFigures) -> {
-                writeFigureToFile(fileIdentifier+"-game-result.txt", chessFigure, getFormattedFigureListPath(chessFigures));
+                writeFigureToFile(fileIdentifier + "-game-result.txt", chessFigure, getFormattedFigureListPath(chessFigures));
             });
             isSaved = true;
         }

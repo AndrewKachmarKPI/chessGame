@@ -1,7 +1,7 @@
 package com.chess.chessgame.serviceImpl;
 
-import com.chess.chessgame.domain.board.ChessCell;
-import com.chess.chessgame.domain.board.GameField;
+import com.chess.chessgame.domain.board.GameBoardCell;
+import com.chess.chessgame.domain.board.GameBoard;
 import com.chess.chessgame.domain.figures.*;
 import com.chess.chessgame.enums.FigureColor;
 import com.chess.chessgame.enums.FigureName;
@@ -9,8 +9,6 @@ import com.chess.chessgame.enums.NotificationStatus;
 import com.chess.chessgame.services.GameFieldService;
 import com.chess.chessgame.services.GameFileService;
 import com.chess.chessgame.services.GameService;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -18,10 +16,8 @@ import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.ImageCursor;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
@@ -43,13 +39,13 @@ import java.util.concurrent.atomic.AtomicReference;
 public class GameFieldServiceImpl implements GameFieldService {
     public static GameFileService gameFileService = new GameFileServiceImpl();
     public static GameService gameService = new GameServiceImpl();
-    public static GameField gameField;
+    public static GameBoard gameBoard;
 
     public static Group borderPanesGroup = new Group();
 
 
     public Group createGameGroup() {
-        gameField = new GameField();
+        gameBoard = new GameBoard();
         createGameBoard();
         Group hBox = new Group(createButtons());
         BorderPane.setAlignment(hBox, Pos.TOP_RIGHT);
@@ -79,6 +75,15 @@ public class GameFieldServiceImpl implements GameFieldService {
         savedGameResults.addEventHandler(MouseEvent.MOUSE_CLICKED, onSavedGameResults);
         savedGameResults.getStyleClass().setAll("text", "info", "btn-icon");
 
+        EventHandler<MouseEvent> onRandomChessPosition = GameFieldServiceImpl::onRandomChessPosition;
+        Button randomChessPosition = new Button();
+        ImageView randomChessPositionImageView = new ImageView(gameFileService.loadImageByPath("images/random_icon.png"));
+        randomChessPositionImageView.setFitWidth(30);
+        randomChessPositionImageView.setFitHeight(30);
+        randomChessPosition.setGraphic(randomChessPositionImageView);
+        randomChessPosition.addEventHandler(MouseEvent.MOUSE_CLICKED, onRandomChessPosition);
+        randomChessPosition.getStyleClass().setAll("text", "success", "btn-icon");
+
         EventHandler<MouseEvent> onClearField = GameFieldServiceImpl::onClearField;
         Button clearField = new Button("Clear field");
         clearField.addEventHandler(MouseEvent.MOUSE_CLICKED, onClearField);
@@ -89,7 +94,10 @@ public class GameFieldServiceImpl implements GameFieldService {
         figureAttacks.addEventHandler(MouseEvent.MOUSE_CLICKED, onFigureAttacks);
         figureAttacks.getStyleClass().setAll("text", "warning", "sm");
 
-        VBox vBox = new VBox(10, savedGameResults, clearField, figureAttacks);
+        HBox iconButtons = new HBox(10, savedGameResults, randomChessPosition);
+        iconButtons.setAlignment(Pos.CENTER);
+        iconButtons.setPrefWidth(150);
+        VBox vBox = new VBox(10, iconButtons, figureAttacks, clearField);
         vBox.setPadding(new Insets(20, 20, 20, 20));
         return vBox;
     }
@@ -115,7 +123,7 @@ public class GameFieldServiceImpl implements GameFieldService {
                     rectangle.setFill(Color.web("#ecedd1"));
                 }
                 borderPane.setId("BorderPane-" + i + j);
-                if (gameField.isGameStarted()) {
+                if (gameBoard.isGameStarted()) {
                     borderPane.setCursor(Cursor.HAND);
                 }
                 borderPane.getChildren().add(rectangle);
@@ -124,7 +132,7 @@ public class GameFieldServiceImpl implements GameFieldService {
                 borderPane.addEventHandler(MouseEvent.MOUSE_ENTERED_TARGET, selectFigure);
                 borderPane.addEventHandler(MouseEvent.MOUSE_EXITED_TARGET, unselectFigure);
                 borderPane.addEventHandler(MouseEvent.MOUSE_CLICKED, mouseEvent -> {
-                    if (mouseEvent.getButton() == MouseButton.SECONDARY && gameField.isGameStarted()) {
+                    if (mouseEvent.getButton() == MouseButton.SECONDARY && gameBoard.isGameStarted()) {
                         BorderPane selectedPane = findBorderPaneById(((BorderPane) mouseEvent.getSource()).getId());
                         ContextMenu contextMenu = openAvailableFiguresMenu(selectedPane);
                         contextMenu.show(rectangle, mouseEvent.getScreenX(), mouseEvent.getScreenY());
@@ -173,7 +181,7 @@ public class GameFieldServiceImpl implements GameFieldService {
         }
     }
 
-    public void setFigureOnBoard(ChessFigure chessFigure) {
+    private static void setFigureOnBoard(ChessFigure chessFigure) {
         ImageView imageView = loadFigureImage(chessFigure.getColor(), chessFigure.getName());
         imageView.setId(chessFigure.getColor().toString().toUpperCase(Locale.ROOT) + "-" + chessFigure.getName());
         imageView.setX(50);
@@ -238,14 +246,14 @@ public class GameFieldServiceImpl implements GameFieldService {
         return getAllBorderPanes().stream().filter(borderPane -> borderPane.getId().equals(borderPaneId)).findFirst().orElse(new BorderPane());
     }
 
-    private static void paintFigurePath(int[][] matrix, ChessFigure chessFigure) {
+    private static void paintFigurePath(int[][] matrix, FigureColor figureColor) {
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
                 if (matrix[i][j] == 1) {
-                    paintRectangle(i, j, Color.web("#f6f87a"), chessFigure.getColor(), false);
+                    paintRectangle(i, j, Color.web("#f6f87a"), figureColor, false);
                 }
                 if (matrix[i][j] == 10) {
-                    paintRectangle(i, j, Color.RED, chessFigure.getColor(), true);
+                    paintRectangle(i, j, Color.RED, figureColor, true);
                 }
             }
         }
@@ -261,12 +269,12 @@ public class GameFieldServiceImpl implements GameFieldService {
                 color = (Color) rectangle.getFill();
             }
         }
-        gameField.getSelectedCells().add(new ChessCell((Color) rectangle.getFill(), rectangle));
+        gameBoard.getSelectedCells().add(new GameBoardCell((Color) rectangle.getFill(), rectangle));
         rectangle.setFill(color);
     }
 
     private static void unPaintRectangle() {
-        gameField.getSelectedCells().forEach(selected -> selected.getRectangle().setFill(selected.getColor()));
+        gameBoard.getSelectedCells().forEach(selected -> selected.getRectangle().setFill(selected.getColor()));
     }
 
     private static void clearBoard() {
@@ -278,66 +286,75 @@ public class GameFieldServiceImpl implements GameFieldService {
         }
     }
 
-
-    private static HBox createComboBox(int id) {
-        ObservableList<String> figureNameTypes = FXCollections.observableArrayList(
-                FigureName.KING.toString(),
-                FigureName.QUEEN.toString(),
-                FigureName.BISHOP.toString(),
-                FigureName.ROOK.toString(),
-                FigureName.KNIGHT.toString());
-        ComboBox<String> figureNameBox = new ComboBox<>(figureNameTypes);
-        figureNameBox.setValue(FigureName.KING.toString());
-
-        ObservableList<String> figureColors = FXCollections.observableArrayList(FigureColor.BLACK.toString(), FigureColor.WHITE.toString());
-        ComboBox<String> figureColorsBox = new ComboBox<>(figureColors);
-        figureColorsBox.setValue(FigureColor.BLACK.toString());
-
-        TextField xPosition = new TextField();
-        xPosition.setPrefWidth(30);
-        xPosition.setAlignment(Pos.CENTER);
-        xPosition.setPromptText("X");
-        xPosition.setText("0");
-        xPosition.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue.matches("\\d*")) {
-                xPosition.setText(newValue.replaceAll("[^\\d]", ""));
+    private static void removeFigureById(String paneId) {
+        List<BorderPane> borderPanes = getAllBorderPanes();
+        for (BorderPane pane : borderPanes) {
+            if (isCellOccupied(pane) && pane.getId().equals(paneId)) {
+                pane.setCenter(null);
             }
-            if (newValue.equals("9") || newValue.equals("8")) {
-                xPosition.setText("");
-            }
-        });
-        EventHandler<KeyEvent> xkeyEvent = keyEvent1 -> xPosition.setText("");
-        xPosition.addEventHandler(KeyEvent.KEY_PRESSED, xkeyEvent);
-
-        TextField yPosition = new TextField();
-        yPosition.setPrefWidth(30);
-        yPosition.setAlignment(Pos.CENTER);
-        yPosition.setPromptText("Y");
-        yPosition.setText("0");
-        yPosition.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue.matches("\\d*")) {
-                yPosition.setText(newValue.replaceAll("[^\\d]", ""));
-            }
-            if (newValue.equals("9") || newValue.equals("8")) {
-                yPosition.setText("");
-            }
-        });
-        EventHandler<KeyEvent> ykeyEvent = keyEvent1 -> yPosition.setText("");
-        yPosition.addEventHandler(KeyEvent.KEY_PRESSED, ykeyEvent);
-
-        Button button = new Button("ADD");
-        button.setOnAction(actionEvent -> {
-            ChessFigure chessFigure = new ChessFigure();
-            chessFigure.setPosition(new Position(Integer.parseInt(xPosition.getText()), Integer.parseInt(yPosition.getText())));
-            chessFigure.setName(FigureName.valueOf(figureNameBox.getValue()));
-            chessFigure.setColor(FigureColor.valueOf(figureColorsBox.getValue()));
-            gameService.addNewFigure(chessFigure);
-        });
-        HBox hBox = new HBox(10, figureNameBox, figureColorsBox, xPosition, yPosition, button);
-        hBox.setPadding(new Insets(20, 0, 0, 20));
-        hBox.setId("ADD-FORM-" + id);
-        return hBox;
+        }
     }
+
+
+//    private static HBox createComboBox(int id) {
+//        ObservableList<String> figureNameTypes = FXCollections.observableArrayList(
+//                FigureName.KING.toString(),
+//                FigureName.QUEEN.toString(),
+//                FigureName.BISHOP.toString(),
+//                FigureName.ROOK.toString(),
+//                FigureName.KNIGHT.toString());
+//        ComboBox<String> figureNameBox = new ComboBox<>(figureNameTypes);
+//        figureNameBox.setValue(FigureName.KING.toString());
+//
+//        ObservableList<String> figureColors = FXCollections.observableArrayList(FigureColor.BLACK.toString(), FigureColor.WHITE.toString());
+//        ComboBox<String> figureColorsBox = new ComboBox<>(figureColors);
+//        figureColorsBox.setValue(FigureColor.BLACK.toString());
+//
+//        TextField xPosition = new TextField();
+//        xPosition.setPrefWidth(30);
+//        xPosition.setAlignment(Pos.CENTER);
+//        xPosition.setPromptText("X");
+//        xPosition.setText("0");
+//        xPosition.textProperty().addListener((observable, oldValue, newValue) -> {
+//            if (!newValue.matches("\\d*")) {
+//                xPosition.setText(newValue.replaceAll("[^\\d]", ""));
+//            }
+//            if (newValue.equals("9") || newValue.equals("8")) {
+//                xPosition.setText("");
+//            }
+//        });
+//        EventHandler<KeyEvent> xkeyEvent = keyEvent1 -> xPosition.setText("");
+//        xPosition.addEventHandler(KeyEvent.KEY_PRESSED, xkeyEvent);
+//
+//        TextField yPosition = new TextField();
+//        yPosition.setPrefWidth(30);
+//        yPosition.setAlignment(Pos.CENTER);
+//        yPosition.setPromptText("Y");
+//        yPosition.setText("0");
+//        yPosition.textProperty().addListener((observable, oldValue, newValue) -> {
+//            if (!newValue.matches("\\d*")) {
+//                yPosition.setText(newValue.replaceAll("[^\\d]", ""));
+//            }
+//            if (newValue.equals("9") || newValue.equals("8")) {
+//                yPosition.setText("");
+//            }
+//        });
+//        EventHandler<KeyEvent> ykeyEvent = keyEvent1 -> yPosition.setText("");
+//        yPosition.addEventHandler(KeyEvent.KEY_PRESSED, ykeyEvent);
+//
+//        Button button = new Button("ADD");
+//        button.setOnAction(actionEvent -> {
+//            ChessFigure chessFigure = new ChessFigure();
+//            chessFigure.setPosition(new Position(Integer.parseInt(xPosition.getText()), Integer.parseInt(yPosition.getText())));
+//            chessFigure.setName(FigureName.valueOf(figureNameBox.getValue()));
+//            chessFigure.setColor(FigureColor.valueOf(figureColorsBox.getValue()));
+//            gameService.addNewFigure(chessFigure);
+//        });
+//        HBox hBox = new HBox(10, figureNameBox, figureColorsBox, xPosition, yPosition, button);
+//        hBox.setPadding(new Insets(20, 0, 0, 20));
+//        hBox.setId("ADD-FORM-" + id);
+//        return hBox;
+//    }
 
     private static void openDialogWindow() {
         Map<ChessFigure, List<ChessFigure>> chessFigureListMap = gameService.getAttackMap();
@@ -498,7 +515,7 @@ public class GameFieldServiceImpl implements GameFieldService {
                 imageView.setFitWidth(20);
                 imageView.setFitHeight(20);
                 MenuItem menuItem = new MenuItem("Remove figure", imageView);
-                menuItem.setOnAction(actionEvent -> onDeleteFigureFromBoard(borderPane));
+                menuItem.setOnAction(actionEvent -> onRemoveFigureFromBoard(borderPane));
                 contextMenu.getItems().add(menuItem);
             } else {
                 ImageView imageView = new ImageView(gameFileService.loadImageByPath("images/mainIcon.png"));
@@ -512,7 +529,7 @@ public class GameFieldServiceImpl implements GameFieldService {
     }
 
     private static void createHoverEffects(BorderPane borderPane) {
-        if (!gameField.isGameStarted()) {
+        if (!gameBoard.isGameStarted()) {
             ImageCursor imageCursor = new ImageCursor(gameFileService.loadImageByPath("images/stopCursor.png"));
             borderPane.setCursor(imageCursor);
         } else {
@@ -553,50 +570,53 @@ public class GameFieldServiceImpl implements GameFieldService {
 
     //ACTIONS
     private static void onHoverFigure(MouseEvent e) {
-        ChessCell chessCell = gameField.getChessCell();
-        if (!chessCell.isInFocus()) {
+        GameBoardCell gameBoardCell = gameBoard.getChessCell();
+        if (!gameBoardCell.isInFocus()) {
             BorderPane borderPane = findBorderPaneById(((BorderPane) e.getSource()).getId());
             createHoverEffects(borderPane);
             if (isCellOccupied(borderPane)) {
-                chessCell.setInFocus(true);
+                gameBoardCell.setInFocus(true);
                 Rectangle rectangle = getRectangleOfBorderPane(borderPane);
-                chessCell.setColor((Color) rectangle.getFill());
-                chessCell.setRectangle(rectangle);
+                gameBoardCell.setColor((Color) rectangle.getFill());
+                gameBoardCell.setRectangle(rectangle);
                 rectangle.setFill(Color.web("#bacd33"));
 
+                String figureId = getImageOfBorderPane(borderPane).getId();
                 Position position = new Position(Integer.parseInt(borderPane.getId().split("-")[1].split("")[0]),
                         Integer.parseInt(borderPane.getId().split("-")[1].split("")[1]));
-                String figureId = getImageOfBorderPane(borderPane).getId();
-                ChessFigure chessFigure = new ChessFigure(FigureName.valueOf(figureId.split("-")[1]), FigureColor.valueOf(figureId.split("-")[0]), position);
-                paintFigurePath(gameService.getFigureTrajectory(chessFigure), chessFigure);
+                FigureName figureName = FigureName.valueOf(figureId.split("-")[1]);
+                FigureColor figureColor = FigureColor.valueOf(figureId.split("-")[0]);
+
+                paintFigurePath(gameService.getFigureTrajectory(position, figureName, figureColor), figureColor);
             }
         }
     }
 
     private static void onUnHooverFigure(MouseEvent e) {
-        ChessCell chessCell = gameField.getChessCell();
-        if (chessCell.isInFocus()) {
+        GameBoardCell gameBoardCell = gameBoard.getChessCell();
+        if (gameBoardCell.isInFocus()) {
             BorderPane borderPane = findBorderPaneById(((BorderPane) e.getSource()).getId());
             createHoverEffects(borderPane);
             if (isCellOccupied(borderPane)) {
-                chessCell.setInFocus(false);
+                gameBoardCell.setInFocus(false);
                 Rectangle rectangle = getRectangleOfBorderPane(borderPane);
-                rectangle.setFill(chessCell.getColor());
+                rectangle.setFill(gameBoardCell.getColor());
                 unPaintRectangle();
             }
         }
     }
 
     private static void onFigureAttacks(MouseEvent e) {
-        if (gameField.isGameStarted()) {
+        if (gameBoard.isGameStarted()) {
             openDialogWindow();
         }
     }
 
     private static void onClearField(MouseEvent e) {
-        if (gameField.isGameStarted()) {
-            gameField = new GameField();
+        if (gameBoard.isGameStarted()) {
+            gameBoard = new GameBoard();
             gameService.clearGameBoard();
+            clearBoard();
             refreshGame();
         }
     }
@@ -609,14 +629,14 @@ public class GameFieldServiceImpl implements GameFieldService {
         }
         chessFigure.setPosition(position);
         gameService.addNewFigure(chessFigure);
-        gameService.initGame();
-        gameField.setGameStarted(true);
+        refreshGame();
     }
 
-    private static void onDeleteFigureFromBoard(BorderPane borderPane) {
+    private static void onRemoveFigureFromBoard(BorderPane borderPane) {
         Position position = new Position(Integer.parseInt(borderPane.getId().split("-")[1].split("")[0]),
                 Integer.parseInt(borderPane.getId().split("-")[1].split("")[1]));
         gameService.removeFigure(position);
+        removeFigureById(borderPane.getId());
         refreshGame();
     }
 
@@ -629,25 +649,22 @@ public class GameFieldServiceImpl implements GameFieldService {
         }
     }
 
+    private static void onRandomChessPosition(MouseEvent e) {
+        System.out.println();
+    }
+
     public void onStartGame() {
-        if (gameField.isGameStarted()) {
-            gameField = new GameField();
-            gameService.clearGameBoard();
-            refreshGame();
-        }
-        gameField.setGameStarted(true);
         try {
             gameFileService.createWorkingFiles();
         } catch (IOException ex) {
             ex.printStackTrace();
         }
-        gameService.initGame();
+        refreshGame();
     }
 
-
     private static void refreshGame() {
-        clearBoard();
-        gameField.setGameStarted(true);
         gameService.initGame();
+        gameBoard.setGameStarted(true);
+        gameService.getFiguresForSetup().forEach(GameFieldServiceImpl::setFigureOnBoard);
     }
 }

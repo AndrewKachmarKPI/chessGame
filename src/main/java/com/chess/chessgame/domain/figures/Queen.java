@@ -6,17 +6,12 @@ import com.chess.chessgame.serviceImpl.AttackServiceImpl;
 import com.chess.chessgame.services.AttackService;
 
 public class Queen extends ChessFigure {
-    public Queen() {
-    }
-
-    public Queen(ChessFigure chessFigure) {
-        super(chessFigure.getName(), chessFigure.getColor(), chessFigure.getPosition());
-    }
 
     public Queen(FigureName name, FigureColor color, Position position) {
         super(name, color, position);
     }
 
+    @Override
     public int[][] getMoveDirection(int[][] gameMatrix) {
         int[][] matrix = new int[8][8];
         for (int i = 0; i < 8; i++) {
@@ -41,7 +36,6 @@ public class Queen extends ChessFigure {
 
     @Override
     public int[][] removeDuplicates(int[][] matrix, int[][] gameMatrix) {
-        AttackService attackService = new AttackServiceImpl();
         int[] horizontalFigureSplice = matrix[this.getPosition().getxPosition()];
         int[] horizontalGameSplice = gameMatrix[this.getPosition().getxPosition()];
         int[] verticalFigureSplice = attackService.getVerticalSplice(matrix,this.getPosition().getyPosition());
