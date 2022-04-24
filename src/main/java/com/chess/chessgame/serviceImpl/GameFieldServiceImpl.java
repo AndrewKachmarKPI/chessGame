@@ -5,6 +5,7 @@ import com.chess.chessgame.domain.board.GameField;
 import com.chess.chessgame.domain.figures.*;
 import com.chess.chessgame.enums.FigureColor;
 import com.chess.chessgame.enums.FigureName;
+import com.chess.chessgame.enums.NotificationStatus;
 import com.chess.chessgame.services.GameFieldService;
 import com.chess.chessgame.services.GameFileService;
 import com.chess.chessgame.services.GameService;
@@ -30,6 +31,8 @@ import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.util.Duration;
+import org.controlsfx.control.Notifications;
 
 import java.io.IOException;
 import java.util.*;
@@ -67,17 +70,26 @@ public class GameFieldServiceImpl implements GameFieldService {
     }
 
     private static VBox createButtons() {
+        EventHandler<MouseEvent> onSavedGameResults = GameFieldServiceImpl::onSavedGameResults;
+        Button savedGameResults = new Button();
+        ImageView imageView = new ImageView(gameFileService.loadImageByPath("images/save_icon.png"));
+        imageView.setFitWidth(30);
+        imageView.setFitHeight(30);
+        savedGameResults.setGraphic(imageView);
+        savedGameResults.addEventHandler(MouseEvent.MOUSE_CLICKED, onSavedGameResults);
+        savedGameResults.getStyleClass().setAll("text", "info", "btn-icon");
+
         EventHandler<MouseEvent> onClearField = GameFieldServiceImpl::onClearField;
         Button clearField = new Button("Clear field");
         clearField.addEventHandler(MouseEvent.MOUSE_CLICKED, onClearField);
-        clearField.getStyleClass().setAll("text", "clear-field");
+        clearField.getStyleClass().setAll("text", "danger", "sm");
 
         EventHandler<MouseEvent> onFigureAttacks = GameFieldServiceImpl::onFigureAttacks;
         Button figureAttacks = new Button("Show attacks");
         figureAttacks.addEventHandler(MouseEvent.MOUSE_CLICKED, onFigureAttacks);
-        figureAttacks.getStyleClass().setAll("text", "show-attacks");
+        figureAttacks.getStyleClass().setAll("text", "warning", "sm");
 
-        VBox vBox = new VBox(10, clearField, figureAttacks);
+        VBox vBox = new VBox(10, savedGameResults, clearField, figureAttacks);
         vBox.setPadding(new Insets(20, 20, 20, 20));
         return vBox;
     }
@@ -508,6 +520,37 @@ public class GameFieldServiceImpl implements GameFieldService {
         }
     }
 
+    private static void createNotification(int duration, String title, String text, NotificationStatus notificationStatus) {
+        Notifications notifications = Notifications.create()
+                .title(title)
+                .text(text)
+                .hideAfter(Duration.seconds(duration))
+                .position(Pos.BOTTOM_RIGHT);
+        notifications.darkStyle();
+        switch (notificationStatus) {
+            case INFO: {
+                notifications.showInformation();
+                break;
+            }
+            case ERROR: {
+                notifications.showError();
+                break;
+            }
+            case WARNING: {
+                notifications.showWarning();
+                break;
+            }
+            case SUCCESS: {
+                ImageView imageView = new ImageView(gameFileService.loadImageByPath("images/success-icon.png"));
+                imageView.setFitHeight(50);
+                imageView.setFitWidth(50);
+                notifications.graphic(imageView);
+                notifications.show();
+                break;
+            }
+        }
+    }
+
     //ACTIONS
     private static void onHoverFigure(MouseEvent e) {
         ChessCell chessCell = gameField.getChessCell();
@@ -544,21 +587,6 @@ public class GameFieldServiceImpl implements GameFieldService {
         }
     }
 
-    public void onStartGame() {
-        if(gameField.isGameStarted()){
-            gameField = new GameField();
-            gameService.clearGameBoard();
-            refreshGame();
-        }
-        gameField.setGameStarted(true);
-        try {
-            gameFileService.createWorkingFiles();
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-        gameService.initGame();
-    }
-
     private static void onFigureAttacks(MouseEvent e) {
         if (gameField.isGameStarted()) {
             openDialogWindow();
@@ -591,6 +619,31 @@ public class GameFieldServiceImpl implements GameFieldService {
         gameService.removeFigure(position);
         refreshGame();
     }
+
+    private static void onSavedGameResults(MouseEvent e) {
+        boolean isSaved = gameService.saveGameResults();
+        if (isSaved) {
+            createNotification(5, "Saved results", "Figure attacks successfully saved", NotificationStatus.SUCCESS);
+        } else {
+            createNotification(5, "Error saving results", "Figure attacks saving error", NotificationStatus.ERROR);
+        }
+    }
+
+    public void onStartGame() {
+        if (gameField.isGameStarted()) {
+            gameField = new GameField();
+            gameService.clearGameBoard();
+            refreshGame();
+        }
+        gameField.setGameStarted(true);
+        try {
+            gameFileService.createWorkingFiles();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        gameService.initGame();
+    }
+
 
     private static void refreshGame() {
         clearBoard();

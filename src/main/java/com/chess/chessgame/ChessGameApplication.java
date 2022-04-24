@@ -19,7 +19,7 @@ public class ChessGameApplication extends Application {
         stage.setTitle("Chess game!");
         stage.setScene(gameMenuService.createMainScene());
         stage.getIcons().add(gameFileService.loadImageByPath("images/mainIcon.png"));
-//        stage.setResizable(false);
+        stage.setResizable(false);
         stage.show();
     }
 

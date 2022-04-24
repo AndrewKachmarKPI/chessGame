@@ -33,102 +33,158 @@
     -fx-border-width: 0 0 2;
     -fx-border-color: white;
 }
-.btn-lg{
+
+.btn-lg {
     -fx-cursor: hand;
 }
-.availableDialog{
+
+.availableDialog {
     -fx-pref-height: 100px;
 }
-.game-start-btn{
 
-}
-.clear-field {
-    -fx-padding: 8 15 15 15;
-    -fx-background-insets: 0,0 0 5 0, 0 0 6 0, 0 0 7 0;
-    -fx-background-radius: 8;
-    -fx-background-color:
-            linear-gradient(from 0% 93% to 0% 100%, #a34313 0%, #903b12 100%),
-            #9d4024,
-            #d86e3a,
-            radial-gradient(center 50% 50%, radius 100%, #d86e3a, #c54e2c);
-    -fx-effect: dropshadow( gaussian , rgba(0,0,0,0.75) , 4,0,0,1 );
-    -fx-font-weight: bold;
+.sm {
     -fx-font-size: 1.1em;
-}
-.clear-field:hover {
-    -fx-cursor: hand;
-    -fx-background-color:
-            linear-gradient(from 0% 93% to 0% 100%, #a34313 0%, #903b12 100%),
-            #9d4024,
-            #d86e3a,
-            radial-gradient(center 50% 50%, radius 100%, #ea7f4b, #c54e2c);
-}
-.clear-field:pressed {
-    -fx-padding: 10 15 13 15;
-    -fx-background-insets: 2 0 0 0,2 0 3 0, 2 0 4 0, 2 0 5 0;
-}
-.clear-field .text {
-    -fx-fill: white;
-    -fx-effect: dropshadow( gaussian , #a30000 , 0,0,0,2 );
+    -fx-min-width: 150px;
 }
 
+.lg {
+    -fx-font-size: 1.5em;
+    -fx-min-width: 337px;
+}
 
-.start-game {
+.btn-rounded {
+    -fx-border-radius: 100;
+}
+.info {
     -fx-padding: 8 15 15 15;
-    -fx-background-insets: 0,0 0 5 0, 0 0 6 0, 0 0 7 0;
+    -fx-background-insets: 0, 0 0 5 0, 0 0 6 0, 0 0 7 0;
     -fx-background-radius: 8;
-    -fx-background-color:
-            linear-gradient(from 0% 93% to 0% 100%, #13a318 0%, #129017 100%),
-            #249d26,
-            #3bd83a,
-            radial-gradient(center 50% 50%, radius 100%, #3ad843, #2dc52c);
-    -fx-effect: dropshadow( gaussian , rgba(0,0,0,0.75) , 4,0,0,1 );
+    -fx-background-color: linear-gradient(from 0% 93% to 0% 100%, #13a3a1 0%, #128e90 100%),
+    #249d9d,
+    #3ad8d5,
+    radial-gradient(center 50% 50%, radius 100%, #3ad8d8, #2cc5c5);
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.75), 4, 0, 0, 1);
     -fx-font-weight: bold;
-    -fx-font-size: 1.1em;
-}
-.start-game:hover {
-    -fx-cursor: hand;
-    -fx-background-color:
-            linear-gradient(from 0% 93% to 0% 100%, #13a318 0%, #129017 100%),
-            #249d26,
-            #3bd83a,
-            radial-gradient(center 50% 50%, radius 100%, #4bea4e, #30c52c);
-}
-.start-game:pressed {
-    -fx-padding: 10 15 13 15;
-    -fx-background-insets: 2 0 0 0,2 0 3 0, 2 0 4 0, 2 0 5 0;
-}
-.start-game .text {
-    -fx-fill: white;
-    -fx-effect: dropshadow( gaussian , #07a300 , 0,0,0,2 );
+    -fx-text-alignment: center;
+    -fx-alignment: center;
+    -fx-font-family: "Gill Sans Ultra Bold";
 }
 
-.show-attacks {
-    -fx-padding: 8 15 15 15;
-    -fx-background-insets: 0,0 0 5 0, 0 0 6 0, 0 0 7 0;
-    -fx-background-radius: 8;
-    -fx-background-color:
-            linear-gradient(from 0% 93% to 0% 100%, #93a313 0%, #849012 100%),
-            #889d24,
-            #c3d83a,
-            radial-gradient(center 50% 50%, radius 100%, #c9d83a, #b1c52c);
-    -fx-effect: dropshadow( gaussian , rgba(0,0,0,0.75) , 4,0,0,1 );
-    -fx-font-weight: bold;
-    -fx-font-size: 1.1em;
-}
-.show-attacks:hover {
+.info:hover {
     -fx-cursor: hand;
-    -fx-background-color:
-            linear-gradient(from 0% 93% to 0% 100%, #93a313 0%, #849012 100%),
-            #889d24,
-            #c3d83a,
-            radial-gradient(center 50% 50%, radius 100%, #d8ea4b, #adc52c);
+    -fx-background-color: linear-gradient(from 0% 93% to 0% 100%, #13a3a1 0%, #128e90 100%),
+    #249d9d,
+    #3ad8d5,
+    radial-gradient(center 50% 50%, radius 100%, #4be7ea, #2cc5c5);
 }
-.show-attacks:pressed {
+
+.info:pressed {
     -fx-padding: 10 15 13 15;
-    -fx-background-insets: 2 0 0 0,2 0 3 0, 2 0 4 0, 2 0 5 0;
+    -fx-background-insets: 2 0 0 0, 2 0 3 0, 2 0 4 0, 2 0 5 0;
 }
-.show-attacks .text {
+
+.info .text {
     -fx-fill: white;
-    -fx-effect: dropshadow( gaussian , #97a300 , 0,0,0,2 );
+    -fx-effect: dropshadow(gaussian, #009ea3, 0, 0, 0, 2);
+}
+
+
+
+.danger {
+    -fx-padding: 8 15 15 15;
+    -fx-background-insets: 0, 0 0 5 0, 0 0 6 0, 0 0 7 0;
+    -fx-background-radius: 8;
+    -fx-background-color: linear-gradient(from 0% 93% to 0% 100%, #a34313 0%, #903b12 100%),
+    #9d4024,
+    #d86e3a,
+    radial-gradient(center 50% 50%, radius 100%, #d86e3a, #c54e2c);
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.75), 4, 0, 0, 1);
+    -fx-font-weight: bold;
+    -fx-text-alignment: center;
+    -fx-alignment: center;
+    -fx-font-family: "Gill Sans Ultra Bold";
+}
+
+.danger:hover {
+    -fx-cursor: hand;
+    -fx-background-color: linear-gradient(from 0% 93% to 0% 100%, #a34313 0%, #903b12 100%),
+    #9d4024,
+    #d86e3a,
+    radial-gradient(center 50% 50%, radius 100%, #ea7f4b, #c54e2c);
+}
+
+.danger:pressed {
+    -fx-padding: 10 15 13 15;
+    -fx-background-insets: 2 0 0 0, 2 0 3 0, 2 0 4 0, 2 0 5 0;
+}
+
+.danger .text {
+    -fx-fill: white;
+    -fx-effect: dropshadow(gaussian, #a30000, 0, 0, 0, 2);
+}
+
+.success {
+    -fx-padding: 8 15 15 15;
+    -fx-background-insets: 0, 0 0 5 0, 0 0 6 0, 0 0 7 0;
+    -fx-background-radius: 8;
+    -fx-background-color: linear-gradient(from 0% 93% to 0% 100%, #13a318 0%, #129017 100%),
+    #249d26,
+    #3bd83a,
+    radial-gradient(center 50% 50%, radius 100%, #3ad843, #2dc52c);
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.75), 4, 0, 0, 1);
+    -fx-font-weight: bold;
+    -fx-text-alignment: center;
+    -fx-alignment: center;
+    -fx-font-family: "Gill Sans Ultra Bold";
+}
+
+.success:hover {
+    -fx-cursor: hand;
+    -fx-background-color: linear-gradient(from 0% 93% to 0% 100%, #13a318 0%, #129017 100%),
+    #249d26,
+    #3bd83a,
+    radial-gradient(center 50% 50%, radius 100%, #4bea4e, #30c52c);
+}
+
+.success:pressed {
+    -fx-padding: 10 15 13 15;
+    -fx-background-insets: 2 0 0 0, 2 0 3 0, 2 0 4 0, 2 0 5 0;
+}
+
+.success .text {
+    -fx-fill: white;
+    -fx-effect: dropshadow(gaussian, #07a300, 0, 0, 0, 2);
+}
+
+.warning {
+    -fx-padding: 8 15 15 15;
+    -fx-background-insets: 0, 0 0 5 0, 0 0 6 0, 0 0 7 0;
+    -fx-background-radius: 8;
+    -fx-background-color: linear-gradient(from 0% 93% to 0% 100%, #93a313 0%, #849012 100%),
+    #889d24,
+    #c3d83a,
+    radial-gradient(center 50% 50%, radius 100%, #c9d83a, #b1c52c);
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.75), 4, 0, 0, 1);
+    -fx-font-weight: bold;
+    -fx-text-alignment: center;
+    -fx-alignment: center;
+    -fx-font-family: "Gill Sans Ultra Bold";
+}
+
+.warning:hover {
+    -fx-cursor: hand;
+    -fx-background-color: linear-gradient(from 0% 93% to 0% 100%, #93a313 0%, #849012 100%),
+    #889d24,
+    #c3d83a,
+    radial-gradient(center 50% 50%, radius 100%, #d8ea4b, #adc52c);
+}
+
+.warning:pressed {
+    -fx-padding: 10 15 13 15;
+    -fx-background-insets: 2 0 0 0, 2 0 3 0, 2 0 4 0, 2 0 5 0;
+}
+
+.warning .text {
+    -fx-fill: white;
+    -fx-effect: dropshadow(gaussian, #97a300, 0, 0, 0, 2);
 }

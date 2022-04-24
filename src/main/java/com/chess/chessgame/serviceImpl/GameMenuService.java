@@ -43,19 +43,19 @@ public class GameMenuService {
 
     private Group createNavigationMenu() {
         EventHandler<MouseEvent> onStartGame = this::onStartGame;
-        Button startGame = new Button("Start game");
+        Button startGame = new Button("START GAME");
         startGame.addEventHandler(MouseEvent.MOUSE_CLICKED, onStartGame);
-        startGame.getStyleClass().setAll("text", "start-game");
+        startGame.getStyleClass().setAll("text", "success","lg");
 
         EventHandler<MouseEvent> onSavedGames = this::onSavedGames;
-        Button figureAttacks = new Button("Saved games");
+        Button figureAttacks = new Button("SAVED GAMES");
         figureAttacks.addEventHandler(MouseEvent.MOUSE_CLICKED, onSavedGames);
-        figureAttacks.getStyleClass().setAll("text", "show-attacks");
+        figureAttacks.getStyleClass().setAll("text", "warning","lg");
 
         EventHandler<MouseEvent> onExitGame = this::onExitGame;
-        Button exitField = new Button("Exit game");
+        Button exitField = new Button("EXIT GAME");
         exitField.addEventHandler(MouseEvent.MOUSE_CLICKED, onExitGame);
-        exitField.getStyleClass().setAll("text", "clear-field");
+        exitField.getStyleClass().setAll("text", "danger","lg");
 
 
         VBox vBox = new VBox(10, startGame, figureAttacks, exitField);
@@ -78,7 +78,7 @@ public class GameMenuService {
         BorderPane.setAlignment(mainBox, Pos.CENTER);
         borderPane.setCenter(mainBox);
         borderPane.setMinHeight(680);
-        borderPane.setMinWidth(800);
+        borderPane.setMinWidth(900);
         return new Group(borderPane);
     }
 

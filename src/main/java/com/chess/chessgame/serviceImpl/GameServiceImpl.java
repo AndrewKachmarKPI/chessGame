@@ -20,7 +20,6 @@ public class GameServiceImpl implements GameService {
         loadFigures();
         fillFigureMap();
         loadFiguresOnBoard();
-        saveGameResults();
     }
 
     @Override
@@ -123,7 +122,13 @@ public class GameServiceImpl implements GameService {
 
     @Override
     public Map<ChessFigure, List<ChessFigure>> getAttackMap() {
-        return chessBoard.getChessFigureMap();
+        Map<ChessFigure, List<ChessFigure>> chessFigureListMap = new HashMap<>();
+        chessBoard.getChessFigureMap().forEach((chessFigure, chessFigures) -> {
+            if (!chessFigures.isEmpty()) {
+                chessFigureListMap.put(chessFigure, chessFigures);
+            }
+        });
+        return chessFigureListMap;
     }
 
     @Override
@@ -198,7 +203,7 @@ public class GameServiceImpl implements GameService {
     public boolean saveGameResults() {
         boolean isSaved = false;
         try {
-            isSaved = gameFileService.saveResultFile(chessBoard.getChessFigureMap());
+            isSaved = gameFileService.saveResultFile(getAttackMap());
         } catch (IOException e) {
             e.printStackTrace();
         }

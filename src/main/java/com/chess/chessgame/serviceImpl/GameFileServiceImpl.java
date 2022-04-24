@@ -6,10 +6,12 @@ import com.chess.chessgame.enums.FigureColor;
 import com.chess.chessgame.enums.FigureName;
 import com.chess.chessgame.services.GameFileService;
 import javafx.scene.image.Image;
-import org.omg.CORBA.Environment;
 
 import java.io.*;
 import java.nio.file.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class GameFileServiceImpl implements GameFileService {
@@ -179,10 +181,11 @@ public class GameFileServiceImpl implements GameFileService {
 
     public boolean saveResultFile(Map<ChessFigure, List<ChessFigure>> chessFigureListMap) throws IOException {
         boolean isSaved = false;
-        File resultFile = new File(System.getProperty("user.dir") + "\\gameResult.txt");
+        String fileIdentifier = UUID.randomUUID().toString();
+        File resultFile = new File(System.getProperty("user.dir") + "\\" + fileIdentifier + "-game-result.txt");
         if (resultFile.createNewFile()) {
             chessFigureListMap.forEach((chessFigure, chessFigures) -> {
-                writeFigureToFile("gameResult.txt", chessFigure, getFormattedFigureListPath(chessFigures));
+                writeFigureToFile(fileIdentifier+"-game-result.txt", chessFigure, getFormattedFigureListPath(chessFigures));
             });
             isSaved = true;
         }
