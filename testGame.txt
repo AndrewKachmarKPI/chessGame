@@ -1,0 +1,2 @@
+black king 3 3
+white knight 4 4

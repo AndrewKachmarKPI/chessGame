@@ -3,21 +3,19 @@ package com.chess.chessgame.services;
 import com.chess.chessgame.domain.figures.ChessFigure;
 import javafx.scene.image.Image;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
 
 
 public interface GameFileService {
-    List<ChessFigure> getFiguresFromInitFile();
+    List<ChessFigure> getFiguresFromFile(String fileName);
 
-    void removeFigureFromFile(ChessFigure chessFigure);
+    void removeFigureFromFile(ChessFigure chessFigure, String fileName);
 
     List<ChessFigure> getAllFigures();
 
-    boolean clearFiguresFile();
+    boolean clearFiguresFile(String fileName);
 
     boolean writeFigureToFile(String fileName,ChessFigure chessFigure);
     boolean writeFigureToFile(String fileName, ChessFigure chessFigure, String... args);

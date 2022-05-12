@@ -1,5 +1,6 @@
 package com.chess.chessgame.serviceImpl;
 
+import com.chess.chessgame.services.GameFieldService;
 import com.chess.chessgame.services.GameFileService;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
@@ -10,15 +11,19 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
+
+import java.io.File;
+import java.util.Arrays;
+import java.util.List;
 
 public class GameMenuService {
-    private final GameFieldServiceImpl gameFieldService;
+    private final GameFieldService gameFieldService;
     private final GameFileService gameFileService;
-    private Group rootGroup;
+    private final Group rootGroup;
 
     public GameMenuService() {
         gameFieldService = new GameFieldServiceImpl();
@@ -33,29 +38,21 @@ public class GameMenuService {
         return scene;
     }
 
-    private HBox createExitButton() {
-        EventHandler<MouseEvent> onExitGame = this::onCloseGame;
-        Button exitField = new Button("Exit game");
-        exitField.addEventHandler(MouseEvent.MOUSE_CLICKED, onExitGame);
-        exitField.getStyleClass().setAll("text", "clear-field");
-        return new HBox(10, exitField);
-    }
-
     private Group createNavigationMenu() {
         EventHandler<MouseEvent> onStartGame = this::onStartGame;
         Button startGame = new Button("START GAME");
         startGame.addEventHandler(MouseEvent.MOUSE_CLICKED, onStartGame);
-        startGame.getStyleClass().setAll("text", "success","lg");
+        startGame.getStyleClass().setAll("text", "success", "lg");
 
         EventHandler<MouseEvent> onSavedGames = this::onSavedGames;
-        Button figureAttacks = new Button("SAVED GAMES");
+        Button figureAttacks = new Button("LOAD GAME FILE");
         figureAttacks.addEventHandler(MouseEvent.MOUSE_CLICKED, onSavedGames);
-        figureAttacks.getStyleClass().setAll("text", "warning","lg");
+        figureAttacks.getStyleClass().setAll("text", "warning", "lg");
 
         EventHandler<MouseEvent> onExitGame = this::onExitGame;
         Button exitField = new Button("EXIT GAME");
         exitField.addEventHandler(MouseEvent.MOUSE_CLICKED, onExitGame);
-        exitField.getStyleClass().setAll("text", "danger","lg");
+        exitField.getStyleClass().setAll("text", "danger", "lg");
 
 
         VBox vBox = new VBox(10, startGame, figureAttacks, exitField);
@@ -82,22 +79,31 @@ public class GameMenuService {
         return new Group(borderPane);
     }
 
-    private void onCloseGame(MouseEvent e) {
-        rootGroup.getChildren().clear();
-        rootGroup.getChildren().add(createNavigationMenu());
-    }
+
 
     private void onStartGame(MouseEvent e) {
+        closeStartMenu();
+        gameFieldService.onStartGame();
+    }
+
+    private void closeStartMenu(){
         rootGroup.getChildren().clear();
         Group gameFieldGroup = gameFieldService.createGameGroup();
-//        gameFieldGroup.getChildren().add(createExitButton());
         rootGroup.getChildren().add(gameFieldGroup);
-        gameFieldService.onStartGame();
     }
 
     private void onSavedGames(MouseEvent e) {
-        gameFieldService.createGameGroup();
-        gameFieldService.onStartGame();
+        FileChooser fileChooser = new FileChooser();
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
+        fileChooser.getExtensionFilters().add(extFilter);
+        Stage stage = (Stage) rootGroup.getScene().getWindow();
+        stage.setTitle("Select game file");
+        stage.getIcons().add(gameFileService.loadImageByPath("images/mainIcon.png"));
+        File file = fileChooser.showOpenDialog(stage);
+        if (file != null) {
+            closeStartMenu();
+            gameFieldService.onLoadGame(file);
+        }
     }
 
     private void onExitGame(MouseEvent e) {

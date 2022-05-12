@@ -1,5 +1,6 @@
 package com.chess.chessgame.domain.board;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,6 +8,7 @@ public class GameBoard {
     private List<GameBoardCell> selectedCells;
     private GameBoardCell gameBoardCell;
     private boolean isGameStarted;
+    private String workingFileName;
 
     public GameBoard() {
         this.selectedCells = new ArrayList<>();
@@ -41,5 +43,21 @@ public class GameBoard {
 
     public void setChessCell(GameBoardCell gameBoardCell) {
         this.gameBoardCell = gameBoardCell;
+    }
+
+    public GameBoardCell getGameBoardCell() {
+        return gameBoardCell;
+    }
+
+    public void setGameBoardCell(GameBoardCell gameBoardCell) {
+        this.gameBoardCell = gameBoardCell;
+    }
+
+    public String getWorkingFileName() {
+        return workingFileName;
+    }
+
+    public void setWorkingFileName(String workingFileName) {
+        this.workingFileName = workingFileName;
     }
 }

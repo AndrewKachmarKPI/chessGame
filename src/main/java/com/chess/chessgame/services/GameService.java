@@ -4,11 +4,13 @@ import com.chess.chessgame.domain.figures.*;
 import com.chess.chessgame.enums.FigureColor;
 import com.chess.chessgame.enums.FigureName;
 
+import java.io.File;
 import java.util.*;
 
 
 public interface GameService {
     void initGame();
+    void initGame(String fileName);
 
     List<ChessFigure> getFiguresForSetup();
 
@@ -17,15 +19,15 @@ public interface GameService {
     int[][] getFigureTrajectory(Position pos, FigureName figureName, FigureColor figureColor);
 
     ChessFigure createChessFigure(Position pos, FigureName figureName, FigureColor figureColor);
-    void clearGameBoard();
+    void clearGameBoard(String fileName);
 
 
-    void addNewFigure(ChessFigure chessFigure);
+    void addNewFigure(ChessFigure chessFigure, String fileName);
 
     List<ChessFigure> getAvailableFigures();
 
 
-    void removeFigure(Position position);
+    void removeFigure(Position position, String fileName);
 
     boolean saveGameResults();
 }

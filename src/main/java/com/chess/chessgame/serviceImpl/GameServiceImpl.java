@@ -4,10 +4,10 @@ import com.chess.chessgame.domain.board.ChessBoard;
 import com.chess.chessgame.domain.figures.*;
 import com.chess.chessgame.enums.FigureColor;
 import com.chess.chessgame.enums.FigureName;
-import com.chess.chessgame.services.GameFieldService;
 import com.chess.chessgame.services.GameFileService;
 import com.chess.chessgame.services.GameService;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -19,12 +19,17 @@ public class GameServiceImpl implements GameService {
 
     @Override
     public void initGame() {
-        loadFigures();
+        loadFigures("init.txt");
+        fillFigureMap();
+    }
+    @Override
+    public void initGame(String file) {
+        loadFigures(file);
         fillFigureMap();
     }
 
-    private void loadFigures() {
-        List<ChessFigure> figures = gameFileService.getFiguresFromInitFile();
+    private void loadFigures(String fileName) {
+        List<ChessFigure> figures =  gameFileService.getFiguresFromFile(fileName);
         int[][] matrix = new int[8][8];
         Map<ChessFigure, List<ChessFigure>> chessFigureMap = new HashMap<>();
         figures.forEach(chessFigure -> {
@@ -159,16 +164,16 @@ public class GameServiceImpl implements GameService {
     }
 
     @Override
-    public void clearGameBoard() {
+    public void clearGameBoard(String fileName) {
         chessBoard = new ChessBoard();
-        if (gameFileService.clearFiguresFile()) {
-            loadFigures();
+        if (gameFileService.clearFiguresFile(fileName)) {
+            chessBoard = new ChessBoard();
         }
     }
 
     @Override
-    public void addNewFigure(ChessFigure chessFigure) {
-        gameFileService.writeFigureToFile("init.txt", chessFigure);
+    public void addNewFigure(ChessFigure chessFigure, String fileName) {
+        gameFileService.writeFigureToFile(fileName, chessFigure);
     }
 
     @Override
@@ -181,7 +186,7 @@ public class GameServiceImpl implements GameService {
     }
 
     @Override
-    public void removeFigure(Position position) {
+    public void removeFigure(Position position, String fileName) {
         ChessFigure chessFigure = chessBoard.getFigures()
                 .stream()
                 .filter(chessFigure1 -> chessFigure1.getPosition().getxPosition() == position.getxPosition() && chessFigure1.getPosition().getyPosition() == position.getyPosition())
@@ -189,7 +194,7 @@ public class GameServiceImpl implements GameService {
         if (chessFigure.getName() != null) {
             chessBoard.getFigures().remove(chessFigure);
             chessBoard.getChessFigureMap().remove(chessFigure);
-            gameFileService.removeFigureFromFile(chessFigure);
+            gameFileService.removeFigureFromFile(chessFigure, fileName);
         }
     }
 

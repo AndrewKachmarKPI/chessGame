@@ -30,6 +30,7 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.controlsfx.control.Notifications;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -67,22 +68,18 @@ public class GameFieldServiceImpl implements GameFieldService {
 
     private static VBox createButtons() {
         EventHandler<MouseEvent> onSavedGameResults = GameFieldServiceImpl::onSavedGameResults;
-        Button savedGameResults = new Button();
+        Button savedGameResults = new Button("Save game");
         ImageView imageView = new ImageView(gameFileService.loadImageByPath("images/save_icon.png"));
         imageView.setFitWidth(30);
         imageView.setFitHeight(30);
         savedGameResults.setGraphic(imageView);
         savedGameResults.addEventHandler(MouseEvent.MOUSE_CLICKED, onSavedGameResults);
-        savedGameResults.getStyleClass().setAll("text", "info", "btn-icon");
+        savedGameResults.getStyleClass().setAll("text", "info", "sm");
 
-        EventHandler<MouseEvent> onRandomChessPosition = GameFieldServiceImpl::onRandomChessPosition;
-        Button randomChessPosition = new Button();
-        ImageView randomChessPositionImageView = new ImageView(gameFileService.loadImageByPath("images/random_icon.png"));
-        randomChessPositionImageView.setFitWidth(30);
-        randomChessPositionImageView.setFitHeight(30);
-        randomChessPosition.setGraphic(randomChessPositionImageView);
-        randomChessPosition.addEventHandler(MouseEvent.MOUSE_CLICKED, onRandomChessPosition);
-        randomChessPosition.getStyleClass().setAll("text", "success", "btn-icon");
+        EventHandler<MouseEvent> onDefaultChessPosition = GameFieldServiceImpl::onDefaultChessPosition;
+        Button randomChessPosition = new Button("Default chess");
+        randomChessPosition.addEventHandler(MouseEvent.MOUSE_CLICKED, onDefaultChessPosition);
+        randomChessPosition.getStyleClass().setAll("text", "success", "sm");
 
         EventHandler<MouseEvent> onClearField = GameFieldServiceImpl::onClearField;
         Button clearField = new Button("Clear field");
@@ -94,10 +91,7 @@ public class GameFieldServiceImpl implements GameFieldService {
         figureAttacks.addEventHandler(MouseEvent.MOUSE_CLICKED, onFigureAttacks);
         figureAttacks.getStyleClass().setAll("text", "warning", "sm");
 
-        HBox iconButtons = new HBox(10, savedGameResults, randomChessPosition);
-        iconButtons.setAlignment(Pos.CENTER);
-        iconButtons.setPrefWidth(150);
-        VBox vBox = new VBox(10, iconButtons, figureAttacks, clearField);
+        VBox vBox = new VBox(10, savedGameResults,randomChessPosition, figureAttacks, clearField);
         vBox.setPadding(new Insets(20, 20, 20, 20));
         return vBox;
     }
@@ -296,65 +290,6 @@ public class GameFieldServiceImpl implements GameFieldService {
     }
 
 
-//    private static HBox createComboBox(int id) {
-//        ObservableList<String> figureNameTypes = FXCollections.observableArrayList(
-//                FigureName.KING.toString(),
-//                FigureName.QUEEN.toString(),
-//                FigureName.BISHOP.toString(),
-//                FigureName.ROOK.toString(),
-//                FigureName.KNIGHT.toString());
-//        ComboBox<String> figureNameBox = new ComboBox<>(figureNameTypes);
-//        figureNameBox.setValue(FigureName.KING.toString());
-//
-//        ObservableList<String> figureColors = FXCollections.observableArrayList(FigureColor.BLACK.toString(), FigureColor.WHITE.toString());
-//        ComboBox<String> figureColorsBox = new ComboBox<>(figureColors);
-//        figureColorsBox.setValue(FigureColor.BLACK.toString());
-//
-//        TextField xPosition = new TextField();
-//        xPosition.setPrefWidth(30);
-//        xPosition.setAlignment(Pos.CENTER);
-//        xPosition.setPromptText("X");
-//        xPosition.setText("0");
-//        xPosition.textProperty().addListener((observable, oldValue, newValue) -> {
-//            if (!newValue.matches("\\d*")) {
-//                xPosition.setText(newValue.replaceAll("[^\\d]", ""));
-//            }
-//            if (newValue.equals("9") || newValue.equals("8")) {
-//                xPosition.setText("");
-//            }
-//        });
-//        EventHandler<KeyEvent> xkeyEvent = keyEvent1 -> xPosition.setText("");
-//        xPosition.addEventHandler(KeyEvent.KEY_PRESSED, xkeyEvent);
-//
-//        TextField yPosition = new TextField();
-//        yPosition.setPrefWidth(30);
-//        yPosition.setAlignment(Pos.CENTER);
-//        yPosition.setPromptText("Y");
-//        yPosition.setText("0");
-//        yPosition.textProperty().addListener((observable, oldValue, newValue) -> {
-//            if (!newValue.matches("\\d*")) {
-//                yPosition.setText(newValue.replaceAll("[^\\d]", ""));
-//            }
-//            if (newValue.equals("9") || newValue.equals("8")) {
-//                yPosition.setText("");
-//            }
-//        });
-//        EventHandler<KeyEvent> ykeyEvent = keyEvent1 -> yPosition.setText("");
-//        yPosition.addEventHandler(KeyEvent.KEY_PRESSED, ykeyEvent);
-//
-//        Button button = new Button("ADD");
-//        button.setOnAction(actionEvent -> {
-//            ChessFigure chessFigure = new ChessFigure();
-//            chessFigure.setPosition(new Position(Integer.parseInt(xPosition.getText()), Integer.parseInt(yPosition.getText())));
-//            chessFigure.setName(FigureName.valueOf(figureNameBox.getValue()));
-//            chessFigure.setColor(FigureColor.valueOf(figureColorsBox.getValue()));
-//            gameService.addNewFigure(chessFigure);
-//        });
-//        HBox hBox = new HBox(10, figureNameBox, figureColorsBox, xPosition, yPosition, button);
-//        hBox.setPadding(new Insets(20, 0, 0, 20));
-//        hBox.setId("ADD-FORM-" + id);
-//        return hBox;
-//    }
 
     private static void openDialogWindow() {
         Map<ChessFigure, List<ChessFigure>> chessFigureListMap = gameService.getAttackMap();
@@ -367,7 +302,7 @@ public class GameFieldServiceImpl implements GameFieldService {
         scrollPane.setPannable(true);
         scrollPane.setStyle("-fx-background-color: #312e2b");
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
 
         Dialog<String> dialog = new Dialog<>();
         dialog.setTitle("Figure attacks");
@@ -378,7 +313,7 @@ public class GameFieldServiceImpl implements GameFieldService {
 
         Text headerText = new Text("Figure attacks");
         headerText.setFill(Color.WHITE);
-        headerText.setFont(Font.font("Verdana", 20));
+        headerText.setFont(Font.font("Gill Sans Ultra Bold", 20));
 
         BorderPane borderPane = new BorderPane();
         borderPane.setStyle("-fx-background-color: #26211b");
@@ -393,21 +328,15 @@ public class GameFieldServiceImpl implements GameFieldService {
         dialogPane.getStyleClass().add("availableDialog");
         dialogPane.setContentText("All figures attacks");
         dialogPane.setContent(borderPane);
-        dialogPane.setPrefHeight(600);
+        if (!chessFigureListMap.isEmpty() && chessFigureListMap.size() > 4) {
+            dialogPane.setPrefHeight(600);
+        }
         dialogPane.setStyle("-fx-background-color: #26211b");
         ButtonType okButton = new ButtonType("Close", ButtonBar.ButtonData.CANCEL_CLOSE);
         dialogPane.getButtonTypes().add(okButton);
-
-//        if (!chessFigureListMap.isEmpty()) { //TODO fix empty space
-//            if (chessFigureListMap.size() < 5) {
-//                dialogPane.setPrefHeight(chessFigureListMap.size() * 100);
-//            } else {
-//                dialogPane.setPrefHeight(600);
-//            }
-//        }
         dialog.setHeight(600);
         dialog.setDialogPane(dialogPane);
-        dialog.setResizable(true);
+        dialog.setResizable(false);
         dialog.show();
     }
 
@@ -456,7 +385,7 @@ public class GameFieldServiceImpl implements GameFieldService {
         if (figuresList.getChildren().size() == 0) {
             Text text = new Text("No attacks was found");
             text.setFill(Color.WHITE);
-            text.setFont(Font.font("Verdana", 20));
+            text.setFont(Font.font("Gill Sans Ultra Bold", 20));
             ImageView imageView = new ImageView(gameFileService.loadImageByPath("images/mainIcon.png"));
             imageView.setFitWidth(120);
             imageView.setFitHeight(120);
@@ -543,7 +472,7 @@ public class GameFieldServiceImpl implements GameFieldService {
                 .text(text)
                 .hideAfter(Duration.seconds(duration))
                 .position(Pos.BOTTOM_RIGHT);
-        notifications.darkStyle();
+//        notifications.darkStyle();
         switch (notificationStatus) {
             case INFO: {
                 notifications.showInformation();
@@ -555,14 +484,6 @@ public class GameFieldServiceImpl implements GameFieldService {
             }
             case WARNING: {
                 notifications.showWarning();
-                break;
-            }
-            case SUCCESS: {
-                ImageView imageView = new ImageView(gameFileService.loadImageByPath("images/success-icon.png"));
-                imageView.setFitHeight(50);
-                imageView.setFitWidth(50);
-                notifications.graphic(imageView);
-                notifications.show();
                 break;
             }
         }
@@ -614,10 +535,11 @@ public class GameFieldServiceImpl implements GameFieldService {
 
     private static void onClearField(MouseEvent e) {
         if (gameBoard.isGameStarted()) {
-            gameBoard = new GameBoard();
-            gameService.clearGameBoard();
+            gameService.clearGameBoard(gameBoard.getWorkingFileName());
+            gameBoard.setGameBoardCell(new GameBoardCell());
+            gameBoard.setSelectedCells(new ArrayList<>());
             clearBoard();
-            refreshGame();
+            refreshGame(gameBoard.getWorkingFileName());
         }
     }
 
@@ -628,42 +550,49 @@ public class GameFieldServiceImpl implements GameFieldService {
             position.setxPosition(Integer.parseInt(borderPane.getId().split("-")[1].split("")[1]));
         }
         chessFigure.setPosition(position);
-        gameService.addNewFigure(chessFigure);
-        refreshGame();
+        gameService.addNewFigure(chessFigure,gameBoard.getWorkingFileName());
+        refreshGame(gameBoard.getWorkingFileName());
     }
 
     private static void onRemoveFigureFromBoard(BorderPane borderPane) {
         Position position = new Position(Integer.parseInt(borderPane.getId().split("-")[1].split("")[0]),
                 Integer.parseInt(borderPane.getId().split("-")[1].split("")[1]));
-        gameService.removeFigure(position);
+        gameService.removeFigure(position, gameBoard.getWorkingFileName());
         removeFigureById(borderPane.getId());
-        refreshGame();
+        refreshGame(gameBoard.getWorkingFileName());
     }
 
     private static void onSavedGameResults(MouseEvent e) {
         boolean isSaved = gameService.saveGameResults();
         if (isSaved) {
-            createNotification(5, "Saved results", "Figure attacks successfully saved", NotificationStatus.SUCCESS);
+            createNotification(5, "Saved results", "Figure attacks successfully saved", NotificationStatus.INFO);
         } else {
             createNotification(5, "Error saving results", "Figure attacks saving error", NotificationStatus.ERROR);
         }
     }
 
-    private static void onRandomChessPosition(MouseEvent e) {
+    private static void onDefaultChessPosition(MouseEvent e) {
         System.out.println();
     }
 
     public void onStartGame() {
         try {
+            gameBoard.setWorkingFileName("init.txt");
             gameFileService.createWorkingFiles();
         } catch (IOException ex) {
             ex.printStackTrace();
         }
-        refreshGame();
+        refreshGame(gameBoard.getWorkingFileName());
     }
 
-    private static void refreshGame() {
-        gameService.initGame();
+    public void onLoadGame(File file) {
+        gameService.initGame(file.getName());
+        gameBoard.setGameStarted(true);
+        gameBoard.setWorkingFileName(file.getName());
+        gameService.getFiguresForSetup().forEach(GameFieldServiceImpl::setFigureOnBoard);
+    }
+    private static void refreshGame(String fileName) {
+        gameService.initGame(fileName);
         gameBoard.setGameStarted(true);
         gameService.getFiguresForSetup().forEach(GameFieldServiceImpl::setFigureOnBoard);
     }

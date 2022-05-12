@@ -19,9 +19,9 @@ public class GameFileServiceImpl implements GameFileService {
     private static final GameService gameService = new GameServiceImpl();
 
     @Override
-    public List<ChessFigure> getFiguresFromInitFile() {
+    public List<ChessFigure> getFiguresFromFile(String fileName) {
         List<ChessFigure> figures = new ArrayList<>();
-        File file = new File(System.getProperty("user.dir") + "\\init.txt");
+        File file = new File(System.getProperty("user.dir") + "\\"+fileName);
         try {
             BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
             String line;
@@ -45,7 +45,7 @@ public class GameFileServiceImpl implements GameFileService {
     }
 
     @Override
-    public void removeFigureFromFile(ChessFigure chessFigure) {
+    public void removeFigureFromFile(ChessFigure chessFigure, String fileName) {
         String removeChessLine = chessFigure.getColor().toString().toLowerCase(Locale.ROOT) + " " +
                 chessFigure.getName().toString().toLowerCase(Locale.ROOT) + " " +
                 chessFigure.getPosition().getxPosition() + " " +
@@ -54,7 +54,7 @@ public class GameFileServiceImpl implements GameFileService {
             String writeTo = System.getProperty("user.dir") + "\\temp.txt";
             File writeToFile = new File(writeTo);
             BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(writeToFile));
-            String readFrom = System.getProperty("user.dir") + "\\init.txt";
+            String readFrom = System.getProperty("user.dir") + "\\"+fileName;
             File readFromFile = new File(readFrom);
             BufferedReader bufferedReader = new BufferedReader(new FileReader(readFromFile));
 
@@ -93,9 +93,9 @@ public class GameFileServiceImpl implements GameFileService {
     }
 
     @Override
-    public boolean clearFiguresFile() {
+    public boolean clearFiguresFile(String fileName) {
         try {
-            File file = new File(System.getProperty("user.dir") + "\\init.txt");
+            File file = new File(System.getProperty("user.dir") + "\\"+fileName);
             PrintWriter writer = new PrintWriter(file);
             writer.print("");
             writer.close();
@@ -151,18 +151,15 @@ public class GameFileServiceImpl implements GameFileService {
     @Override
     public void createWorkingFiles() throws IOException {
         File initFile = new File(System.getProperty("user.dir") + "\\init.txt");
-        if (initFile.createNewFile()) {
+        if (!initFile.exists() && initFile.createNewFile()) {
             String defaultChessPosition = "white king 0 0\n" + "white queen 5 1\n" + "white rook 2 5\n" + "white bishop 3 7\n" + "white knight 5 5\n" + "black king 7 7\n" + "black queen 1 5\n" + "black rook 3 1\n" + "black bishop 7 3\n";
             writeInitialFiles("init.txt", defaultChessPosition);
-        } else {
-            deleteWorkingFiles();
-            createWorkingFiles();
         }
         File allFiguresTxt = new File(System.getProperty("user.dir") + "\\allFigures.txt");
         if (allFiguresTxt.createNewFile()) {
             String defaultChessPosition = "white king\n" + "white queen\n" + "white rook\n" + "white bishop\n" + "white knight\n" + "black king\n" + "black queen\n" + "black rook\n" + "black bishop\n" + "black knight\n";
             writeInitialFiles("allFigures.txt", defaultChessPosition);
-        } else {
+        }else{
             deleteWorkingFiles();
             createWorkingFiles();
         }
@@ -170,9 +167,9 @@ public class GameFileServiceImpl implements GameFileService {
 
     @Override
     public boolean deleteWorkingFiles() {
-        File initFile = new File(System.getProperty("user.dir") + "\\init.txt");
+//        File initFile = new File(System.getProperty("user.dir") + "\\init.txt");
         File allFiguresTxt = new File(System.getProperty("user.dir") + "\\allFigures.txt");
-        return initFile.delete() && allFiguresTxt.delete();
+        return allFiguresTxt.delete();
     }
 
     @Override
@@ -183,13 +180,15 @@ public class GameFileServiceImpl implements GameFileService {
                 chessFigure.getPosition().getxPosition();
     }
 
+    @Override
     public boolean saveResultFile(Map<ChessFigure, List<ChessFigure>> chessFigureListMap) throws IOException {
         boolean isSaved = false;
-        String fileIdentifier = UUID.randomUUID().toString();
-        File resultFile = new File(System.getProperty("user.dir") + "\\" + fileIdentifier + "-game-result.txt");
+        String fileIdentifier = UUID.randomUUID().toString().split("-")[0];
+        File resultFile = new File(System.getProperty("user.dir") + "\\" + "game-result-" + fileIdentifier + ".txt");
         if (resultFile.createNewFile()) {
             chessFigureListMap.forEach((chessFigure, chessFigures) -> {
-                writeFigureToFile(fileIdentifier + "-game-result.txt", chessFigure, getFormattedFigureListPath(chessFigures));
+                chessFigure.increasePosition();
+                writeFigureToFile("game-result-" + fileIdentifier + ".txt", chessFigure, getFormattedFigureListPath(chessFigures));
             });
             isSaved = true;
         }
