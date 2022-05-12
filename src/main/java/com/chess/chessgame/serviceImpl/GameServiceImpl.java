@@ -18,11 +18,6 @@ public class GameServiceImpl implements GameService {
     public static ChessBoard chessBoard = new ChessBoard();
 
     @Override
-    public void initGame() {
-        loadFigures("init.txt");
-        fillFigureMap();
-    }
-    @Override
     public void initGame(String file) {
         loadFigures(file);
         fillFigureMap();

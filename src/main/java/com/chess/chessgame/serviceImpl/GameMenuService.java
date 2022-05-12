@@ -1,5 +1,6 @@
 package com.chess.chessgame.serviceImpl;
 
+import com.chess.chessgame.enums.NotificationStatus;
 import com.chess.chessgame.services.GameFieldService;
 import com.chess.chessgame.services.GameFileService;
 import javafx.application.Platform;
@@ -17,8 +18,6 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.List;
 
 public class GameMenuService {
     private final GameFieldService gameFieldService;
@@ -80,13 +79,12 @@ public class GameMenuService {
     }
 
 
-
     private void onStartGame(MouseEvent e) {
         closeStartMenu();
         gameFieldService.onStartGame();
     }
 
-    private void closeStartMenu(){
+    private void closeStartMenu() {
         rootGroup.getChildren().clear();
         Group gameFieldGroup = gameFieldService.createGameGroup();
         rootGroup.getChildren().add(gameFieldGroup);
@@ -96,13 +94,19 @@ public class GameMenuService {
         FileChooser fileChooser = new FileChooser();
         FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
         fileChooser.getExtensionFilters().add(extFilter);
+        fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
         Stage stage = (Stage) rootGroup.getScene().getWindow();
         stage.setTitle("Select game file");
         stage.getIcons().add(gameFileService.loadImageByPath("images/mainIcon.png"));
         File file = fileChooser.showOpenDialog(stage);
         if (file != null) {
-            closeStartMenu();
-            gameFieldService.onLoadGame(file);
+            if (gameFileService.gameFileValidator(file.getName())) {
+                closeStartMenu();
+                gameFieldService.onLoadGame(file);
+            } else {
+                gameFieldService.createNotification(3000, "Wrong file",
+                        "The format of " + file.getName() + " file is wrong", NotificationStatus.ERROR);
+            }
         }
     }
 

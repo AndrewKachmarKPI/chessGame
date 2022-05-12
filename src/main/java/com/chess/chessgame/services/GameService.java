@@ -3,13 +3,10 @@ package com.chess.chessgame.services;
 import com.chess.chessgame.domain.figures.*;
 import com.chess.chessgame.enums.FigureColor;
 import com.chess.chessgame.enums.FigureName;
-
-import java.io.File;
 import java.util.*;
 
 
 public interface GameService {
-    void initGame();
     void initGame(String fileName);
 
     List<ChessFigure> getFiguresForSetup();

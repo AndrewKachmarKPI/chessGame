@@ -66,7 +66,7 @@ public class GameFieldServiceImpl implements GameFieldService {
         paintBorders(720, 0);
     }
 
-    private static VBox createButtons() {
+    private VBox createButtons() {
         EventHandler<MouseEvent> onSavedGameResults = GameFieldServiceImpl::onSavedGameResults;
         Button savedGameResults = new Button("Save game");
         ImageView imageView = new ImageView(gameFileService.loadImageByPath("images/save_icon.png"));
@@ -77,7 +77,7 @@ public class GameFieldServiceImpl implements GameFieldService {
         savedGameResults.getStyleClass().setAll("text", "info", "sm");
 
         EventHandler<MouseEvent> onDefaultChessPosition = GameFieldServiceImpl::onDefaultChessPosition;
-        Button randomChessPosition = new Button("Default chess");
+        Button randomChessPosition = new Button("Upload chess");
         randomChessPosition.addEventHandler(MouseEvent.MOUSE_CLICKED, onDefaultChessPosition);
         randomChessPosition.getStyleClass().setAll("text", "success", "sm");
 
@@ -91,7 +91,30 @@ public class GameFieldServiceImpl implements GameFieldService {
         figureAttacks.addEventHandler(MouseEvent.MOUSE_CLICKED, onFigureAttacks);
         figureAttacks.getStyleClass().setAll("text", "warning", "sm");
 
-        VBox vBox = new VBox(10, savedGameResults,randomChessPosition, figureAttacks, clearField);
+        Text headerText = new Text(gameBoard.getWorkingFileName());
+        headerText.setFill(Color.WHITE);
+        headerText.setFont(Font.font("Gill Sans Ultra Bold", 20));
+
+        System.out.println("FILE NAME->"+ gameBoard.getWorkingFileName());
+        Rectangle rectangle = new Rectangle();
+        rectangle.setWidth(150);
+        rectangle.setHeight(40);
+        rectangle.setStrokeWidth(2);
+        rectangle.setStrokeType(StrokeType.CENTERED);
+        rectangle.setStroke(Color.BLACK);
+        rectangle.setFill(Color.web("#26211b"));
+        BorderPane borderPane = new BorderPane();
+        borderPane.setMinWidth(120);
+        borderPane.setMinHeight(40);
+        borderPane.getChildren().add(rectangle);
+        borderPane.setCenter(headerText);
+
+
+        VBox vBox1 = new VBox(10, savedGameResults, figureAttacks, clearField);
+        VBox vBox2 = new VBox(10, randomChessPosition, borderPane);
+        vBox1.setPadding(new Insets(0,0,380,0));
+        VBox vBox = new VBox(10,vBox1,vBox2);
+        vBox.setAlignment(Pos.CENTER);
         vBox.setPadding(new Insets(20, 20, 20, 20));
         return vBox;
     }
@@ -302,7 +325,7 @@ public class GameFieldServiceImpl implements GameFieldService {
         scrollPane.setPannable(true);
         scrollPane.setStyle("-fx-background-color: #312e2b");
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
         Dialog<String> dialog = new Dialog<>();
         dialog.setTitle("Figure attacks");
@@ -466,13 +489,36 @@ public class GameFieldServiceImpl implements GameFieldService {
         }
     }
 
-    private static void createNotification(int duration, String title, String text, NotificationStatus notificationStatus) {
+    public static void sendMessage(int duration, String title, String text, NotificationStatus notificationStatus) {
         Notifications notifications = Notifications.create()
                 .title(title)
                 .text(text)
                 .hideAfter(Duration.seconds(duration))
                 .position(Pos.BOTTOM_RIGHT);
-//        notifications.darkStyle();
+        notifications.darkStyle();
+        switch (notificationStatus) {
+            case INFO: {
+                notifications.showInformation();
+                break;
+            }
+            case ERROR: {
+                notifications.showError();
+                break;
+            }
+            case WARNING: {
+                notifications.showWarning();
+                break;
+            }
+        }
+    }
+
+    public void createNotification(int duration, String title, String text, NotificationStatus notificationStatus) {
+        Notifications notifications = Notifications.create()
+                .title(title)
+                .text(text)
+                .hideAfter(Duration.seconds(duration))
+                .position(Pos.BOTTOM_RIGHT);
+        notifications.darkStyle();
         switch (notificationStatus) {
             case INFO: {
                 notifications.showInformation();
@@ -565,14 +611,23 @@ public class GameFieldServiceImpl implements GameFieldService {
     private static void onSavedGameResults(MouseEvent e) {
         boolean isSaved = gameService.saveGameResults();
         if (isSaved) {
-            createNotification(5, "Saved results", "Figure attacks successfully saved", NotificationStatus.INFO);
+            sendMessage(5, "Saved results", "Figure attacks successfully saved", NotificationStatus.INFO);
         } else {
-            createNotification(5, "Error saving results", "Figure attacks saving error", NotificationStatus.ERROR);
+            sendMessage(5, "Error saving results", "Figure attacks saving error", NotificationStatus.ERROR);
         }
     }
 
     private static void onDefaultChessPosition(MouseEvent e) {
-        System.out.println();
+        gameBoard.setGameBoardCell(new GameBoardCell());
+        gameBoard.setSelectedCells(new ArrayList<>());
+        clearBoard();
+        try {
+            gameBoard.setWorkingFileName("init.txt");
+            gameFileService.createDefaultGameFile();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        refreshGame(gameBoard.getWorkingFileName());
     }
 
     public void onStartGame() {

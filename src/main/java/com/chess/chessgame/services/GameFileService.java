@@ -25,5 +25,9 @@ public interface GameFileService {
 
     Image loadImageByPath(String path);
     void createWorkingFiles() throws IOException;
+    void createDefaultGameFile() throws IOException;
     boolean deleteWorkingFiles();
+
+
+    boolean gameFileValidator(String fileName);
 }

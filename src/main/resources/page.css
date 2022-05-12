@@ -47,6 +47,11 @@
     -fx-min-width: 150px;
 }
 
+.box{
+    -fx-background-color: #26211b;
+    -fx-min-width: 150px;
+}
+
 .lg {
     -fx-font-size: 1.5em;
     -fx-min-width: 337px;
