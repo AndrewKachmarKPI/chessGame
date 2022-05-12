@@ -8,6 +8,7 @@ import com.chess.chessgame.enums.FigureName;
 import com.chess.chessgame.enums.NotificationStatus;
 import com.chess.chessgame.services.GameFieldService;
 import com.chess.chessgame.services.GameFileService;
+import com.chess.chessgame.services.GameMenuService;
 import com.chess.chessgame.services.GameService;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -16,6 +17,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.ImageCursor;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
@@ -38,9 +40,10 @@ import java.util.concurrent.atomic.AtomicReference;
 
 
 public class GameFieldServiceImpl implements GameFieldService {
-    public static GameFileService gameFileService = new GameFileServiceImpl();
-    public static GameService gameService = new GameServiceImpl();
-    public static GameBoard gameBoard;
+    private static final GameMenuService gameMenuService = new GameMenuServiceImpl();
+    private static final GameFileService gameFileService = new GameFileServiceImpl();
+    private static final GameService gameService = new GameServiceImpl();
+    private static GameBoard gameBoard;
 
     public static Group borderPanesGroup = new Group();
 
@@ -76,9 +79,13 @@ public class GameFieldServiceImpl implements GameFieldService {
         savedGameResults.addEventHandler(MouseEvent.MOUSE_CLICKED, onSavedGameResults);
         savedGameResults.getStyleClass().setAll("text", "info", "sm");
 
-        EventHandler<MouseEvent> onDefaultChessPosition = GameFieldServiceImpl::onDefaultChessPosition;
-        Button randomChessPosition = new Button("Upload chess");
-        randomChessPosition.addEventHandler(MouseEvent.MOUSE_CLICKED, onDefaultChessPosition);
+        EventHandler<MouseEvent> onUploadFile = GameFieldServiceImpl::onUploadChessPosition;
+        Button randomChessPosition = new Button("Upload");
+        ImageView imageView1 = new ImageView(gameFileService.loadImageByPath("images/upload.png"));
+        imageView1.setFitWidth(30);
+        imageView1.setFitHeight(30);
+        randomChessPosition.setGraphic(imageView1);
+        randomChessPosition.addEventHandler(MouseEvent.MOUSE_CLICKED, onUploadFile);
         randomChessPosition.getStyleClass().setAll("text", "success", "sm");
 
         EventHandler<MouseEvent> onClearField = GameFieldServiceImpl::onClearField;
@@ -91,9 +98,10 @@ public class GameFieldServiceImpl implements GameFieldService {
         figureAttacks.addEventHandler(MouseEvent.MOUSE_CLICKED, onFigureAttacks);
         figureAttacks.getStyleClass().setAll("text", "warning", "sm");
 
-        Text headerText = new Text(gameBoard.getWorkingFileName());
+        Text headerText = gameBoard.getWorkingFileName();
+        headerText.setId("fileName");
         headerText.setFill(Color.WHITE);
-        headerText.setFont(Font.font("Gill Sans Ultra Bold", 20));
+        headerText.setFont(Font.font("Gill Sans Ultra Bold", 15));
 
         System.out.println("FILE NAME->"+ gameBoard.getWorkingFileName());
         Rectangle rectangle = new Rectangle();
@@ -104,6 +112,7 @@ public class GameFieldServiceImpl implements GameFieldService {
         rectangle.setStroke(Color.BLACK);
         rectangle.setFill(Color.web("#26211b"));
         BorderPane borderPane = new BorderPane();
+        borderPane.setId("fileNamePane");
         borderPane.setMinWidth(120);
         borderPane.setMinHeight(40);
         borderPane.getChildren().add(rectangle);
@@ -112,7 +121,8 @@ public class GameFieldServiceImpl implements GameFieldService {
 
         VBox vBox1 = new VBox(10, savedGameResults, figureAttacks, clearField);
         VBox vBox2 = new VBox(10, randomChessPosition, borderPane);
-        vBox1.setPadding(new Insets(0,0,380,0));
+        vBox2.setId("textVbox");
+        vBox1.setPadding(new Insets(0,0,360,0));
         VBox vBox = new VBox(10,vBox1,vBox2);
         vBox.setAlignment(Pos.CENTER);
         vBox.setPadding(new Insets(20, 20, 20, 20));
@@ -581,11 +591,11 @@ public class GameFieldServiceImpl implements GameFieldService {
 
     private static void onClearField(MouseEvent e) {
         if (gameBoard.isGameStarted()) {
-            gameService.clearGameBoard(gameBoard.getWorkingFileName());
+            gameService.clearGameBoard(gameBoard.getWorkingFileName().getText());
             gameBoard.setGameBoardCell(new GameBoardCell());
             gameBoard.setSelectedCells(new ArrayList<>());
             clearBoard();
-            refreshGame(gameBoard.getWorkingFileName());
+            refreshGame(gameBoard.getWorkingFileName().getText());
         }
     }
 
@@ -596,16 +606,16 @@ public class GameFieldServiceImpl implements GameFieldService {
             position.setxPosition(Integer.parseInt(borderPane.getId().split("-")[1].split("")[1]));
         }
         chessFigure.setPosition(position);
-        gameService.addNewFigure(chessFigure,gameBoard.getWorkingFileName());
-        refreshGame(gameBoard.getWorkingFileName());
+        gameService.addNewFigure(chessFigure,gameBoard.getWorkingFileName().getText());
+        refreshGame(gameBoard.getWorkingFileName().getText());
     }
 
     private static void onRemoveFigureFromBoard(BorderPane borderPane) {
         Position position = new Position(Integer.parseInt(borderPane.getId().split("-")[1].split("")[0]),
                 Integer.parseInt(borderPane.getId().split("-")[1].split("")[1]));
-        gameService.removeFigure(position, gameBoard.getWorkingFileName());
+        gameService.removeFigure(position, gameBoard.getWorkingFileName().getText());
         removeFigureById(borderPane.getId());
-        refreshGame(gameBoard.getWorkingFileName());
+        refreshGame(gameBoard.getWorkingFileName().getText());
     }
 
     private static void onSavedGameResults(MouseEvent e) {
@@ -617,35 +627,46 @@ public class GameFieldServiceImpl implements GameFieldService {
         }
     }
 
-    private static void onDefaultChessPosition(MouseEvent e) {
-        gameBoard.setGameBoardCell(new GameBoardCell());
-        gameBoard.setSelectedCells(new ArrayList<>());
-        clearBoard();
-        try {
-            gameBoard.setWorkingFileName("init.txt");
-            gameFileService.createDefaultGameFile();
-        } catch (IOException ex) {
-            ex.printStackTrace();
+    private static void onUploadChessPosition(MouseEvent e) {
+        Node node = (Node) e.getSource();
+        Stage stage = (Stage) node.getScene().getWindow();
+        File file = gameMenuService.selectFileDialog(stage);
+        if(file!=null){
+            if(!file.toString().equals(System.getProperty("user.dir") + "\\"+file.getName())){
+                sendMessage(5, "Wrong directory",
+                        "Upload file from " + System.getProperty("user.dir") + " directory", NotificationStatus.ERROR);
+            }else{
+                if(gameFileService.gameFileValidator(file.getName())){
+                    gameBoard.setGameBoardCell(new GameBoardCell());
+                    gameBoard.setSelectedCells(new ArrayList<>());
+                    clearBoard();
+                    gameBoard.getWorkingFileName().setText(file.getName());
+                }else {
+                    sendMessage(5, "Wrong file",
+                            "The format of " + file.getName() + " file is wrong", NotificationStatus.ERROR);
+                }
+            }
         }
-        refreshGame(gameBoard.getWorkingFileName());
+        refreshGame(gameBoard.getWorkingFileName().getText());
     }
 
     public void onStartGame() {
         try {
-            gameBoard.setWorkingFileName("init.txt");
+            gameBoard.getWorkingFileName().setText("init.txt");
             gameFileService.createWorkingFiles();
         } catch (IOException ex) {
             ex.printStackTrace();
         }
-        refreshGame(gameBoard.getWorkingFileName());
+        refreshGame(gameBoard.getWorkingFileName().getText());
     }
 
     public void onLoadGame(File file) {
         gameService.initGame(file.getName());
         gameBoard.setGameStarted(true);
-        gameBoard.setWorkingFileName(file.getName());
+        gameBoard.getWorkingFileName().setText(file.getName());
         gameService.getFiguresForSetup().forEach(GameFieldServiceImpl::setFigureOnBoard);
     }
+
     private static void refreshGame(String fileName) {
         gameService.initGame(fileName);
         gameBoard.setGameStarted(true);

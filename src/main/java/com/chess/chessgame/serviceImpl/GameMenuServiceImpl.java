@@ -3,6 +3,7 @@ package com.chess.chessgame.serviceImpl;
 import com.chess.chessgame.enums.NotificationStatus;
 import com.chess.chessgame.services.GameFieldService;
 import com.chess.chessgame.services.GameFileService;
+import com.chess.chessgame.services.GameMenuService;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -14,17 +15,18 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
 
-public class GameMenuService {
+public class GameMenuServiceImpl implements GameMenuService {
     private final GameFieldService gameFieldService;
     private final GameFileService gameFileService;
     private final Group rootGroup;
 
-    public GameMenuService() {
+    public GameMenuServiceImpl() {
         gameFieldService = new GameFieldServiceImpl();
         gameFileService = new GameFileServiceImpl();
         rootGroup = createNavigationMenu();
@@ -43,7 +45,7 @@ public class GameMenuService {
         startGame.addEventHandler(MouseEvent.MOUSE_CLICKED, onStartGame);
         startGame.getStyleClass().setAll("text", "success", "lg");
 
-        EventHandler<MouseEvent> onSavedGames = this::onSavedGames;
+        EventHandler<MouseEvent> onSavedGames = this::onUploadGame;
         Button figureAttacks = new Button("LOAD GAME FILE");
         figureAttacks.addEventHandler(MouseEvent.MOUSE_CLICKED, onSavedGames);
         figureAttacks.getStyleClass().setAll("text", "warning", "lg");
@@ -82,6 +84,7 @@ public class GameMenuService {
     private void onStartGame(MouseEvent e) {
         closeStartMenu();
         gameFieldService.onStartGame();
+        setGameFileName("init.txt");
     }
 
     private void closeStartMenu() {
@@ -90,27 +93,47 @@ public class GameMenuService {
         rootGroup.getChildren().add(gameFieldGroup);
     }
 
-    private void onSavedGames(MouseEvent e) {
+    public File selectFileDialog(Stage stage){
         FileChooser fileChooser = new FileChooser();
         FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
         fileChooser.getExtensionFilters().add(extFilter);
         fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
-        Stage stage = (Stage) rootGroup.getScene().getWindow();
         stage.setTitle("Select game file");
         stage.getIcons().add(gameFileService.loadImageByPath("images/mainIcon.png"));
-        File file = fileChooser.showOpenDialog(stage);
+        return fileChooser.showOpenDialog(stage);
+    }
+    private void onUploadGame(MouseEvent e) {
+        File file = selectFileDialog( (Stage) rootGroup.getScene().getWindow());
         if (file != null) {
-            if (gameFileService.gameFileValidator(file.getName())) {
-                closeStartMenu();
-                gameFieldService.onLoadGame(file);
-            } else {
-                gameFieldService.createNotification(3000, "Wrong file",
-                        "The format of " + file.getName() + " file is wrong", NotificationStatus.ERROR);
+            if(!file.toString().equals(System.getProperty("user.dir") + "\\"+file.getName())){
+                gameFieldService.createNotification(5, "Wrong directory",
+                        "Upload file from " + System.getProperty("user.dir") + " directory", NotificationStatus.ERROR);
+            }else{
+                if (gameFileService.gameFileValidator(file.getName())) {
+                    closeStartMenu();
+                    gameFieldService.onLoadGame(file);
+                    setGameFileName(file.getName());
+                } else {
+                    gameFieldService.createNotification(5, "Wrong file",
+                            "The format of " + file.getName() + " file is wrong", NotificationStatus.ERROR);
+                }
             }
         }
     }
 
     private void onExitGame(MouseEvent e) {
         Platform.exit();
+    }
+
+
+    public void setGameFileName(String fileName) {
+        Group group = (Group) rootGroup.getChildren().get(0);
+        BorderPane borderPane = (BorderPane) group.getChildren().get(0);
+        Group buttonGroup = (Group) borderPane.getRight();
+        VBox vBox = (VBox) buttonGroup.getChildren().get(0);
+        VBox vBox1 = (VBox) vBox.getChildren().get(1);
+        BorderPane pane = (BorderPane) vBox1.getChildren().get(1);
+        Text text = (Text) pane.getCenter();
+        text.setText(fileName);
     }
 }
