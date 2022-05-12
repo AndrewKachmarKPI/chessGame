@@ -103,7 +103,6 @@ public class GameFieldServiceImpl implements GameFieldService {
         headerText.setFill(Color.WHITE);
         headerText.setFont(Font.font("Gill Sans Ultra Bold", 15));
 
-        System.out.println("FILE NAME->"+ gameBoard.getWorkingFileName());
         Rectangle rectangle = new Rectangle();
         rectangle.setWidth(150);
         rectangle.setHeight(40);
