@@ -151,9 +151,12 @@ public class GameFileServiceImpl implements GameFileService {
         if (!initFile.exists() && initFile.createNewFile()) {
             String defaultChessPosition = "white king 0 0\n" + "white queen 5 1\n" + "white rook 2 5\n" + "white bishop 3 7\n" + "white knight 5 5\n" + "black king 7 7\n" + "black queen 1 5\n" + "black rook 3 1\n" + "black bishop 7 3\n";
             writeInitialFiles("init.txt", defaultChessPosition);
+        }else{
+            deleteWorkingFiles();
+            createWorkingFiles();
         }
         File allFiguresTxt = new File(System.getProperty("user.dir") + "\\allFigures.txt");
-        if (allFiguresTxt.createNewFile()) {
+        if (!allFiguresTxt.exists() && allFiguresTxt.createNewFile()) {
             String defaultChessPosition = "white king\n" + "white queen\n" + "white rook\n" + "white bishop\n" + "white knight\n" + "black king\n" + "black queen\n" + "black rook\n" + "black bishop\n" + "black knight\n";
             writeInitialFiles("allFigures.txt", defaultChessPosition);
         } else {
@@ -178,9 +181,9 @@ public class GameFileServiceImpl implements GameFileService {
 
     @Override
     public boolean deleteWorkingFiles() {
-//        File initFile = new File(System.getProperty("user.dir") + "\\init.txt");
+        File initFile = new File(System.getProperty("user.dir") + "\\init.txt");
         File allFiguresTxt = new File(System.getProperty("user.dir") + "\\allFigures.txt");
-        return allFiguresTxt.delete();
+        return initFile.delete() && allFiguresTxt.delete();
     }
 
     @Override
