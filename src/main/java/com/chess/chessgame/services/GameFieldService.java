@@ -10,5 +10,5 @@ public interface GameFieldService {
     Group createGameGroup();
     void onLoadGame(File file);
     void onStartGame();
-    void createNotification(int duration, String title, String text, NotificationStatus notificationStatus);
+    void createNotification(String title, String text, NotificationStatus notificationStatus);
 }

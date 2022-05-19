@@ -103,10 +103,12 @@ public class GameMenuServiceImpl implements GameMenuService {
         return fileChooser.showOpenDialog(stage);
     }
     private void onUploadGame(MouseEvent e) {
-        File file = selectFileDialog( (Stage) rootGroup.getScene().getWindow());
+        Stage stage = (Stage) rootGroup.getScene().getWindow();
+        File file = selectFileDialog(stage);
+        stage.setTitle("Chess game!");
         if (file != null) {
             if(!file.toString().equals(System.getProperty("user.dir") + "\\"+file.getName())){
-                gameFieldService.createNotification(5, "Wrong directory",
+                gameFieldService.createNotification( "Wrong directory",
                         "Upload file from " + System.getProperty("user.dir") + " directory", NotificationStatus.ERROR);
             }else{
                 if (gameFileService.gameFileValidator(file.getName())) {
@@ -114,7 +116,7 @@ public class GameMenuServiceImpl implements GameMenuService {
                     gameFieldService.onLoadGame(file);
                     setGameFileName(file.getName());
                 } else {
-                    gameFieldService.createNotification(5, "Wrong file",
+                    gameFieldService.createNotification( "Wrong file",
                             "The format of " + file.getName() + " file is wrong", NotificationStatus.ERROR);
                 }
             }

@@ -29,6 +29,7 @@ import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.util.Duration;
 import org.controlsfx.control.Notifications;
 
@@ -338,6 +339,7 @@ public class GameFieldServiceImpl implements GameFieldService {
 
         Dialog<String> dialog = new Dialog<>();
         dialog.setTitle("Figure attacks");
+        dialog.initStyle(StageStyle.UTILITY);
         dialog.setHeaderText(null);
         dialog.setGraphic(null);
         Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
@@ -498,50 +500,24 @@ public class GameFieldServiceImpl implements GameFieldService {
         }
     }
 
-    public static void sendMessage(int duration, String title, String text, NotificationStatus notificationStatus) {
-        Notifications notifications = Notifications.create()
-                .title(title)
-                .text(text)
-                .hideAfter(Duration.seconds(duration))
-                .position(Pos.BOTTOM_RIGHT);
-        notifications.darkStyle();
-        switch (notificationStatus) {
-            case INFO: {
-                notifications.showInformation();
-                break;
-            }
-            case ERROR: {
-                notifications.showError();
-                break;
-            }
-            case WARNING: {
-                notifications.showWarning();
-                break;
-            }
-        }
-    }
 
-    public void createNotification(int duration, String title, String text, NotificationStatus notificationStatus) {
-        Notifications notifications = Notifications.create()
-                .title(title)
-                .text(text)
-                .hideAfter(Duration.seconds(duration))
-                .position(Pos.BOTTOM_RIGHT);
-        notifications.darkStyle();
+    public void createNotification(String title, String text, NotificationStatus notificationStatus) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
         switch (notificationStatus) {
-            case INFO: {
-                notifications.showInformation();
-                break;
-            }
             case ERROR: {
-                notifications.showError();
+                alert = new Alert(Alert.AlertType.ERROR);
                 break;
             }
             case WARNING: {
-                notifications.showWarning();
+                alert = new Alert(Alert.AlertType.WARNING);
                 break;
             }
         }
+        alert.initStyle(StageStyle.UTILITY);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(text);
+        alert.showAndWait();
     }
 
     //ACTIONS
@@ -618,21 +594,24 @@ public class GameFieldServiceImpl implements GameFieldService {
     }
 
     private static void onSavedGameResults(MouseEvent e) {
+        GameFieldService gameFieldService = new GameFieldServiceImpl();
         boolean isSaved = gameService.saveGameResults();
         if (isSaved) {
-            sendMessage(5, "Saved results", "Figure attacks successfully saved", NotificationStatus.INFO);
+            gameFieldService.createNotification( "Saved results", "Figure attacks successfully saved", NotificationStatus.INFO);
         } else {
-            sendMessage(5, "Error saving results", "Figure attacks saving error", NotificationStatus.ERROR);
+            gameFieldService.createNotification("Error saving results", "Figure attacks saving error", NotificationStatus.ERROR);
         }
     }
 
     private static void onUploadChessPosition(MouseEvent e) {
+        GameFieldService gameFieldService = new GameFieldServiceImpl();
         Node node = (Node) e.getSource();
         Stage stage = (Stage) node.getScene().getWindow();
         File file = gameMenuService.selectFileDialog(stage);
+        stage.setTitle("Chess game!");
         if(file!=null){
             if(!file.toString().equals(System.getProperty("user.dir") + "\\"+file.getName())){
-                sendMessage(5, "Wrong directory",
+                gameFieldService.createNotification( "Wrong directory",
                         "Upload file from " + System.getProperty("user.dir") + " directory", NotificationStatus.ERROR);
             }else{
                 if(gameFileService.gameFileValidator(file.getName())){
@@ -641,7 +620,7 @@ public class GameFieldServiceImpl implements GameFieldService {
                     clearBoard();
                     gameBoard.getWorkingFileName().setText(file.getName());
                 }else {
-                    sendMessage(5, "Wrong file",
+                    gameFieldService.createNotification( "Wrong file",
                             "The format of " + file.getName() + " file is wrong", NotificationStatus.ERROR);
                 }
             }

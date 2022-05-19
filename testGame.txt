@@ -1,3 +1,0 @@
-white queen 4 5
-black king 2 3
-white queen 1 5

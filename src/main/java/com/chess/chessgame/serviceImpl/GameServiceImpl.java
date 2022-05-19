@@ -14,8 +14,13 @@ import java.util.stream.Collectors;
 
 
 public class GameServiceImpl implements GameService {
-    public static GameFileService gameFileService = new GameFileServiceImpl();
-    public static ChessBoard chessBoard = new ChessBoard();
+    public GameFileService gameFileService;
+    public ChessBoard chessBoard;
+
+    public GameServiceImpl() {
+        this.gameFileService = new GameFileServiceImpl();
+        this.chessBoard = new ChessBoard();
+    }
 
     @Override
     public void initGame(String file) {
