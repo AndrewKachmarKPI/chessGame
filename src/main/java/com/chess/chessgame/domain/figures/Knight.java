@@ -50,6 +50,6 @@ public class Knight extends ChessFigure {
 
     @Override
     public int[][] removeDuplicates(int[][] matrix, int[][] gameMatrix) {
-        return attackService.removeDuplicatesSimple(matrix, gameMatrix);
+        return attackService.setAttackSimple(matrix, gameMatrix);
     }
 }

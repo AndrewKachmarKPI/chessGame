@@ -162,7 +162,7 @@ public class AttackServiceImpl implements AttackService {
     }
 
     @Override
-    public int[][] removeDuplicatesSimple(int[][] matrix, int[][] gameMatrix) {
+    public int[][] setAttackSimple(int[][] matrix, int[][] gameMatrix) {
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
                 if (gameMatrix[i][j] > 1 && matrix[i][j] == 1) {

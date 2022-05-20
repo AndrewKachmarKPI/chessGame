@@ -32,6 +32,7 @@ public class GameMenuServiceImpl implements GameMenuService {
         rootGroup = createNavigationMenu();
     }
 
+    @Override
     public Scene createMainScene() {
         Scene scene = new Scene(rootGroup, Color.web("312e2b"));
         scene.getStylesheets().clear();
@@ -84,7 +85,7 @@ public class GameMenuServiceImpl implements GameMenuService {
     private void onStartGame(MouseEvent e) {
         closeStartMenu();
         gameFieldService.onStartGame();
-        setGameFileName("init.txt");
+        setGameFileName("init.txt", gameFileService.getFileContent("init.txt"));
     }
 
     private void closeStartMenu() {
@@ -93,6 +94,7 @@ public class GameMenuServiceImpl implements GameMenuService {
         rootGroup.getChildren().add(gameFieldGroup);
     }
 
+    @Override
     public File selectFileDialog(Stage stage){
         FileChooser fileChooser = new FileChooser();
         FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
@@ -114,7 +116,7 @@ public class GameMenuServiceImpl implements GameMenuService {
                 if (gameFileService.gameFileValidator(file.getName())) {
                     closeStartMenu();
                     gameFieldService.onLoadGame(file);
-                    setGameFileName(file.getName());
+                    setGameFileName(file.getName(), gameFileService.getFileContent(file.getName()));
                 } else {
                     gameFieldService.createNotification( "Wrong file",
                             "The format of " + file.getName() + " file is wrong", NotificationStatus.ERROR);
@@ -128,7 +130,8 @@ public class GameMenuServiceImpl implements GameMenuService {
     }
 
 
-    public void setGameFileName(String fileName) {
+    @Override
+    public void setGameFileName(String fileName, String fileContent) {
         Group group = (Group) rootGroup.getChildren().get(0);
         BorderPane borderPane = (BorderPane) group.getChildren().get(0);
         Group buttonGroup = (Group) borderPane.getRight();
@@ -137,5 +140,9 @@ public class GameMenuServiceImpl implements GameMenuService {
         BorderPane pane = (BorderPane) vBox1.getChildren().get(1);
         Text text = (Text) pane.getCenter();
         text.setText(fileName);
+
+        BorderPane pane1 = (BorderPane) vBox1.getChildren().get(0);
+        Text text1 = (Text) pane1.getCenter();
+        text1.setText(fileContent);
     }
 }

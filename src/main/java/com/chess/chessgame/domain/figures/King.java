@@ -2,8 +2,6 @@ package com.chess.chessgame.domain.figures;
 
 import com.chess.chessgame.enums.FigureColor;
 import com.chess.chessgame.enums.FigureName;
-import com.chess.chessgame.serviceImpl.AttackServiceImpl;
-import com.chess.chessgame.services.AttackService;
 
 public class King extends ChessFigure {
 
@@ -54,6 +52,6 @@ public class King extends ChessFigure {
 
     @Override
     public int[][] removeDuplicates(int[][] matrix, int[][] gameMatrix) {
-        return attackService.removeDuplicatesSimple(matrix, gameMatrix);
+        return attackService.setAttackSimple(matrix, gameMatrix);
     }
 }

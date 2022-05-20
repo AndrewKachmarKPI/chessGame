@@ -22,5 +22,5 @@ public interface AttackService {
 
     int[] addElementToArray(int[] array, int element);
 
-    int[][] removeDuplicatesSimple(int[][] matrix, int[][] gameMatrix);
+    int[][] setAttackSimple(int[][] matrix, int[][] gameMatrix);
 }

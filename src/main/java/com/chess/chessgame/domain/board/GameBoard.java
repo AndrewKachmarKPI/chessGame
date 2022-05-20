@@ -11,12 +11,14 @@ public class GameBoard {
     private GameBoardCell gameBoardCell;
     private boolean isGameStarted;
     private Text workingFileName;
+    private Text workingFileContent;
 
     public GameBoard() {
         this.selectedCells = new ArrayList<>();
         this.gameBoardCell = new GameBoardCell();
         this.isGameStarted = false;
         this.workingFileName = new Text();
+        this.workingFileContent = new Text();
     }
 
     public GameBoard(List<GameBoardCell> selectedCells, GameBoardCell gameBoardCell) {
@@ -60,7 +62,15 @@ public class GameBoard {
         return workingFileName;
     }
 
-    public void setWorkingFileName(Text workingFileName) {
-        this.workingFileName = workingFileName;
+    public Text getWorkingFileContent() {
+        return workingFileContent;
+    }
+
+    public void setWorkingFileContent(String workingFileContent) {
+        this.workingFileContent = new Text(workingFileContent);
+    }
+
+    public void setWorkingFileName(String workingFileName) {
+        this.workingFileName = new Text(workingFileName);
     }
 }

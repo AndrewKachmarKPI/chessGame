@@ -104,33 +104,29 @@ public class GameFileServiceImpl implements GameFileService {
     }
 
     @Override
-    public boolean writeFigureToFile(String fileName, ChessFigure chessFigure) {
+    public void writeFigureToFile(String fileName, ChessFigure chessFigure) {
         try {
             FileWriter fileWriter = new FileWriter(System.getProperty("user.dir") + "\\" + fileName, true);
             BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
             bufferedWriter.write(getFigurePath(chessFigure));
             bufferedWriter.newLine();
             bufferedWriter.close();
-            return true;
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return false;
     }
 
     @Override
-    public boolean writeFigureToFile(String fileName, ChessFigure chessFigure, String... args) {
+    public void writeFigureToFile(String fileName, ChessFigure chessFigure, String... args) {
         try {
             FileWriter fileWriter = new FileWriter(System.getProperty("user.dir") + "\\" + fileName, true);
             BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
             bufferedWriter.write(getFigurePath(chessFigure) + "->" + Arrays.toString(args));
             bufferedWriter.newLine();
             bufferedWriter.close();
-            return true;
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return false;
     }
 
     @Override
@@ -151,7 +147,7 @@ public class GameFileServiceImpl implements GameFileService {
         if (!initFile.exists() && initFile.createNewFile()) {
             String defaultChessPosition = "white king 0 0\n" + "white queen 5 1\n" + "white rook 2 5\n" + "white bishop 3 7\n" + "white knight 5 5\n" + "black king 7 7\n" + "black queen 1 5\n" + "black rook 3 1\n" + "black bishop 7 3\n";
             writeInitialFiles("init.txt", defaultChessPosition);
-        }else{
+        } else {
             deleteWorkingFiles();
             createWorkingFiles();
         }
@@ -171,19 +167,21 @@ public class GameFileServiceImpl implements GameFileService {
         if (!initFile.exists() && initFile.createNewFile()) {
             String defaultChessPosition = "white king 0 0\n" + "white queen 5 1\n" + "white rook 2 5\n" + "white bishop 3 7\n" + "white knight 5 5\n" + "black king 7 7\n" + "black queen 1 5\n" + "black rook 3 1\n" + "black bishop 7 3\n";
             writeInitialFiles("init.txt", defaultChessPosition);
-        }else {
+        } else {
             File file = new File(System.getProperty("user.dir") + "\\init.txt");
-            if(file.delete()){
+            if (file.delete()) {
                 createDefaultGameFile();
             }
         }
     }
 
     @Override
-    public boolean deleteWorkingFiles() {
+    public void deleteWorkingFiles() {
         File initFile = new File(System.getProperty("user.dir") + "\\init.txt");
         File allFiguresTxt = new File(System.getProperty("user.dir") + "\\allFigures.txt");
-        return initFile.delete() && allFiguresTxt.delete();
+        if (initFile.delete()) {
+            allFiguresTxt.delete();
+        }
     }
 
     @Override
@@ -201,7 +199,6 @@ public class GameFileServiceImpl implements GameFileService {
         File resultFile = new File(System.getProperty("user.dir") + "\\" + "game-result-" + fileIdentifier + ".txt");
         if (resultFile.createNewFile()) {
             chessFigureListMap.forEach((chessFigure, chessFigures) -> {
-                chessFigure.increasePosition();
                 writeFigureToFile("game-result-" + fileIdentifier + ".txt", chessFigure, getFormattedFigureListPath(chessFigures));
             });
             isSaved = true;
@@ -257,7 +254,7 @@ public class GameFileServiceImpl implements GameFileService {
             int count = 0;
             while ((line = bufferedReader.readLine()) != null) {
                 line = line.trim();
-                if(count>10){
+                if (count > 10) {
                     isValid = false;
                     break;
                 }
@@ -265,23 +262,15 @@ public class GameFileServiceImpl implements GameFileService {
                     isValid = false;
                     break;
                 }
-                if (!colors.contains(line.split(" ")[0])) {
-                    isValid = false;
-                    break;
-                }
-                if (!names.contains(line.split(" ")[1])) {
+                if (!colors.contains(line.split(" ")[0]) || !names.contains(line.split(" ")[1])) {
                     isValid = false;
                     break;
                 }
 
                 try {
                     int posX = Integer.parseInt(line.split(" ")[2]);
-                    if (posX < 0 || posX > 7) {
-                        isValid = false;
-                        break;
-                    }
                     int posY = Integer.parseInt(line.split(" ")[3]);
-                    if (posY < 0 || posY > 7) {
+                    if ((posX < 0 || posX > 7) || (posY < 0 || posY > 7)) {
                         isValid = false;
                         break;
                     }
@@ -296,5 +285,23 @@ public class GameFileServiceImpl implements GameFileService {
             e.printStackTrace();
         }
         return isValid;
+    }
+
+    @Override
+    public String getFileContent(String fileName) {
+        StringBuilder fileContent = new StringBuilder();
+        File file = new File(System.getProperty("user.dir") + "\\" + fileName);
+        try {
+            BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                fileContent.append(line.trim()).append("\n");
+            }
+            bufferedReader.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return fileContent.toString();
     }
 }

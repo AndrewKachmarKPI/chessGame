@@ -142,6 +142,7 @@ public class GameServiceImpl implements GameService {
         return matrix;
     }
 
+    @Override
     public ChessFigure createChessFigure(Position pos, FigureName figureName, FigureColor figureColor) {
         switch (figureName) {
             case KING: {

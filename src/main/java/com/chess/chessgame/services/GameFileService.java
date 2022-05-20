@@ -17,17 +17,23 @@ public interface GameFileService {
 
     boolean clearFiguresFile(String fileName);
 
-    boolean writeFigureToFile(String fileName,ChessFigure chessFigure);
-    boolean writeFigureToFile(String fileName, ChessFigure chessFigure, String... args);
+    void writeFigureToFile(String fileName, ChessFigure chessFigure);
+
+    void writeFigureToFile(String fileName, ChessFigure chessFigure, String... args);
+
     boolean saveResultFile(Map<ChessFigure, List<ChessFigure>> chessFigureListMap) throws IOException;
 
     String getFigurePath(ChessFigure chessFigure);
 
     Image loadImageByPath(String path);
-    void createWorkingFiles() throws IOException;
-    void createDefaultGameFile() throws IOException;
-    boolean deleteWorkingFiles();
 
+    void createWorkingFiles() throws IOException;
+
+    void createDefaultGameFile() throws IOException;
+
+    void deleteWorkingFiles();
 
     boolean gameFileValidator(String fileName);
+
+    String getFileContent(String fileName);
 }
