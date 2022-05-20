@@ -179,9 +179,8 @@ public class GameFileServiceImpl implements GameFileService {
     public void deleteWorkingFiles() {
         File initFile = new File(System.getProperty("user.dir") + "\\init.txt");
         File allFiguresTxt = new File(System.getProperty("user.dir") + "\\allFigures.txt");
-        if (initFile.delete()) {
-            allFiguresTxt.delete();
-        }
+        allFiguresTxt.delete();
+        initFile.delete();
     }
 
     @Override
