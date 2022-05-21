@@ -21,7 +21,7 @@ public interface GameFileService {
 
     void writeFigureToFile(String fileName, ChessFigure chessFigure, String... args);
 
-    boolean saveResultFile(Map<ChessFigure, List<ChessFigure>> chessFigureListMap) throws IOException;
+    boolean saveResultFile(Map<ChessFigure, List<ChessFigure>> chessFigureListMap, String directory) throws IOException;
 
     String getFigurePath(ChessFigure chessFigure);
 

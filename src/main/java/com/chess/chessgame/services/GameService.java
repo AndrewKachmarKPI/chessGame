@@ -26,5 +26,5 @@ public interface GameService {
 
     void removeFigure(Position position, String fileName);
 
-    boolean saveGameResults();
+    boolean saveGameResults(String directory);
 }

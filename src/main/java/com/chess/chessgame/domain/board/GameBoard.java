@@ -10,6 +10,7 @@ public class GameBoard {
     private List<GameBoardCell> selectedCells;
     private GameBoardCell gameBoardCell;
     private boolean isGameStarted;
+    private String workingFileDirectory;
     private Text workingFileName;
     private Text workingFileContent;
 
@@ -72,5 +73,13 @@ public class GameBoard {
 
     public void setWorkingFileName(String workingFileName) {
         this.workingFileName = new Text(workingFileName);
+    }
+
+    public String getWorkingFileDirectory() {
+        return workingFileDirectory;
+    }
+
+    public void setWorkingFileDirectory(String workingFileDirectory) {
+        this.workingFileDirectory = workingFileDirectory;
     }
 }

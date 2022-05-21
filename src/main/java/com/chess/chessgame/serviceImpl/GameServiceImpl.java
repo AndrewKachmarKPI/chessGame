@@ -23,8 +23,8 @@ public class GameServiceImpl implements GameService {
     }
 
     @Override
-    public void initGame(String file) {
-        loadFigures(file);
+    public void initGame(String fileName){
+        loadFigures(fileName);
         fillFigureMap();
     }
 
@@ -200,10 +200,10 @@ public class GameServiceImpl implements GameService {
     }
 
     @Override
-    public boolean saveGameResults() {
+    public boolean saveGameResults(String directory) {
         boolean isSaved = false;
         try {
-            isSaved = gameFileService.saveResultFile(getAttackMap());
+            isSaved = gameFileService.saveResultFile(getAttackMap(),directory);
         } catch (IOException e) {
             e.printStackTrace();
         }

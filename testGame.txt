@@ -1,1 +1,1 @@
-white knight 3 3
+black queen 6 6

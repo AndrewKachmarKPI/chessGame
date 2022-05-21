@@ -110,23 +110,18 @@ public class GameMenuServiceImpl implements GameMenuService {
         File file = selectFileDialog(stage);
         stage.setTitle("Chess game!");
         if (file != null) {
-            if(!file.toString().equals(System.getProperty("user.dir") + "\\"+file.getName())){
-                gameFieldService.createNotification( "Wrong directory",
-                        "Upload file from " + System.getProperty("user.dir") + " directory", NotificationStatus.ERROR);
-            }else{
-                if (gameFileService.gameFileValidator(file.getName())) {
-                    closeStartMenu();
-                    gameFieldService.onLoadGame(file);
-                    setGameFileName(file.getName(), gameFileService.getFileContent(file.getName()));
-                    try {
-                        gameFileService.createWorkingFiles();
-                    } catch (IOException ex) {
-                        ex.printStackTrace();
-                    }
-                } else {
-                    gameFieldService.createNotification( "Wrong file",
-                            "The format of " + file.getName() + " file is wrong", NotificationStatus.ERROR);
+            if (gameFileService.gameFileValidator(file.getPath())) {
+                closeStartMenu();
+                gameFieldService.onLoadGame(file);
+                setGameFileName(file.getName(), gameFileService.getFileContent(file.getPath()));
+                try {
+                    gameFileService.createWorkingFiles();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
                 }
+            } else {
+                gameFieldService.createNotification( "Wrong file",
+                        "The format of " + file.getName() + " file is wrong", NotificationStatus.ERROR);
             }
         }
     }

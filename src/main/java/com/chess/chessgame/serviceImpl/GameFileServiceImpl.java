@@ -18,7 +18,7 @@ public class GameFileServiceImpl implements GameFileService {
     @Override
     public List<ChessFigure> getFiguresFromFile(String fileName) {
         List<ChessFigure> figures = new ArrayList<>();
-        File file = new File(System.getProperty("user.dir") + "\\" + fileName);
+        File file = new File(fileName);
         try {
             BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
             String line;
@@ -51,8 +51,8 @@ public class GameFileServiceImpl implements GameFileService {
             String writeTo = System.getProperty("user.dir") + "\\temp.txt";
             File writeToFile = new File(writeTo);
             BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(writeToFile));
-            String readFrom = System.getProperty("user.dir") + "\\" + fileName;
-            File readFromFile = new File(readFrom);
+
+            File readFromFile = new File(fileName);
             BufferedReader bufferedReader = new BufferedReader(new FileReader(readFromFile));
 
             String currentLine;
@@ -63,7 +63,7 @@ public class GameFileServiceImpl implements GameFileService {
             }
             bufferedWriter.close();
             bufferedReader.close();
-            Files.move(Paths.get(writeTo), Paths.get(readFrom), StandardCopyOption.REPLACE_EXISTING);
+            Files.move(Paths.get(writeTo), Paths.get(fileName), StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -92,7 +92,7 @@ public class GameFileServiceImpl implements GameFileService {
     @Override
     public boolean clearFiguresFile(String fileName) {
         try {
-            File file = new File(System.getProperty("user.dir") + "\\" + fileName);
+            File file = new File(fileName);
             PrintWriter writer = new PrintWriter(file);
             writer.print("");
             writer.close();
@@ -106,7 +106,7 @@ public class GameFileServiceImpl implements GameFileService {
     @Override
     public void writeFigureToFile(String fileName, ChessFigure chessFigure) {
         try {
-            FileWriter fileWriter = new FileWriter(System.getProperty("user.dir") + "\\" + fileName, true);
+            FileWriter fileWriter = new FileWriter(fileName, true);
             BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
             bufferedWriter.write(getFigurePath(chessFigure));
             bufferedWriter.newLine();
@@ -119,7 +119,7 @@ public class GameFileServiceImpl implements GameFileService {
     @Override
     public void writeFigureToFile(String fileName, ChessFigure chessFigure, String... args) {
         try {
-            FileWriter fileWriter = new FileWriter(System.getProperty("user.dir") + "\\" + fileName, true);
+            FileWriter fileWriter = new FileWriter(fileName, true);
             BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
             bufferedWriter.write(getFigurePath(chessFigure) + "->" + Arrays.toString(args));
             bufferedWriter.newLine();
@@ -192,13 +192,13 @@ public class GameFileServiceImpl implements GameFileService {
     }
 
     @Override
-    public boolean saveResultFile(Map<ChessFigure, List<ChessFigure>> chessFigureListMap) throws IOException {
+    public boolean saveResultFile(Map<ChessFigure, List<ChessFigure>> chessFigureListMap, String directory) throws IOException {
         boolean isSaved = false;
         String fileIdentifier = UUID.randomUUID().toString().split("-")[0];
-        File resultFile = new File(System.getProperty("user.dir") + "\\" + "game-result-" + fileIdentifier + ".txt");
+        File resultFile = new File(directory + "\\" + "game-result-" + fileIdentifier + ".txt");
         if (resultFile.createNewFile()) {
             chessFigureListMap.forEach((chessFigure, chessFigures) -> {
-                writeFigureToFile("game-result-" + fileIdentifier + ".txt", chessFigure, getFormattedFigureListPath(chessFigures));
+                writeFigureToFile(directory + "\\" + "game-result-" + fileIdentifier + ".txt", chessFigure, getFormattedFigureListPath(chessFigures));
             });
             isSaved = true;
         }
@@ -246,14 +246,14 @@ public class GameFileServiceImpl implements GameFileService {
         colors.add("black");
 
         boolean isValid = true;
-        File file = new File(System.getProperty("user.dir") + "\\" + fileName);
+        File file = new File(fileName);
         try {
             BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
             String line;
             int count = 0;
             while ((line = bufferedReader.readLine()) != null) {
                 line = line.trim();
-                if(line.isEmpty()){
+                if (line.isEmpty()) {
                     continue;
                 }
                 if (count > 10) {
@@ -292,12 +292,12 @@ public class GameFileServiceImpl implements GameFileService {
     @Override
     public String getFileContent(String fileName) {
         StringBuilder fileContent = new StringBuilder();
-        File file = new File(System.getProperty("user.dir") + "\\" + fileName);
+        File file = new File(fileName);
         try {
             BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
             String line;
             while ((line = bufferedReader.readLine()) != null) {
-                if(!line.isEmpty()){
+                if (!line.isEmpty()) {
                     fileContent.append(line.trim()).append("\n");
                 }
             }
