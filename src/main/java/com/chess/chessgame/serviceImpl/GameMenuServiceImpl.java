@@ -20,6 +20,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
+import java.io.IOException;
 
 public class GameMenuServiceImpl implements GameMenuService {
     private final GameFieldService gameFieldService;
@@ -117,6 +118,11 @@ public class GameMenuServiceImpl implements GameMenuService {
                     closeStartMenu();
                     gameFieldService.onLoadGame(file);
                     setGameFileName(file.getName(), gameFileService.getFileContent(file.getName()));
+                    try {
+                        gameFileService.createWorkingFiles();
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
                 } else {
                     gameFieldService.createNotification( "Wrong file",
                             "The format of " + file.getName() + " file is wrong", NotificationStatus.ERROR);

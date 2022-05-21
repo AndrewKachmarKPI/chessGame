@@ -30,10 +30,6 @@ public abstract class ChessFigure {
         this.position = position;
         attackService = new AttackServiceImpl();
     }
-    public void increasePosition(){
-        this.position.setxPosition(this.position.getxPosition()+1);
-        this.position.setyPosition(this.position.getyPosition()+1);
-    }
 
     public FigureName getName() {
         return name;

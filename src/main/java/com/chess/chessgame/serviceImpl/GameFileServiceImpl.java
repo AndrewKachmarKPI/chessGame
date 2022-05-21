@@ -253,10 +253,13 @@ public class GameFileServiceImpl implements GameFileService {
             int count = 0;
             while ((line = bufferedReader.readLine()) != null) {
                 line = line.trim();
-                if (count > 10) {
-                    isValid = false;
-                    break;
+                if(line.isEmpty()){
+                    continue;
                 }
+//                if (count > 10) {
+//                    isValid = false;
+//                    break;
+//                }
                 if (line.split(" ").length != 4) {
                     isValid = false;
                     break;
@@ -294,7 +297,9 @@ public class GameFileServiceImpl implements GameFileService {
             BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
             String line;
             while ((line = bufferedReader.readLine()) != null) {
-                fileContent.append(line.trim()).append("\n");
+                if(!line.isEmpty()){
+                    fileContent.append(line.trim()).append("\n");
+                }
             }
             bufferedReader.close();
 
