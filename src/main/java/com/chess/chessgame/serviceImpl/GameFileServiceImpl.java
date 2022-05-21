@@ -22,7 +22,7 @@ public class GameFileServiceImpl implements GameFileService {
         try {
             BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
             String line;
-            while ((line = bufferedReader.readLine()) != null) { //&& figures.size() <= 10
+            while ((line = bufferedReader.readLine()) != null) {
                 line = line.trim();
                 if (!line.isEmpty()) {
                     String color = line.split(" ")[0];
@@ -256,10 +256,10 @@ public class GameFileServiceImpl implements GameFileService {
                 if(line.isEmpty()){
                     continue;
                 }
-//                if (count > 10) {
-//                    isValid = false;
-//                    break;
-//                }
+                if (count > 10) {
+                    isValid = false;
+                    break;
+                }
                 if (line.split(" ").length != 4) {
                     isValid = false;
                     break;
