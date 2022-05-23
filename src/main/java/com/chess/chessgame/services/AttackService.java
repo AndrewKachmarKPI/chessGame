@@ -8,9 +8,7 @@ public interface AttackService {
 
     int[][] setVerticalSplice(int[][] matrix, int[] splice, int position);
 
-    int[] processSpliceHorizontal(int[] figureArray, int[] gameArray, int position);
-
-    int[] processSpliceVertical(int[] figureArray, int[] gameArray, int xPosition);
+    int[] processSpliceMultiDirection(int[] figureArray, int[] gameArray, int position);
 
     int[] processSpliceDiagonal(int[] figureArray, int[] gameArray, int figureNumber);
 

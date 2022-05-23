@@ -22,7 +22,7 @@ public class AttackServiceImpl implements AttackService {
     }
 
     @Override
-    public int[] processSpliceHorizontal(int[] figureArray, int[] gameArray, int position) {
+    public int[] processSpliceMultiDirection(int[] figureArray, int[] gameArray, int position) {
         boolean isFound = false;
         for (int i = position + 1; i < figureArray.length; i++) {
             if (gameArray[i] > 1 && !isFound) {
@@ -48,32 +48,6 @@ public class AttackServiceImpl implements AttackService {
         return figureArray;
     }
 
-    @Override
-    public int[] processSpliceVertical(int[] figureArray, int[] gameArray, int xPosition) {
-        boolean isFound = false;
-        for (int i = xPosition + 1; i < figureArray.length; i++) {
-            if (gameArray[i] > 1 && !isFound) {
-                figureArray[i] = 10;
-                isFound = true;
-            } else {
-                if (isFound) {
-                    figureArray[i] = 0;
-                }
-            }
-        }
-        isFound = false;
-        for (int i = xPosition - 1; i + 1 > 0; i--) {
-            if (gameArray.length > 1 && gameArray[i] > 1 && !isFound) {
-                figureArray[i] = 10;
-                isFound = true;
-            } else {
-                if (isFound) {
-                    figureArray[i] = 0;
-                }
-            }
-        }
-        return figureArray;
-    }
 
     @Override
     public int[] processSpliceDiagonal(int[] figureArray, int[] gameArray, int figureNumber) {

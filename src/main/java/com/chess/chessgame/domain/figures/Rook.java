@@ -30,8 +30,8 @@ public class Rook extends ChessFigure {
         int[] verticalFigureSplice = attackService.getVerticalSplice(matrix, this.getPosition().getyPosition());
         int[] verticalGameSplice = attackService.getVerticalSplice(gameMatrix, this.getPosition().getyPosition());
 
-        matrix[this.getPosition().getxPosition()] = attackService.processSpliceHorizontal(horizontalFigureSplice, horizontalGameSplice, this.getPosition().getyPosition());
-        matrix = attackService.setVerticalSplice(matrix, attackService.processSpliceVertical(verticalFigureSplice,
+        matrix[this.getPosition().getxPosition()] = attackService.processSpliceMultiDirection(horizontalFigureSplice, horizontalGameSplice, this.getPosition().getyPosition());
+        matrix = attackService.setVerticalSplice(matrix, attackService.processSpliceMultiDirection(verticalFigureSplice,
                 verticalGameSplice, this.getPosition().getxPosition()), this.getPosition().getyPosition());
         return matrix;
     }

@@ -46,9 +46,9 @@ public class Queen extends ChessFigure {
         int[] mainDiagonalGame = attackService.getDiagonalSplice(gameMatrix, true, this.getPosition());
         int[] secondDiagonalGame = attackService.getDiagonalSplice(gameMatrix, false, this.getPosition());
 
-        matrix[this.getPosition().getxPosition()] = attackService.processSpliceHorizontal(horizontalFigureSplice,
+        matrix[this.getPosition().getxPosition()] = attackService.processSpliceMultiDirection(horizontalFigureSplice,
                 horizontalGameSplice,this.getPosition().getyPosition());
-        matrix = attackService.setVerticalSplice(matrix, attackService.processSpliceVertical(verticalFigureSplice,
+        matrix = attackService.setVerticalSplice(matrix, attackService.processSpliceMultiDirection(verticalFigureSplice,
                 verticalGameSplice,this.getPosition().getxPosition()),this.getPosition().getyPosition());
 
 
