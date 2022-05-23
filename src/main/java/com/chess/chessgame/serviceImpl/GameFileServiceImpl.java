@@ -251,6 +251,7 @@ public class GameFileServiceImpl implements GameFileService {
             BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
             String line;
             int count = 0;
+            List<Position> positions = new ArrayList<>();
             while ((line = bufferedReader.readLine()) != null) {
                 line = line.trim();
                 if (line.isEmpty()) {
@@ -276,11 +277,18 @@ public class GameFileServiceImpl implements GameFileService {
                         isValid = false;
                         break;
                     }
+                    positions.add(new Position(posX, posY));
                 } catch (NumberFormatException e) {
                     isValid = false;
                     break;
                 }
                 count++;
+            }
+            for (Position pos: positions) {
+                if(Collections.frequency(positions,pos)>1){
+                    isValid = false;
+                    break;
+                }
             }
             bufferedReader.close();
         } catch (IOException e) {
