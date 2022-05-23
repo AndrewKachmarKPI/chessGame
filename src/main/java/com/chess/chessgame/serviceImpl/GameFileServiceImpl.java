@@ -73,7 +73,7 @@ public class GameFileServiceImpl implements GameFileService {
     public List<ChessFigure> getAllFigures() {
         List<ChessFigure> figures = new ArrayList<>();
         try {
-            File file = new File(System.getProperty("user.dir") + "\\allFigures.txt");
+            File file = new File(System.getProperty("user.dir") + "\\allFigures.dat");
             BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
             String line;
             while ((line = bufferedReader.readLine()) != null) {
@@ -151,10 +151,10 @@ public class GameFileServiceImpl implements GameFileService {
             deleteWorkingFiles();
             createWorkingFiles();
         }
-        File allFiguresTxt = new File(System.getProperty("user.dir") + "\\allFigures.txt");
+        File allFiguresTxt = new File(System.getProperty("user.dir") + "\\allFigures.dat");
         if (!allFiguresTxt.exists() && allFiguresTxt.createNewFile()) {
             String defaultChessPosition = "white king\n" + "white queen\n" + "white rook\n" + "white bishop\n" + "white knight\n" + "black king\n" + "black queen\n" + "black rook\n" + "black bishop\n" + "black knight\n";
-            writeInitialFiles("allFigures.txt", defaultChessPosition);
+            writeInitialFiles("allFigures.dat", defaultChessPosition);
         } else {
             deleteWorkingFiles();
             createWorkingFiles();
@@ -178,7 +178,7 @@ public class GameFileServiceImpl implements GameFileService {
     @Override
     public void deleteWorkingFiles() {
         File initFile = new File(System.getProperty("user.dir") + "\\init.txt");
-        File allFiguresTxt = new File(System.getProperty("user.dir") + "\\allFigures.txt");
+        File allFiguresTxt = new File(System.getProperty("user.dir") + "\\allFigures.dat");
         allFiguresTxt.delete();
         initFile.delete();
     }
