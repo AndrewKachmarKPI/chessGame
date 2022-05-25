@@ -1,4 +1,0 @@
-white queen 1 2
-black queen 2 1
-black queen 3 1
-black queen 7 7
