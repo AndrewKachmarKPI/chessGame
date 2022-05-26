@@ -3,6 +3,7 @@ package com.chess.chessgame.services;
 import com.chess.chessgame.domain.figures.*;
 import com.chess.chessgame.enums.FigureColor;
 import com.chess.chessgame.enums.FigureName;
+
 import java.util.*;
 
 
@@ -16,13 +17,11 @@ public interface GameService {
     int[][] getFigureTrajectory(Position pos, FigureName figureName, FigureColor figureColor);
 
     ChessFigure createChessFigure(Position pos, FigureName figureName, FigureColor figureColor);
+
     void clearGameBoard(String fileName);
 
 
     void addNewFigure(ChessFigure chessFigure, String fileName);
-
-    List<ChessFigure> getAvailableFigures();
-
 
     void removeFigure(Position position, String fileName);
 

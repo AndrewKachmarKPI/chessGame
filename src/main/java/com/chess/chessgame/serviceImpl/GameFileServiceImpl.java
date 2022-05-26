@@ -73,19 +73,13 @@ public class GameFileServiceImpl implements GameFileService {
     @Override
     public List<ChessFigure> getAllFigures() {
         List<ChessFigure> figures = new ArrayList<>();
-        try {
-            File file = new File(System.getProperty("user.dir") + "\\allFigures.dat");
-            BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
-            String line;
-            while ((line = bufferedReader.readLine()) != null) {
-                line = line.trim();
-                String color = line.split(" ")[0];
-                String name = line.split(" ")[1];
-                figures.add(gameService.createChessFigure(new Position(), FigureName.valueOf(name.toUpperCase(Locale.ROOT)), FigureColor.valueOf(color.toUpperCase(Locale.ROOT))));
-            }
-            bufferedReader.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+        String allFigures = "white king\n" + "white queen\n" + "white rook\n" + "white bishop\n" + "white knight\n" + "black king\n" + "black queen\n" + "black rook\n" + "black bishop\n" + "black knight\n";
+        String[] splitFigures = allFigures.split("\n");
+        for (String splitFigure : splitFigures) {
+            String line = splitFigure.trim();
+            String color = line.split(" ")[0];
+            String name = line.split(" ")[1];
+            figures.add(gameService.createChessFigure(new Position(), FigureName.valueOf(name.toUpperCase(Locale.ROOT)), FigureColor.valueOf(color.toUpperCase(Locale.ROOT))));
         }
         return figures;
     }
@@ -165,14 +159,6 @@ public class GameFileServiceImpl implements GameFileService {
             deleteWorkingFiles();
             createWorkingFiles();
         }
-        File allFiguresTxt = new File(System.getProperty("user.dir") + "\\allFigures.dat");
-        if (!allFiguresTxt.exists() && allFiguresTxt.createNewFile()) {
-            String defaultChessPosition = "white king\n" + "white queen\n" + "white rook\n" + "white bishop\n" + "white knight\n" + "black king\n" + "black queen\n" + "black rook\n" + "black bishop\n" + "black knight\n";
-            writeInitialFiles("allFigures.dat", defaultChessPosition);
-        } else {
-            deleteWorkingFiles();
-            createWorkingFiles();
-        }
     }
 
     @Override
@@ -192,8 +178,6 @@ public class GameFileServiceImpl implements GameFileService {
     @Override
     public void deleteWorkingFiles() {
         File initFile = new File(System.getProperty("user.dir") + "\\init.txt");
-        File allFiguresTxt = new File(System.getProperty("user.dir") + "\\allFigures.dat");
-        allFiguresTxt.delete();
         initFile.delete();
     }
 
@@ -210,6 +194,7 @@ public class GameFileServiceImpl implements GameFileService {
                 .append(chessFigure.getPosition().getxPosition());
         return chessPath.toString();
     }
+
     @Override
     public String getFigurePath(ChessFigure chessFigure) {
         return chessFigure.getColor().toString().toLowerCase(Locale.ROOT) + " " +

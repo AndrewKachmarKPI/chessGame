@@ -178,15 +178,6 @@ public class GameServiceImpl implements GameService {
     }
 
     @Override
-    public List<ChessFigure> getAvailableFigures() {
-        List<ChessFigure> allFigures = gameFileService.getAllFigures();
-        if (chessBoard.getFigures().size() >= 10) {
-            allFigures = new ArrayList<>();
-        }
-        return allFigures;
-    }
-
-    @Override
     public void removeFigure(Position position, String fileName) {
         ChessFigure chessFigure = chessBoard.getFigures()
                 .stream()
