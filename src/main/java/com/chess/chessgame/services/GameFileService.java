@@ -19,11 +19,13 @@ public interface GameFileService {
 
     void writeFigureToFile(String fileName, ChessFigure chessFigure);
 
+    void writeTextToFile(String fileName, String text);
     void writeFigureToFile(String fileName, ChessFigure chessFigure, String... args);
 
     boolean saveResultFile(Map<ChessFigure, List<ChessFigure>> chessFigureListMap, String directory) throws IOException;
 
     String getFigurePath(ChessFigure chessFigure);
+    String getFigurePathForPrint(ChessFigure chessFigure);
 
     Image loadImageByPath(String path);
 

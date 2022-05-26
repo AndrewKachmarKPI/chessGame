@@ -11,8 +11,8 @@ public class GameBoard {
     private GameBoardCell gameBoardCell;
     private boolean isGameStarted;
     private String workingFileDirectory;
-    private Text workingFileName;
-    private Text workingFileContent;
+    private final Text workingFileName;
+    private final Text workingFileContent;
 
     public GameBoard() {
         this.selectedCells = new ArrayList<>();
@@ -20,11 +20,6 @@ public class GameBoard {
         this.isGameStarted = false;
         this.workingFileName = new Text();
         this.workingFileContent = new Text();
-    }
-
-    public GameBoard(List<GameBoardCell> selectedCells, GameBoardCell gameBoardCell) {
-        this.selectedCells = selectedCells;
-        this.gameBoardCell = gameBoardCell;
     }
 
     public boolean isGameStarted() {
@@ -47,14 +42,6 @@ public class GameBoard {
         return gameBoardCell;
     }
 
-    public void setChessCell(GameBoardCell gameBoardCell) {
-        this.gameBoardCell = gameBoardCell;
-    }
-
-    public GameBoardCell getGameBoardCell() {
-        return gameBoardCell;
-    }
-
     public void setGameBoardCell(GameBoardCell gameBoardCell) {
         this.gameBoardCell = gameBoardCell;
     }
@@ -65,14 +52,6 @@ public class GameBoard {
 
     public Text getWorkingFileContent() {
         return workingFileContent;
-    }
-
-    public void setWorkingFileContent(String workingFileContent) {
-        this.workingFileContent = new Text(workingFileContent);
-    }
-
-    public void setWorkingFileName(String workingFileName) {
-        this.workingFileName = new Text(workingFileName);
     }
 
     public String getWorkingFileDirectory() {

@@ -11,6 +11,7 @@ import javafx.scene.image.Image;
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class GameFileServiceImpl implements GameFileService {
     private static final GameService gameService = new GameServiceImpl();
@@ -117,11 +118,24 @@ public class GameFileServiceImpl implements GameFileService {
     }
 
     @Override
+    public void writeTextToFile(String fileName, String text) {
+        try {
+            FileWriter fileWriter = new FileWriter(fileName, true);
+            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+            bufferedWriter.write(text + "\n");
+            bufferedWriter.newLine();
+            bufferedWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
     public void writeFigureToFile(String fileName, ChessFigure chessFigure, String... args) {
         try {
             FileWriter fileWriter = new FileWriter(fileName, true);
             BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
-            bufferedWriter.write(getFigurePath(chessFigure) + "->" + Arrays.toString(args));
+            bufferedWriter.write(getFigurePathForPrint(chessFigure) + " -> " + Arrays.toString(args));
             bufferedWriter.newLine();
             bufferedWriter.close();
         } catch (IOException e) {
@@ -184,6 +198,19 @@ public class GameFileServiceImpl implements GameFileService {
     }
 
     @Override
+    public String getFigurePathForPrint(ChessFigure chessFigure) {
+        StringBuilder chessPath = new StringBuilder(appendChessIcon(chessFigure) + " ");
+        chessPath.append(chessFigure.getColor().toString().toLowerCase(Locale.ROOT)).append(" ")
+                .append(chessFigure.getName().toString().toLowerCase(Locale.ROOT));
+        int maxSize = 7;
+        for (int i = 0; i < maxSize - chessFigure.getName().toString().length(); i++) {
+            chessPath.append(" ");
+        }
+        chessPath.append(chessFigure.getPosition().getyPosition()).append(" ")
+                .append(chessFigure.getPosition().getxPosition());
+        return chessPath.toString();
+    }
+    @Override
     public String getFigurePath(ChessFigure chessFigure) {
         return chessFigure.getColor().toString().toLowerCase(Locale.ROOT) + " " +
                 chessFigure.getName().toString().toLowerCase(Locale.ROOT) + " " +
@@ -197,18 +224,74 @@ public class GameFileServiceImpl implements GameFileService {
         String fileIdentifier = UUID.randomUUID().toString().split("-")[0];
         File resultFile = new File(directory + "\\" + "game-result-" + fileIdentifier + ".txt");
         if (resultFile.createNewFile()) {
+            String fileName = directory + "\\" + "game-result-" + fileIdentifier + ".txt";
+            writeTextToFile(fileName, "Figure attacks!");
             chessFigureListMap.forEach((chessFigure, chessFigures) -> {
-                writeFigureToFile(directory + "\\" + "game-result-" + fileIdentifier + ".txt", chessFigure, getFormattedFigureListPath(chessFigures));
+                writeFigureToFile(fileName, chessFigure, getFormattedFigureListPath(chessFigures));
             });
+            writeTextToFile(fileName, "\nTotal:" + chessFigureListMap.keySet().size() + " attacks");
             isSaved = true;
         }
         return isSaved;
     }
 
+    private String appendChessIcon(ChessFigure chessFigure) {
+        String ico = "";
+        switch (chessFigure.getName()) {
+            case KING: {
+                if (chessFigure.getColor() == FigureColor.BLACK) {
+                    ico = "♚";
+                } else {
+                    ico = "♔";
+                }
+                break;
+            }
+            case BISHOP: {
+                if (chessFigure.getColor() == FigureColor.BLACK) {
+                    ico = "♝";
+                } else {
+                    ico = "♗";
+                }
+                break;
+            }
+            case KNIGHT: {
+                if (chessFigure.getColor() == FigureColor.BLACK) {
+                    ico = "♞";
+                } else {
+                    ico = "♘";
+                }
+                break;
+            }
+            case QUEEN: {
+                if (chessFigure.getColor() == FigureColor.BLACK) {
+                    ico = "♛";
+                } else {
+                    ico = "♕";
+                }
+                break;
+            }
+            case ROOK: {
+                if (chessFigure.getColor() == FigureColor.BLACK) {
+                    ico = "♜";
+                } else {
+                    ico = "♖";
+                }
+                break;
+            }
+        }
+        return ico;
+    }
+
     private String getFormattedFigureListPath(List<ChessFigure> chessFigures) {
-        StringBuilder stringBuilder = new StringBuilder("[");
-        chessFigures.forEach(chessFigure -> stringBuilder.append(getFigurePath(chessFigure)).append("|"));
-        stringBuilder.append("]");
+        StringBuilder stringBuilder = new StringBuilder();
+        AtomicInteger k = new AtomicInteger();
+        chessFigures.forEach(chessFigure -> {
+            stringBuilder.append(getFigurePathForPrint(chessFigure));
+            k.getAndIncrement();
+            if (k.get() != chessFigures.size()) {
+                stringBuilder.append("|");
+            }
+        });
         return stringBuilder.toString();
     }
 
@@ -284,8 +367,8 @@ public class GameFileServiceImpl implements GameFileService {
                 }
                 count++;
             }
-            for (Position pos: positions) {
-                if(Collections.frequency(positions,pos)>1){
+            for (Position pos : positions) {
+                if (Collections.frequency(positions, pos) > 1) {
                     isValid = false;
                     break;
                 }

@@ -653,12 +653,13 @@ public class GameFieldServiceImpl implements GameFieldService {
         Stage stage = (Stage) node.getScene().getWindow();
         File file = directoryChooser.showDialog(stage);
 
-        System.out.println(file.getPath());
-        boolean isSaved = gameService.saveGameResults(file.getPath());
-        if (isSaved) {
-            gameFieldService.createNotification("Saved results", "Figure attacks successfully saved", NotificationStatus.INFO);
-        } else {
-            gameFieldService.createNotification("Error saving results", "Figure attacks saving error", NotificationStatus.ERROR);
+        if(file!=null){
+            boolean isSaved = gameService.saveGameResults(file.getPath());
+            if (isSaved) {
+                gameFieldService.createNotification("Saved results", "Figure attacks successfully saved", NotificationStatus.INFO);
+            } else {
+                gameFieldService.createNotification("Error saving results", "Figure attacks saving error", NotificationStatus.ERROR);
+            }
         }
     }
 

@@ -1,4 +1,0 @@
-white knight 4 1
-black knight 6 2
-white knight 4 3
-white queen 3 5
