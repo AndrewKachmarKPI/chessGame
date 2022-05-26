@@ -145,10 +145,10 @@ public class GameFieldServiceImpl implements GameFieldService {
 
 
         VBox vBox1 = new VBox(10, savedGameResults, figureAttacks, clearField);
-        VBox vBox2 = new VBox(10, textPane,borderPane,randomChessPosition);
+        VBox vBox2 = new VBox(10, textPane, borderPane, randomChessPosition);
         vBox2.setId("textVbox");
-        vBox1.setPadding(new Insets(0,0,120,0));
-        VBox vBox = new VBox(10,vBox1,vBox2);
+        vBox1.setPadding(new Insets(0, 0, 120, 0));
+        VBox vBox = new VBox(10, vBox1, vBox2);
         vBox.setAlignment(Pos.CENTER);
         vBox.setPadding(new Insets(20, 20, 20, 20));
         return vBox;
@@ -346,7 +346,6 @@ public class GameFieldServiceImpl implements GameFieldService {
             }
         }
     }
-
 
 
     private void openDialogWindow() {
@@ -599,6 +598,31 @@ public class GameFieldServiceImpl implements GameFieldService {
         }
     }
 
+    private void onClearField() {
+        if (gameBoard.isGameStarted()) {
+            gameService.clearGameBoard(gameBoard.getWorkingFileDirectory());
+            gameBoard.setGameBoardCell(new GameBoardCell());
+            gameBoard.setSelectedCells(new ArrayList<>());
+            clearBoard();
+            refreshGame(gameBoard.getWorkingFileDirectory());
+        }
+    }
+
+    private boolean isFileExist(String filePath) {
+        boolean isExist = true;
+        File file = new File(filePath);
+        if (!file.exists()) {
+            isExist = false;
+            try {
+                onClearField();
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return isExist;
+    }
+
     private void onSelectContextMenuItem(ChessFigure chessFigure, BorderPane borderPane) {
         Position position = new Position();
         if (borderPane != null) {
@@ -606,16 +630,19 @@ public class GameFieldServiceImpl implements GameFieldService {
             position.setxPosition(Integer.parseInt(borderPane.getId().split("-")[1].split("")[1]));
         }
         chessFigure.setPosition(position);
-        gameService.addNewFigure(chessFigure,gameBoard.getWorkingFileDirectory());
+        isFileExist(gameBoard.getWorkingFileDirectory());
+        gameService.addNewFigure(chessFigure, gameBoard.getWorkingFileDirectory());
         refreshGame(gameBoard.getWorkingFileDirectory());
     }
 
     private void onRemoveFigureFromBoard(BorderPane borderPane) {
         Position position = new Position(Integer.parseInt(borderPane.getId().split("-")[1].split("")[0]),
                 Integer.parseInt(borderPane.getId().split("-")[1].split("")[1]));
-        gameService.removeFigure(position, gameBoard.getWorkingFileDirectory());
-        removeFigureById(borderPane.getId());
-        refreshGame(gameBoard.getWorkingFileDirectory());
+        if(isFileExist(gameBoard.getWorkingFileDirectory())){
+            gameService.removeFigure(position, gameBoard.getWorkingFileDirectory());
+            removeFigureById(borderPane.getId());
+            refreshGame(gameBoard.getWorkingFileDirectory());
+        }
     }
 
     private void onSavedGameResults(MouseEvent e) {
@@ -629,7 +656,7 @@ public class GameFieldServiceImpl implements GameFieldService {
         System.out.println(file.getPath());
         boolean isSaved = gameService.saveGameResults(file.getPath());
         if (isSaved) {
-            gameFieldService.createNotification( "Saved results", "Figure attacks successfully saved", NotificationStatus.INFO);
+            gameFieldService.createNotification("Saved results", "Figure attacks successfully saved", NotificationStatus.INFO);
         } else {
             gameFieldService.createNotification("Error saving results", "Figure attacks saving error", NotificationStatus.ERROR);
         }
@@ -641,25 +668,31 @@ public class GameFieldServiceImpl implements GameFieldService {
         Stage stage = (Stage) node.getScene().getWindow();
         File file = gameMenuService.selectFileDialog(stage);
         stage.setTitle("Chess game!");
-        if(file!=null){
-            if(gameFileService.gameFileValidator(file.getPath())){
-                gameBoard.setGameBoardCell(new GameBoardCell());
-                gameBoard.setSelectedCells(new ArrayList<>());
-                clearBoard();
-                gameBoard.getWorkingFileName().setText(file.getName());
-                gameBoard.setWorkingFileDirectory(file.getPath());
-            }else {
-                createNotification( "Wrong file",
-                        "The format of " + file.getName() + " file is wrong", NotificationStatus.ERROR);
+        if (file != null) {
+            if (gameBoard.getWorkingFileDirectory().equals(file.getPath())) {
+                createNotification("Already used file",
+                        "The file: " + file.getName() + " already in use select another file!", NotificationStatus.ERROR);
+            } else {
+                if (gameFileService.gameFileValidator(file.getPath())) {
+                    gameBoard.setGameBoardCell(new GameBoardCell());
+                    gameBoard.setSelectedCells(new ArrayList<>());
+                    clearBoard();
+                    gameBoard.getWorkingFileName().setText(file.getName());
+                    gameBoard.setWorkingFileDirectory(file.getPath());
+                    refreshGame(gameBoard.getWorkingFileDirectory());
+                } else {
+                    createNotification("Wrong file",
+                            "The format of " + file.getName() + " file is wrong", NotificationStatus.ERROR);
+
+                }
             }
         }
-        refreshGame(gameBoard.getWorkingFileDirectory());
     }
 
     public void onStartGame() {
         try {
             gameBoard.getWorkingFileName().setText("init.txt");
-            gameBoard.setWorkingFileDirectory(System.getProperty("user.dir")+"\\"+"init.txt");
+            gameBoard.setWorkingFileDirectory(System.getProperty("user.dir") + "\\" + "init.txt");
             gameFileService.createWorkingFiles();
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -676,9 +709,16 @@ public class GameFieldServiceImpl implements GameFieldService {
     }
 
     private void refreshGame(String directory) {
-        gameService.initGame(directory);
-        gameBoard.setGameStarted(true);
-        gameService.getFiguresForSetup().forEach(this::setFigureOnBoard);
-        gameBoard.getWorkingFileContent().setText(gameFileService.getFileContent(directory));
+        isFileExist(directory);
+        if (gameFileService.gameFileValidator(gameBoard.getWorkingFileName().getText())) {
+            gameService.initGame(directory);
+            gameBoard.setGameStarted(true);
+            gameService.getFiguresForSetup().forEach(this::setFigureOnBoard);
+            gameBoard.getWorkingFileContent().setText(gameFileService.getFileContent(directory));
+        } else {
+            onClearField();
+            createNotification("Damaged file",
+                    "The file" + gameBoard.getWorkingFileName().getText() + " is damaged!", NotificationStatus.ERROR);
+        }
     }
 }
