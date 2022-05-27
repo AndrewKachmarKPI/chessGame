@@ -1,4 +1,0 @@
-white queen 7 0
-black queen 0 7
-white rook 5 2
-black knight 2 1

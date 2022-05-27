@@ -13,8 +13,6 @@ public interface GameFileService {
 
     void removeFigureFromFile(ChessFigure chessFigure, String fileName);
 
-    List<ChessFigure> getAllFigures();
-
     boolean clearFiguresFile(String fileName);
 
     void writeFigureToFile(String fileName, ChessFigure chessFigure);

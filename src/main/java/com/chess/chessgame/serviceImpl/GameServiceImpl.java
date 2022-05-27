@@ -200,4 +200,20 @@ public class GameServiceImpl implements GameService {
         }
         return isSaved;
     }
+
+    @Override
+    public List<ChessFigure> getAvailableFigures() {
+        List<ChessFigure> figures = new ArrayList<>();
+        if(chessBoard.getFigures().size() <= 10){
+            String allFigures = "white king\n" + "white queen\n" + "white rook\n" + "white bishop\n" + "white knight\n" + "black king\n" + "black queen\n" + "black rook\n" + "black bishop\n" + "black knight\n";
+            String[] splitFigures = allFigures.split("\n");
+            for (String splitFigure : splitFigures) {
+                String line = splitFigure.trim();
+                String color = line.split(" ")[0];
+                String name = line.split(" ")[1];
+                figures.add(createChessFigure(new Position(), FigureName.valueOf(name.toUpperCase(Locale.ROOT)), FigureColor.valueOf(color.toUpperCase(Locale.ROOT))));
+            }
+        }
+        return figures;
+    }
 }

@@ -479,7 +479,7 @@ public class GameFieldServiceImpl implements GameFieldService {
     }
 
     private ContextMenu openAvailableFiguresMenu(BorderPane borderPane) {
-        List<ChessFigure> availableFigures = gameFileService.getAllFigures();
+        List<ChessFigure> availableFigures = gameService.getAvailableFigures();
         ContextMenu contextMenu = new ContextMenu();
         contextMenu.getStyleClass().add("contextMenu");
         availableFigures.forEach(chessFigure -> {

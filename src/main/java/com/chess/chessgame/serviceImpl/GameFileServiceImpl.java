@@ -73,20 +73,6 @@ public class GameFileServiceImpl implements GameFileService {
     }
 
     @Override
-    public List<ChessFigure> getAllFigures() {
-        List<ChessFigure> figures = new ArrayList<>();
-        String allFigures = "white king\n" + "white queen\n" + "white rook\n" + "white bishop\n" + "white knight\n" + "black king\n" + "black queen\n" + "black rook\n" + "black bishop\n" + "black knight\n";
-        String[] splitFigures = allFigures.split("\n");
-        for (String splitFigure : splitFigures) {
-            String line = splitFigure.trim();
-            String color = line.split(" ")[0];
-            String name = line.split(" ")[1];
-            figures.add(gameService.createChessFigure(new Position(), FigureName.valueOf(name.toUpperCase(Locale.ROOT)), FigureColor.valueOf(color.toUpperCase(Locale.ROOT))));
-        }
-        return figures;
-    }
-
-    @Override
     public boolean clearFiguresFile(String fileName) {
         try {
             File file = new File(fileName);
