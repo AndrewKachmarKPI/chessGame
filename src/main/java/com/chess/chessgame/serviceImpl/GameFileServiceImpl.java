@@ -9,6 +9,8 @@ import com.chess.chessgame.services.GameService;
 import javafx.scene.image.Image;
 
 import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -114,8 +116,8 @@ public class GameFileServiceImpl implements GameFileService {
     @Override
     public void writeTextToFile(String fileName, String text) {
         try {
-            FileWriter fileWriter = new FileWriter(fileName, true);
-            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+            Path path = Paths.get(fileName);
+            BufferedWriter bufferedWriter = Files.newBufferedWriter(path,StandardCharsets.UTF_8);
             bufferedWriter.write(text + "\n");
             bufferedWriter.newLine();
             bufferedWriter.close();
@@ -210,11 +212,14 @@ public class GameFileServiceImpl implements GameFileService {
         File resultFile = new File(directory + "\\" + "game-result-" + fileIdentifier + ".txt");
         if (resultFile.createNewFile()) {
             String fileName = directory + "\\" + "game-result-" + fileIdentifier + ".txt";
-            writeTextToFile(fileName, "Figure attacks!");
+            StringBuilder stringBuilder = new StringBuilder("Figure attacks!\n");
             chessFigureListMap.forEach((chessFigure, chessFigures) -> {
-                writeFigureToFile(fileName, chessFigure, getFormattedFigureListPath(chessFigures));
+                stringBuilder.append(getFigurePathForPrint(chessFigure))
+                        .append(" -> ")
+                        .append(getFormattedFigureListPath(chessFigures)).append("\n");
             });
-            writeTextToFile(fileName, "\nTotal:" + chessFigureListMap.keySet().size() + " attacks");
+            stringBuilder.append("\nTotal:").append(chessFigureListMap.keySet().size()).append(" attacks");
+            writeTextToFile(fileName, stringBuilder.toString());
             isSaved = true;
         }
         return isSaved;
