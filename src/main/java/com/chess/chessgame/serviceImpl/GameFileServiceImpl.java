@@ -105,7 +105,7 @@ public class GameFileServiceImpl implements GameFileService {
         try {
             Path path = Paths.get(fileName);
             BufferedWriter bufferedWriter = Files.newBufferedWriter(path, StandardCharsets.UTF_8);
-            bufferedWriter.write(text + "\n");
+            bufferedWriter.write(text);
             bufferedWriter.newLine();
             bufferedWriter.close();
         } catch (IOException e) {
@@ -131,7 +131,7 @@ public class GameFileServiceImpl implements GameFileService {
         if (!initFile.exists() && initFile.createNewFile()) {
             String defaultChessPosition = "white king 0 0\n" + "white queen 5 1\n" + "white rook 2 5\n" +
                     "white bishop 3 7\n" + "white knight 5 5\n" + "black king 7 7\n" +
-                    "black queen 1 5\n" + "black rook 3 1\n" + "black bishop 7 3\n";
+                    "black queen 1 5\n" + "black rook 3 1\n" + "black bishop 7 3";
             writeTextToFile("init.txt", defaultChessPosition);
         } else {
             deleteWorkingFiles();
@@ -180,7 +180,7 @@ public class GameFileServiceImpl implements GameFileService {
                         .append(" -> ")
                         .append(getFormattedFigureListPath(chessFigures)).append("\n");
             });
-            stringBuilder.append("\nTotal:").append(chessFigureListMap.keySet().size()).append(" attacks");
+            stringBuilder.append("\nTotal:").append(chessFigureListMap.keySet().size()).append(" attacks \n");
             writeTextToFile(fileName, stringBuilder.toString());
             isSaved = true;
         }

@@ -152,14 +152,14 @@ public class GameServiceImpl implements GameService {
 
     @Override
     public void removeFigure(Position position, String fileName) {
-        ChessFigure chessFigure = chessBoard.getFigures()
+        Optional<ChessFigure> chessFigure = chessBoard.getFigures()
                 .stream()
                 .filter(chessFigure1 -> chessFigure1.getPosition().getxPosition() == position.getxPosition() && chessFigure1.getPosition().getyPosition() == position.getyPosition())
-                .findFirst().orElseThrow(() -> new RuntimeException("Figure not found!"));
-        if (chessFigure.getName() != null) {
-            chessBoard.getFigures().remove(chessFigure);
-            chessBoard.getChessFigureMap().remove(chessFigure);
-            gameFileService.removeFigureFromFile(chessFigure, fileName);
+                .findFirst();
+        if (chessFigure.isPresent()) {
+            chessBoard.getFigures().remove(chessFigure.get());
+            chessBoard.getChessFigureMap().remove(chessFigure.get());
+            gameFileService.removeFigureFromFile(chessFigure.get(), fileName);
         }
     }
 

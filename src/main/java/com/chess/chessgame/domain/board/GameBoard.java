@@ -1,5 +1,6 @@
 package com.chess.chessgame.domain.board;
 
+import javafx.scene.control.ContextMenu;
 import javafx.scene.text.Text;
 
 import java.io.File;
@@ -8,6 +9,7 @@ import java.util.List;
 
 public class GameBoard {
     private List<GameBoardCell> selectedCells;
+    private final List<ContextMenu> menuList;
     private GameBoardCell gameBoardCell;
     private boolean isGameStarted;
     private String workingFileDirectory;
@@ -16,6 +18,7 @@ public class GameBoard {
 
     public GameBoard() {
         this.selectedCells = new ArrayList<>();
+        this.menuList = new ArrayList<>();
         this.gameBoardCell = new GameBoardCell();
         this.isGameStarted = false;
         this.workingFileName = new Text();
@@ -60,5 +63,8 @@ public class GameBoard {
 
     public void setWorkingFileDirectory(String workingFileDirectory) {
         this.workingFileDirectory = workingFileDirectory;
+    }
+    public List<ContextMenu> getMenuList() {
+        return menuList;
     }
 }

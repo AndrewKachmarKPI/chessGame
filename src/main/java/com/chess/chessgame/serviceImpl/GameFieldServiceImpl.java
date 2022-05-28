@@ -179,6 +179,7 @@ public class GameFieldServiceImpl implements GameFieldService {
                     if (mouseEvent.getButton() == MouseButton.SECONDARY && gameBoard.isGameStarted()) {
                         BorderPane selectedPane = findBorderPaneById(((BorderPane) mouseEvent.getSource()).getId());
                         ContextMenu contextMenu = openAvailableFiguresMenu(selectedPane);
+                        gameBoard.getMenuList().add(contextMenu);
                         contextMenu.show(rectangle, mouseEvent.getScreenX(), mouseEvent.getScreenY());
                     }
                 });
@@ -187,6 +188,10 @@ public class GameFieldServiceImpl implements GameFieldService {
             }
             isSecond = !isSecond;
         }
+    }
+
+    private void closeAllMenus() {
+        gameBoard.getMenuList().forEach(ContextMenu::hide);
     }
 
     private void paintBorders(int x, int y) {
@@ -613,6 +618,7 @@ public class GameFieldServiceImpl implements GameFieldService {
         chessFigure.setPosition(position);
         isFileExist(gameBoard.getWorkingFileDirectory());
         gameService.addNewFigure(chessFigure, gameBoard.getWorkingFileDirectory());
+        closeAllMenus();
         refreshGame(gameBoard.getWorkingFileDirectory());
     }
 
@@ -622,6 +628,7 @@ public class GameFieldServiceImpl implements GameFieldService {
         if (isFileExist(gameBoard.getWorkingFileDirectory())) {
             gameService.removeFigure(position, gameBoard.getWorkingFileDirectory());
             removeFigureById(borderPane.getId());
+            closeAllMenus();
             refreshGame(gameBoard.getWorkingFileDirectory());
         }
     }
