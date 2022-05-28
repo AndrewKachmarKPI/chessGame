@@ -7,10 +7,8 @@ import com.chess.chessgame.enums.FigureName;
 import com.chess.chessgame.services.GameFileService;
 import com.chess.chessgame.services.GameService;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 
 public class GameServiceImpl implements GameService {
@@ -23,62 +21,37 @@ public class GameServiceImpl implements GameService {
     }
 
     @Override
-    public void initGame(String fileName){
+    public void initGame(String fileName) {
         loadFigures(fileName);
         fillFigureMap();
     }
 
     private void loadFigures(String fileName) {
-        List<ChessFigure> figures =  gameFileService.getFiguresFromFile(fileName);
+        List<ChessFigure> figures = gameFileService.getFiguresFromFile(fileName);
         int[][] matrix = new int[8][8];
         Map<ChessFigure, List<ChessFigure>> chessFigureMap = new HashMap<>();
         figures.forEach(chessFigure -> {
             chessFigureMap.put(chessFigure, new ArrayList<>());
-            for (int i = 0; i < 8; i++) {
-                for (int j = 0; j < 8; j++) {
-                    if (chessFigure.getPosition().getxPosition() == i && chessFigure.getPosition().getyPosition() == j) {
-                        matrix[i][j] = getFigureNumber(chessFigure);
-                        break;
-                    }
-                }
-            }
+            matrix[chessFigure.getPosition().getxPosition()][chessFigure.getPosition().getyPosition()] = getFigureNumber(chessFigure);
         });
-        chessBoard.setChessFigureMap(chessFigureMap);
-        chessBoard.setFigures(figures);
-        chessBoard.setChessMatrix(matrix);
+        chessBoard = new ChessBoard(figures, chessFigureMap, matrix);
     }
 
     private void fillFigureMap() {
         List<ChessFigure> chessFigures = chessBoard.getFigures();
         Map<ChessFigure, List<ChessFigure>> chessFigureMap = chessBoard.getChessFigureMap();
-
-        chessFigures.forEach(chessFigure -> {
-            List<ChessFigure> passedFigures = getAttackedFigures(chessFigure);
-            chessFigureMap.put(chessFigure, passedFigures);
-        });
+        chessFigures.forEach(chessFigure -> chessFigureMap.put(chessFigure, getAttackedFigures(chessFigure)));
     }
 
     private List<ChessFigure> getAttackedFigures(ChessFigure chessFigure) {
         List<Position> figurePositions = convertMatrixToPositionList(getFigureTrajectory(chessFigure.getPosition(), chessFigure.getName(), chessFigure.getColor()));
-        List<Position> matchedPositions = new ArrayList<>();
-        List<Position> boardFiguresPositions = chessBoard.getFigures().stream().map(ChessFigure::getPosition).collect(Collectors.toList());
-
-        figurePositions.forEach(position -> {
-            boardFiguresPositions.forEach(boardPosition -> {
-                if (position.equals(boardPosition)) {
-                    matchedPositions.add(boardPosition);
-                }
-            });
-        });
-
         List<ChessFigure> matchedFigures = new ArrayList<>();
-        matchedPositions.forEach(position -> {
-            chessBoard.getFigures().forEach(figure -> {
-                if (position.equals(figure.getPosition()) && !figure.getColor().equals(chessFigure.getColor())) {
-                    matchedFigures.add(figure);
-                }
-            });
-        });
+
+        figurePositions.forEach(position -> chessBoard.getFigures().forEach(figure -> {
+            if (position.equals(figure.getPosition()) && !figure.getColor().equals(chessFigure.getColor())) {
+                matchedFigures.add(figure);
+            }
+        }));
         return matchedFigures;
     }
 
@@ -174,7 +147,7 @@ public class GameServiceImpl implements GameService {
 
     @Override
     public void addNewFigure(ChessFigure chessFigure, String fileName) {
-        gameFileService.writeFigureToFile(fileName, chessFigure);
+        gameFileService.appendFigureToFile(fileName, chessFigure);
     }
 
     @Override
@@ -194,7 +167,7 @@ public class GameServiceImpl implements GameService {
     public boolean saveGameResults(String directory) {
         boolean isSaved = false;
         try {
-            isSaved = gameFileService.saveResultFile(getAttackMap(),directory);
+            isSaved = gameFileService.saveResultFile(getAttackMap(), directory);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -204,7 +177,7 @@ public class GameServiceImpl implements GameService {
     @Override
     public List<ChessFigure> getAvailableFigures() {
         List<ChessFigure> figures = new ArrayList<>();
-        if(chessBoard.getFigures().size() <= 10){
+        if (chessBoard.getFigures().size() <= 10) {
             String allFigures = "white king\n" + "white queen\n" + "white rook\n" + "white bishop\n" + "white knight\n" + "black king\n" + "black queen\n" + "black rook\n" + "black bishop\n" + "black knight\n";
             String[] splitFigures = allFigures.split("\n");
             for (String splitFigure : splitFigures) {

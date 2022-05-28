@@ -8,15 +8,12 @@ import com.chess.chessgame.enums.FigureName;
 import com.chess.chessgame.enums.NotificationStatus;
 import com.chess.chessgame.services.GameFieldService;
 import com.chess.chessgame.services.GameFileService;
-import com.chess.chessgame.services.GameMenuService;
 import com.chess.chessgame.services.GameService;
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
-import javafx.scene.ImageCursor;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
@@ -53,7 +50,12 @@ public class GameFieldServiceImpl implements GameFieldService {
     }
 
     public Group createGameGroup() {
-        createGameBoard();
+        paintGameBoard();
+        paintBorders(0, 60);
+        paintBorders(0, 720);
+        paintBorders(60, 0);
+        paintBorders(720, 0);
+
         Group hBox = new Group(createButtons());
         BorderPane.setAlignment(hBox, Pos.TOP_RIGHT);
         BorderPane.setAlignment(borderPanesGroup, Pos.CENTER);
@@ -62,14 +64,6 @@ public class GameFieldServiceImpl implements GameFieldService {
         borderPane.setStyle("-fx-background-color: #312e2b");
         borderPane.setRight(hBox);
         return new Group(borderPane);
-    }
-
-    private void createGameBoard() {
-        paintGameBoard();
-        paintBorders(0, 60);
-        paintBorders(0, 720);
-        paintBorders(60, 0);
-        paintBorders(720, 0);
     }
 
     private VBox createButtons() {
@@ -160,6 +154,7 @@ public class GameFieldServiceImpl implements GameFieldService {
                 borderPane.setMinHeight(80);
                 borderPane.setLayoutX((j * 80) + 80);
                 borderPane.setLayoutY((i * 80) + 80);
+                borderPane.setCursor(Cursor.HAND);
                 Rectangle rectangle = new Rectangle();
                 rectangle.setWidth(80);
                 rectangle.setHeight(80);
@@ -512,15 +507,6 @@ public class GameFieldServiceImpl implements GameFieldService {
         return contextMenu;
     }
 
-    private void createHoverEffects(BorderPane borderPane) {
-        if (!gameBoard.isGameStarted()) {
-            ImageCursor imageCursor = new ImageCursor(gameFileService.loadImageByPath("images/stopCursor.png"));
-            borderPane.setCursor(imageCursor);
-        } else {
-            borderPane.setCursor(Cursor.HAND);
-        }
-    }
-
 
     public void createNotification(String title, String text, NotificationStatus notificationStatus) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -546,7 +532,6 @@ public class GameFieldServiceImpl implements GameFieldService {
         GameBoardCell gameBoardCell = gameBoard.getChessCell();
         if (!gameBoardCell.isInFocus()) {
             BorderPane borderPane = findBorderPaneById(((BorderPane) e.getSource()).getId());
-            createHoverEffects(borderPane);
             if (isCellOccupied(borderPane)) {
                 gameBoardCell.setInFocus(true);
                 Rectangle rectangle = getRectangleOfBorderPane(borderPane);
@@ -569,7 +554,6 @@ public class GameFieldServiceImpl implements GameFieldService {
         GameBoardCell gameBoardCell = gameBoard.getChessCell();
         if (gameBoardCell.isInFocus()) {
             BorderPane borderPane = findBorderPaneById(((BorderPane) e.getSource()).getId());
-            createHoverEffects(borderPane);
             if (isCellOccupied(borderPane)) {
                 gameBoardCell.setInFocus(false);
                 Rectangle rectangle = getRectangleOfBorderPane(borderPane);
@@ -670,19 +654,18 @@ public class GameFieldServiceImpl implements GameFieldService {
             if (gameBoard.getWorkingFileDirectory().equals(file.getPath())) {
                 createNotification("Already used file",
                         "The file: " + file.getName() + " already in use select another file!", NotificationStatus.ERROR);
+                return;
+            }
+            if (gameFileService.gameFileValidator(file.getPath())) {
+                gameBoard.setGameBoardCell(new GameBoardCell());
+                gameBoard.setSelectedCells(new ArrayList<>());
+                clearBoard();
+                gameBoard.getWorkingFileName().setText(file.getName());
+                gameBoard.setWorkingFileDirectory(file.getPath());
+                refreshGame(gameBoard.getWorkingFileDirectory());
             } else {
-                if (gameFileService.gameFileValidator(file.getPath())) {
-                    gameBoard.setGameBoardCell(new GameBoardCell());
-                    gameBoard.setSelectedCells(new ArrayList<>());
-                    clearBoard();
-                    gameBoard.getWorkingFileName().setText(file.getName());
-                    gameBoard.setWorkingFileDirectory(file.getPath());
-                    refreshGame(gameBoard.getWorkingFileDirectory());
-                } else {
-                    createNotification("Wrong file",
-                            "The format of " + file.getName() + " file is wrong", NotificationStatus.ERROR);
-
-                }
+                createNotification("Wrong file",
+                        "The format of " + file.getName() + " file is wrong", NotificationStatus.ERROR);
             }
         }
     }

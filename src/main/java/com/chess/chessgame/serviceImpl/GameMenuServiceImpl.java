@@ -114,11 +114,6 @@ public class GameMenuServiceImpl implements GameMenuService {
                 closeStartMenu();
                 gameFieldService.onLoadGame(file);
                 setGameFileName(file.getName(), gameFileService.getFileContent(file.getPath()));
-                try {
-                    gameFileService.createWorkingFiles();
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
             } else {
                 gameFieldService.createNotification( "Wrong file",
                         "The format of " + file.getName() + " file is wrong", NotificationStatus.ERROR);

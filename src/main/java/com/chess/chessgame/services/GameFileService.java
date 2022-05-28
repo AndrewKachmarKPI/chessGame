@@ -15,10 +15,9 @@ public interface GameFileService {
 
     boolean clearFiguresFile(String fileName);
 
-    void writeFigureToFile(String fileName, ChessFigure chessFigure);
+    void appendFigureToFile(String fileName, ChessFigure chessFigure);
 
     void writeTextToFile(String fileName, String text);
-    void writeFigureToFile(String fileName, ChessFigure chessFigure, String... args);
 
     boolean saveResultFile(Map<ChessFigure, List<ChessFigure>> chessFigureListMap, String directory) throws IOException;
 

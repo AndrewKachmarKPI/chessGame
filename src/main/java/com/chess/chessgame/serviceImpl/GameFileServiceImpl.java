@@ -74,20 +74,21 @@ public class GameFileServiceImpl implements GameFileService {
 
     @Override
     public boolean clearFiguresFile(String fileName) {
+        boolean isCleared = false;
         try {
             File file = new File(fileName);
             PrintWriter writer = new PrintWriter(file);
             writer.print("");
             writer.close();
-            return true;
+            isCleared = true;
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-        return false;
+        return isCleared;
     }
 
     @Override
-    public void writeFigureToFile(String fileName, ChessFigure chessFigure) {
+    public void appendFigureToFile(String fileName, ChessFigure chessFigure) {
         try {
             FileWriter fileWriter = new FileWriter(fileName, true);
             BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
@@ -113,19 +114,6 @@ public class GameFileServiceImpl implements GameFileService {
     }
 
     @Override
-    public void writeFigureToFile(String fileName, ChessFigure chessFigure, String... args) {
-        try {
-            FileWriter fileWriter = new FileWriter(fileName, true);
-            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
-            bufferedWriter.write(getFigurePathForPrint(chessFigure) + " -> " + Arrays.toString(args));
-            bufferedWriter.newLine();
-            bufferedWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
     public Image loadImageByPath(String path) {
         InputStream inputStream = getFileInputStream(path);
         Image image = new Image(getFileInputStream(path));
@@ -142,7 +130,7 @@ public class GameFileServiceImpl implements GameFileService {
         File initFile = new File(System.getProperty("user.dir") + "\\init.txt");
         if (!initFile.exists() && initFile.createNewFile()) {
             String defaultChessPosition = "white king 0 0\n" + "white queen 5 1\n" + "white rook 2 5\n" + "white bishop 3 7\n" + "white knight 5 5\n" + "black king 7 7\n" + "black queen 1 5\n" + "black rook 3 1\n" + "black bishop 7 3\n";
-            writeInitialFiles("init.txt", defaultChessPosition);
+            writeTextToFile("init.txt", defaultChessPosition);
         } else {
             deleteWorkingFiles();
             createWorkingFiles();
@@ -154,7 +142,7 @@ public class GameFileServiceImpl implements GameFileService {
         File initFile = new File(System.getProperty("user.dir") + "\\init.txt");
         if (!initFile.exists() && initFile.createNewFile()) {
             String defaultChessPosition = "white king 0 0\n" + "white queen 5 1\n" + "white rook 2 5\n" + "white bishop 3 7\n" + "white knight 5 5\n" + "black king 7 7\n" + "black queen 1 5\n" + "black rook 3 1\n" + "black bishop 7 3\n";
-            writeInitialFiles("init.txt", defaultChessPosition);
+            writeTextToFile("init.txt", defaultChessPosition);
         } else {
             File file = new File(System.getProperty("user.dir") + "\\init.txt");
             if (file.delete()) {
@@ -269,17 +257,6 @@ public class GameFileServiceImpl implements GameFileService {
             }
         });
         return stringBuilder.toString();
-    }
-
-    private void writeInitialFiles(String fileName, String defaultData) {
-        try {
-            File file = new File(System.getProperty("user.dir") + "\\" + fileName);
-            PrintWriter writer = new PrintWriter(file);
-            writer.print(defaultData);
-            writer.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
     }
 
     private InputStream getFileInputStream(String fileName) {

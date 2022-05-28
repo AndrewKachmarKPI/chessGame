@@ -59,6 +59,20 @@ public abstract class ChessFigure {
 
     public abstract int[][] removeDuplicates(int[][] matrix, int[][] gameMatrix);
 
+    public int[][] fillInitialMatrix(){
+        int[][] matrix = new int[8][8];
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                if (i + this.getPosition().getyPosition() == j + this.getPosition().getxPosition()) {
+                    matrix[i][j] = 1;
+                }
+                if (i + (8 - this.getPosition().getyPosition()) + j - this.getPosition().getxPosition() == 8) {
+                    matrix[i][j] = 1;
+                }
+            }
+        }
+        return matrix;
+    }
     @Override
     public String toString() {
         return "ChessFigure{" +
