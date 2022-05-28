@@ -69,7 +69,7 @@ public class GameFieldServiceImpl implements GameFieldService {
     private VBox createButtons() {
         EventHandler<MouseEvent> onSavedGameResults = this::onSavedGameResults;
         Button savedGameResults = new Button("Save game");
-        ImageView imageView = new ImageView(gameFileService.loadImageByPath("images/save_icon.png"));
+        ImageView imageView = new ImageView(gameFileService.loadImageByPath("images/save-icon.png"));
         imageView.setFitWidth(30);
         imageView.setFitHeight(30);
         savedGameResults.setGraphic(imageView);
@@ -78,7 +78,7 @@ public class GameFieldServiceImpl implements GameFieldService {
 
         EventHandler<MouseEvent> onUploadFile = this::onUploadChessPosition;
         Button randomChessPosition = new Button("Upload");
-        ImageView imageView1 = new ImageView(gameFileService.loadImageByPath("images/upload.png"));
+        ImageView imageView1 = new ImageView(gameFileService.loadImageByPath("images/upload-icon.png"));
         imageView1.setFitWidth(30);
         imageView1.setFitHeight(30);
         randomChessPosition.setGraphic(imageView1);
@@ -359,7 +359,7 @@ public class GameFieldServiceImpl implements GameFieldService {
         dialog.setHeaderText(null);
         dialog.setGraphic(null);
         Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
-        stage.getIcons().add(gameFileService.loadImageByPath("images/mainIcon.png"));
+        stage.getIcons().add(gameFileService.loadImageByPath("images/main-icon.png"));
 
         Text headerText = new Text("Figure attacks");
         headerText.setFill(Color.WHITE);
@@ -412,7 +412,7 @@ public class GameFieldServiceImpl implements GameFieldService {
             if (chessFigures.size() > 0) {
                 VBox labelBox = getLabelBox(chessFigure);
                 ImageView imageView = loadFigureImage(chessFigure.getColor(), chessFigure.getName());
-                ImageView attackArrow = new ImageView(gameFileService.loadImageByPath("images/attackArrow1.png"));
+                ImageView attackArrow = new ImageView(gameFileService.loadImageByPath("images/attack-arrow.png"));
                 attackArrow.getStyleClass().add("attackIcon");
 
                 StackPane attackArrowPane = new StackPane(attackArrow);
@@ -436,7 +436,7 @@ public class GameFieldServiceImpl implements GameFieldService {
             Text text = new Text("No attacks was found");
             text.setFill(Color.WHITE);
             text.setFont(Font.font("Gill Sans Ultra Bold", 20));
-            ImageView imageView = new ImageView(gameFileService.loadImageByPath("images/mainIcon.png"));
+            ImageView imageView = new ImageView(gameFileService.loadImageByPath("images/main-icon.png"));
             imageView.setFitWidth(120);
             imageView.setFitHeight(120);
             BorderPane borderPane = new BorderPane();
@@ -490,14 +490,14 @@ public class GameFieldServiceImpl implements GameFieldService {
         });
         if (contextMenu.getItems().size() == 0) {
             if (isCellOccupied(borderPane)) {
-                ImageView imageView = new ImageView(gameFileService.loadImageByPath("images/trash.png"));
+                ImageView imageView = new ImageView(gameFileService.loadImageByPath("images/remove-icon.png"));
                 imageView.setFitWidth(20);
                 imageView.setFitHeight(20);
                 MenuItem menuItem = new MenuItem("Remove figure", imageView);
                 menuItem.setOnAction(actionEvent -> onRemoveFigureFromBoard(borderPane));
                 contextMenu.getItems().add(menuItem);
             } else {
-                ImageView imageView = new ImageView(gameFileService.loadImageByPath("images/mainIcon.png"));
+                ImageView imageView = new ImageView(gameFileService.loadImageByPath("images/main-icon.png"));
                 imageView.setFitWidth(60);
                 imageView.setFitHeight(60);
                 MenuItem menuItem = new MenuItem("No available figures for cell", imageView);
@@ -619,7 +619,7 @@ public class GameFieldServiceImpl implements GameFieldService {
     private void onRemoveFigureFromBoard(BorderPane borderPane) {
         Position position = new Position(Integer.parseInt(borderPane.getId().split("-")[1].split("")[0]),
                 Integer.parseInt(borderPane.getId().split("-")[1].split("")[1]));
-        if(isFileExist(gameBoard.getWorkingFileDirectory())){
+        if (isFileExist(gameBoard.getWorkingFileDirectory())) {
             gameService.removeFigure(position, gameBoard.getWorkingFileDirectory());
             removeFigureById(borderPane.getId());
             refreshGame(gameBoard.getWorkingFileDirectory());
@@ -634,7 +634,7 @@ public class GameFieldServiceImpl implements GameFieldService {
         Stage stage = (Stage) node.getScene().getWindow();
         File file = directoryChooser.showDialog(stage);
 
-        if(file!=null){
+        if (file != null) {
             boolean isSaved = gameService.saveGameResults(file.getPath());
             if (isSaved) {
                 gameFieldService.createNotification("Saved results", "Figure attacks successfully saved", NotificationStatus.INFO);

@@ -37,7 +37,7 @@ public class GameMenuServiceImpl implements GameMenuService {
     public Scene createMainScene() {
         Scene scene = new Scene(rootGroup, Color.web("312e2b"));
         scene.getStylesheets().clear();
-        scene.getStylesheets().add("page.css");
+        scene.getStylesheets().add("styles.css");
         return scene;
     }
 
@@ -65,7 +65,7 @@ public class GameMenuServiceImpl implements GameMenuService {
         HBox buttonBox = new HBox(10, vBox);
         buttonBox.setAlignment(Pos.CENTER);
 
-        ImageView imageView = new ImageView(gameFileService.loadImageByPath("images/logo.png"));
+        ImageView imageView = new ImageView(gameFileService.loadImageByPath("images/logo-icon.png"));
         HBox imageBox = new HBox(10, imageView);
         imageBox.setAlignment(Pos.CENTER);
 
@@ -96,15 +96,16 @@ public class GameMenuServiceImpl implements GameMenuService {
     }
 
     @Override
-    public File selectFileDialog(Stage stage){
+    public File selectFileDialog(Stage stage) {
         FileChooser fileChooser = new FileChooser();
         FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
         fileChooser.getExtensionFilters().add(extFilter);
         fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
         stage.setTitle("Select game file");
-        stage.getIcons().add(gameFileService.loadImageByPath("images/mainIcon.png"));
+        stage.getIcons().add(gameFileService.loadImageByPath("images/main-icon.png"));
         return fileChooser.showOpenDialog(stage);
     }
+
     private void onUploadGame(MouseEvent e) {
         Stage stage = (Stage) rootGroup.getScene().getWindow();
         File file = selectFileDialog(stage);
@@ -115,7 +116,7 @@ public class GameMenuServiceImpl implements GameMenuService {
                 gameFieldService.onLoadGame(file);
                 setGameFileName(file.getName(), gameFileService.getFileContent(file.getPath()));
             } else {
-                gameFieldService.createNotification( "Wrong file",
+                gameFieldService.createNotification("Wrong file",
                         "The format of " + file.getName() + " file is wrong", NotificationStatus.ERROR);
             }
         }

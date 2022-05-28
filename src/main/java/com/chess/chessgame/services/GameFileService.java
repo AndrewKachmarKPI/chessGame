@@ -22,13 +22,12 @@ public interface GameFileService {
     boolean saveResultFile(Map<ChessFigure, List<ChessFigure>> chessFigureListMap, String directory) throws IOException;
 
     String getFigurePath(ChessFigure chessFigure);
+
     String getFigurePathForPrint(ChessFigure chessFigure);
 
     Image loadImageByPath(String path);
 
     void createWorkingFiles() throws IOException;
-
-    void createDefaultGameFile() throws IOException;
 
     void deleteWorkingFiles();
 

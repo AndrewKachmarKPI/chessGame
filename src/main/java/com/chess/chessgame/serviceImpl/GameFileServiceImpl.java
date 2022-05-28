@@ -104,7 +104,7 @@ public class GameFileServiceImpl implements GameFileService {
     public void writeTextToFile(String fileName, String text) {
         try {
             Path path = Paths.get(fileName);
-            BufferedWriter bufferedWriter = Files.newBufferedWriter(path,StandardCharsets.UTF_8);
+            BufferedWriter bufferedWriter = Files.newBufferedWriter(path, StandardCharsets.UTF_8);
             bufferedWriter.write(text + "\n");
             bufferedWriter.newLine();
             bufferedWriter.close();
@@ -129,25 +129,13 @@ public class GameFileServiceImpl implements GameFileService {
     public void createWorkingFiles() throws IOException {
         File initFile = new File(System.getProperty("user.dir") + "\\init.txt");
         if (!initFile.exists() && initFile.createNewFile()) {
-            String defaultChessPosition = "white king 0 0\n" + "white queen 5 1\n" + "white rook 2 5\n" + "white bishop 3 7\n" + "white knight 5 5\n" + "black king 7 7\n" + "black queen 1 5\n" + "black rook 3 1\n" + "black bishop 7 3\n";
+            String defaultChessPosition = "white king 0 0\n" + "white queen 5 1\n" + "white rook 2 5\n" +
+                    "white bishop 3 7\n" + "white knight 5 5\n" + "black king 7 7\n" +
+                    "black queen 1 5\n" + "black rook 3 1\n" + "black bishop 7 3\n";
             writeTextToFile("init.txt", defaultChessPosition);
         } else {
             deleteWorkingFiles();
             createWorkingFiles();
-        }
-    }
-
-    @Override
-    public void createDefaultGameFile() throws IOException {
-        File initFile = new File(System.getProperty("user.dir") + "\\init.txt");
-        if (!initFile.exists() && initFile.createNewFile()) {
-            String defaultChessPosition = "white king 0 0\n" + "white queen 5 1\n" + "white rook 2 5\n" + "white bishop 3 7\n" + "white knight 5 5\n" + "black king 7 7\n" + "black queen 1 5\n" + "black rook 3 1\n" + "black bishop 7 3\n";
-            writeTextToFile("init.txt", defaultChessPosition);
-        } else {
-            File file = new File(System.getProperty("user.dir") + "\\init.txt");
-            if (file.delete()) {
-                createDefaultGameFile();
-            }
         }
     }
 
@@ -346,7 +334,6 @@ public class GameFileServiceImpl implements GameFileService {
                 }
             }
             bufferedReader.close();
-
         } catch (IOException e) {
             e.printStackTrace();
         }

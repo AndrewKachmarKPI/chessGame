@@ -19,11 +19,6 @@ public class GameBoardCell {
         isInFocus = false;
     }
 
-    public GameBoardCell(Color color, Rectangle rectangle, boolean isInFocus) {
-        this.color = color;
-        this.rectangle = rectangle;
-        this.isInFocus = isInFocus;
-    }
 
     public boolean isInFocus() {
         return isInFocus;

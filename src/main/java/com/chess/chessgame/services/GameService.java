@@ -20,7 +20,6 @@ public interface GameService {
 
     void clearGameBoard(String fileName);
 
-
     void addNewFigure(ChessFigure chessFigure, String fileName);
 
     void removeFigure(Position position, String fileName);

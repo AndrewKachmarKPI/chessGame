@@ -16,7 +16,7 @@ public class ChessGameApplication extends Application {
         GameMenuServiceImpl gameMenuServiceImpl = new GameMenuServiceImpl();
         stage.setTitle("Chess game!");
         stage.setScene(gameMenuServiceImpl.createMainScene());
-        stage.getIcons().add(gameFileService.loadImageByPath("images/mainIcon.png"));
+        stage.getIcons().add(gameFileService.loadImageByPath("images/main-icon.png"));
         stage.setResizable(false);
         stage.show();
     }

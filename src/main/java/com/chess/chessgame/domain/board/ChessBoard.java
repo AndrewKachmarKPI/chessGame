@@ -24,23 +24,11 @@ public class ChessBoard {
         return chessFigureMap;
     }
 
-    public void setChessFigureMap(Map<ChessFigure, List<ChessFigure>> chessFigureMap) {
-        this.chessFigureMap = chessFigureMap;
-    }
-
     public List<ChessFigure> getFigures() {
         return figures;
     }
 
-    public void setFigures(List<ChessFigure> figures) {
-        this.figures = figures;
-    }
-
     public int[][] getChessMatrix() {
         return chessMatrix;
-    }
-
-    public void setChessMatrix(int[][] chessMatrix) {
-        this.chessMatrix = chessMatrix;
     }
 }
