@@ -2,8 +2,6 @@ package com.chess.chessgame.domain.board;
 
 import javafx.scene.control.ContextMenu;
 import javafx.scene.text.Text;
-
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 

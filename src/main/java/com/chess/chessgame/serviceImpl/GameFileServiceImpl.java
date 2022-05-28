@@ -9,7 +9,6 @@ import com.chess.chessgame.services.GameService;
 import javafx.scene.image.Image;
 
 import java.io.*;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.util.*;

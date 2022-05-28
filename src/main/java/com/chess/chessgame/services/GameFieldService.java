@@ -1,6 +1,4 @@
 package com.chess.chessgame.services;
-
-import com.chess.chessgame.domain.figures.ChessFigure;
 import com.chess.chessgame.enums.NotificationStatus;
 import javafx.scene.Group;
 

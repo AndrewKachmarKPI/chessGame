@@ -20,7 +20,6 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
-import java.io.IOException;
 
 public class GameMenuServiceImpl implements GameMenuService {
     private final GameFieldService gameFieldService;
