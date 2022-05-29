@@ -21,6 +21,9 @@ import javafx.stage.Stage;
 
 import java.io.File;
 
+/**
+ * Класс для створення меню навігації
+ */
 public class GameMenuServiceImpl implements GameMenuService {
     private final GameFieldService gameFieldService;
     private final GameFileService gameFileService;
@@ -32,6 +35,10 @@ public class GameMenuServiceImpl implements GameMenuService {
         rootGroup = createNavigationMenu();
     }
 
+    /**
+     * Створення головної сцени
+     * @return створений об'єкт сцени
+     */
     @Override
     public Scene createMainScene() {
         Scene scene = new Scene(rootGroup, Color.web("312e2b"));
@@ -40,6 +47,10 @@ public class GameMenuServiceImpl implements GameMenuService {
         return scene;
     }
 
+    /**
+     * Створення головного меню
+     * @return створена група меню
+     */
     private Group createNavigationMenu() {
         EventHandler<MouseEvent> onStartGame = this::onStartGame;
         Button startGame = new Button("START GAME");
@@ -81,19 +92,30 @@ public class GameMenuServiceImpl implements GameMenuService {
         return new Group(borderPane);
     }
 
-
+    /**
+     * Запуск гри
+     * @param e
+     */
     private void onStartGame(MouseEvent e) {
         closeStartMenu();
         gameFieldService.onStartGame();
         setGameFileName("init.txt", gameFileService.getFileContent("init.txt"));
     }
 
+    /**
+     * Закриття головного меню
+     */
     private void closeStartMenu() {
         rootGroup.getChildren().clear();
         Group gameFieldGroup = gameFieldService.createGameGroup();
         rootGroup.getChildren().add(gameFieldGroup);
     }
 
+    /**
+     * Відкриття форми вибору файлу
+     * @param stage обє'кт Stage
+     * @return обє'кт File
+     */
     @Override
     public File selectFileDialog(Stage stage) {
         FileChooser fileChooser = new FileChooser();
@@ -105,6 +127,10 @@ public class GameMenuServiceImpl implements GameMenuService {
         return fileChooser.showOpenDialog(stage);
     }
 
+    /**
+     * Завантаження власного файлу гри
+     * @param e
+     */
     private void onUploadGame(MouseEvent e) {
         Stage stage = (Stage) rootGroup.getScene().getWindow();
         File file = selectFileDialog(stage);
@@ -121,11 +147,19 @@ public class GameMenuServiceImpl implements GameMenuService {
         }
     }
 
+    /**
+     * Закриття гри
+     * @param e
+     */
     private void onExitGame(MouseEvent e) {
         Platform.exit();
     }
 
-
+    /**
+     * Виведення назви завантаженого файлу та його вмісту
+     * @param fileName назва файлу
+     * @param fileContent вміст файлу
+     */
     @Override
     public void setGameFileName(String fileName, String fileContent) {
         Group group = (Group) rootGroup.getChildren().get(0);

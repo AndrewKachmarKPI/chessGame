@@ -35,7 +35,10 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
-
+/**
+ * Клас для створення ігрового поля та обробки
+ * візуальної частини програми
+ */
 public class GameFieldServiceImpl implements GameFieldService {
     private final GameFileService gameFileService;
     private final GameService gameService;
@@ -49,6 +52,10 @@ public class GameFieldServiceImpl implements GameFieldService {
         this.borderPanesGroup = new Group();
     }
 
+    /**
+     * Створення ігрового поля
+     * @return створена група
+     */
     public Group createGameGroup() {
         paintGameBoard();
         paintBorders(0, 60);
@@ -66,6 +73,10 @@ public class GameFieldServiceImpl implements GameFieldService {
         return new Group(borderPane);
     }
 
+    /**
+     * Створення кнопок навігації
+     * @return група з кнопками
+     */
     private VBox createButtons() {
         EventHandler<MouseEvent> onSavedGameResults = this::onSavedGameResults;
         Button savedGameResults = new Button("Save game");
@@ -145,6 +156,9 @@ public class GameFieldServiceImpl implements GameFieldService {
         return vBox;
     }
 
+    /**
+     * Створення клітинок шахівниці
+     */
     private void paintGameBoard() {
         boolean isSecond = false;
         for (int i = 0; i < 8; i++) {
@@ -190,10 +204,18 @@ public class GameFieldServiceImpl implements GameFieldService {
         }
     }
 
+    /**
+     * Закриття усіх контекстних меню
+     */
     private void closeAllMenus() {
         gameBoard.getMenuList().forEach(ContextMenu::hide);
     }
 
+    /**
+     * Створення бортиків шахівниці
+     * @param x позиція по x
+     * @param y позиція по y
+     */
     private void paintBorders(int x, int y) {
         char[] characters = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'};
         if (y != 0) {
@@ -230,6 +252,10 @@ public class GameFieldServiceImpl implements GameFieldService {
         }
     }
 
+    /**
+     * Розташування фігури на шахівницю
+     * @param chessFigure об'єкт фігури
+     */
     private void setFigureOnBoard(ChessFigure chessFigure) {
         ImageView imageView = loadFigureImage(chessFigure.getColor(), chessFigure.getName());
         imageView.setId(chessFigure.getColor().toString().toUpperCase(Locale.ROOT) + "-" + chessFigure.getName());
@@ -246,6 +272,11 @@ public class GameFieldServiceImpl implements GameFieldService {
         }
     }
 
+    /**
+     * Отримання інформації чи клітинка зайнята
+     * @param borderPane клітинка з фігурою
+     * @return чи клітинка зайнята
+     */
     private boolean isCellOccupied(BorderPane borderPane) {
         AtomicBoolean isUsed = new AtomicBoolean(false);
         borderPane.getChildren().forEach(node -> {
@@ -256,6 +287,10 @@ public class GameFieldServiceImpl implements GameFieldService {
         return isUsed.get();
     }
 
+    /**
+     * Отримання усіх клітинок
+     * @return спсиок усіх клітинок
+     */
     private List<BorderPane> getAllBorderPanes() {
         List<BorderPane> borderPanes = new ArrayList<>();
         borderPanesGroup.getChildren().forEach(node -> {
@@ -266,6 +301,11 @@ public class GameFieldServiceImpl implements GameFieldService {
         return borderPanes;
     }
 
+    /**
+     * Отримання прямокутника клітинки
+     * @param borderPane одна клітинка
+     * @return прамокутник літинки
+     */
     private Rectangle getRectangleOfBorderPane(BorderPane borderPane) {
         AtomicReference<Rectangle> rectangle = new AtomicReference<>(new Rectangle());
         borderPane.getChildren().forEach(content -> {
@@ -276,6 +316,11 @@ public class GameFieldServiceImpl implements GameFieldService {
         return rectangle.get();
     }
 
+    /**
+     * Отримання картинки фігури в клітинці
+     * @param borderPane клітинка
+     * @return картинка клітинки
+     */
     private ImageView getImageOfBorderPane(BorderPane borderPane) {
         AtomicReference<ImageView> imageView = new AtomicReference<>(new ImageView());
         borderPane.getChildren().forEach(content -> {
@@ -286,15 +331,31 @@ public class GameFieldServiceImpl implements GameFieldService {
         return imageView.get();
     }
 
+    /**
+     * Отримання картинки фігури
+     * @param figureColor колір фігури
+     * @param figureName назва фігури
+     * @return картинка фігури
+     */
     private ImageView loadFigureImage(FigureColor figureColor, FigureName figureName) {
         String path = "images/" + figureColor.toString().toLowerCase(Locale.ROOT) + "-" + figureName.toString().toLowerCase() + ".png";
         return new ImageView(gameFileService.loadImageByPath(path));
     }
 
+    /**
+     * Отримання клітинки по id
+     * @param borderPaneId id клітинки
+     * @return клітинка
+     */
     private BorderPane findBorderPaneById(String borderPaneId) {
         return getAllBorderPanes().stream().filter(borderPane -> borderPane.getId().equals(borderPaneId)).findFirst().orElse(new BorderPane());
     }
 
+    /**
+     * Розфарбовування клітинок шахівниці для ходів або атак фігури
+     * @param matrix матриця фігури
+     * @param figureColor колір фігури
+     */
     private void paintFigurePath(int[][] matrix, FigureColor figureColor) {
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
@@ -308,6 +369,14 @@ public class GameFieldServiceImpl implements GameFieldService {
         }
     }
 
+    /**
+     * Розфарбовування клітинки у заданий колір
+     * @param x позиція по x
+     * @param y позиція по y
+     * @param color колір клітинки
+     * @param figureColor колір фігури
+     * @param isAttack чи атакована клітинка
+     */
     private void paintRectangle(int x, int y, Color color, FigureColor figureColor, boolean isAttack) {
         BorderPane borderPane = findBorderPaneById("BorderPane-" + x + "" + y);
         Rectangle rectangle = getRectangleOfBorderPane(borderPane);
@@ -322,10 +391,16 @@ public class GameFieldServiceImpl implements GameFieldService {
         rectangle.setFill(color);
     }
 
+    /**
+     * Скидання розфарбовування
+     */
     private void unPaintRectangle() {
         gameBoard.getSelectedCells().forEach(selected -> selected.getRectangle().setFill(selected.getColor()));
     }
 
+    /**
+     * Очищення шахівниці
+     */
     private void clearBoard() {
         List<BorderPane> borderPanes = getAllBorderPanes();
         for (BorderPane pane : borderPanes) {
@@ -335,6 +410,10 @@ public class GameFieldServiceImpl implements GameFieldService {
         }
     }
 
+    /**
+     * Видалення фігури по id
+     * @param paneId id клітинки
+     */
     private void removeFigureById(String paneId) {
         List<BorderPane> borderPanes = getAllBorderPanes();
         for (BorderPane pane : borderPanes) {
@@ -344,7 +423,9 @@ public class GameFieldServiceImpl implements GameFieldService {
         }
     }
 
-
+    /**
+     * Відкриття діалогового вікна зі списком атак
+     */
     private void openDialogWindow() {
         Map<ChessFigure, List<ChessFigure>> chessFigureListMap = gameService.getAttackMap();
         VBox vBox = loadFigureList(chessFigureListMap);
@@ -395,6 +476,11 @@ public class GameFieldServiceImpl implements GameFieldService {
         dialog.show();
     }
 
+    /**
+     * Отримання підпису фігури
+     * @param chessFigure об'єкт фігури
+     * @return група фігури з підписом
+     */
     private VBox getLabelBox(ChessFigure chessFigure) {
         Label nameLabel = new Label(chessFigure.getName().toString());
         nameLabel.setTextFill(Color.WHITE);
@@ -408,6 +494,11 @@ public class GameFieldServiceImpl implements GameFieldService {
         return labelBox;
     }
 
+    /**
+     * Виведення списку яка фігура б’є
+     * @param chessFigureListMap Map атак усіх фігур
+     * @return група з фігурами та підписами
+     */
     private VBox loadFigureList(Map<ChessFigure, List<ChessFigure>> chessFigureListMap) {
         VBox figuresList = new VBox();
         figuresList.setStyle("-fx-background-color: #312e2b");
@@ -457,6 +548,11 @@ public class GameFieldServiceImpl implements GameFieldService {
         return figuresList;
     }
 
+    /**
+     * Виведення списку кого б’є фігура
+     * @param chessFigures список фігур
+     * @return група з фігурами та підписами
+     */
     private HBox loadNestedFigures(List<ChessFigure> chessFigures) {
         HBox hBox = new HBox();
         hBox.setStyle("-fx-background-color: #dc3545bd");
@@ -478,6 +574,11 @@ public class GameFieldServiceImpl implements GameFieldService {
         return hBox;
     }
 
+    /**
+     * Відкриття контекстного меню доступних фігур для розташування на шахівниці
+     * @param borderPane id клітинки відкриття меню
+     * @return контекстне меню
+     */
     private ContextMenu openAvailableFiguresMenu(BorderPane borderPane) {
         List<ChessFigure> availableFigures = gameService.getAvailableFigures();
         ContextMenu contextMenu = new ContextMenu();
@@ -512,7 +613,12 @@ public class GameFieldServiceImpl implements GameFieldService {
         return contextMenu;
     }
 
-
+    /**
+     * Виведення повідомлення користувачу
+     * @param title підпис повідомлення
+     * @param text тест повідомлення
+     * @param notificationStatus статус повідомлення
+     */
     public void createNotification(String title, String text, NotificationStatus notificationStatus) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         switch (notificationStatus) {
@@ -532,7 +638,10 @@ public class GameFieldServiceImpl implements GameFieldService {
         alert.showAndWait();
     }
 
-    //ACTIONS
+    /**
+     * Вибір фігури для перегляду
+     * @param e
+     */
     private void onHoverFigure(MouseEvent e) {
         GameBoardCell gameBoardCell = gameBoard.getChessCell();
         if (!gameBoardCell.isInFocus()) {
@@ -555,6 +664,10 @@ public class GameFieldServiceImpl implements GameFieldService {
         }
     }
 
+    /**
+     * Скидання вибору фігури для перегляду
+     * @param e
+     */
     private void onUnHooverFigure(MouseEvent e) {
         GameBoardCell gameBoardCell = gameBoard.getChessCell();
         if (gameBoardCell.isInFocus()) {
@@ -568,12 +681,20 @@ public class GameFieldServiceImpl implements GameFieldService {
         }
     }
 
+    /**
+     * Виклик відкриття діалогового вікна
+     * @param e
+     */
     private void onFigureAttacks(MouseEvent e) {
         if (gameBoard.isGameStarted()) {
             openDialogWindow();
         }
     }
 
+    /**
+     * Очищення ігрового поля та збереженої інформації
+     * @param e
+     */
     private void onClearField(MouseEvent e) {
         if (gameBoard.isGameStarted()) {
             gameService.clearGameBoard(gameBoard.getWorkingFileDirectory());
@@ -584,6 +705,9 @@ public class GameFieldServiceImpl implements GameFieldService {
         }
     }
 
+    /**
+     * Очищення ігрового поля та збереженої інформації
+     */
     private void onClearField() {
         if (gameBoard.isGameStarted()) {
             gameService.clearGameBoard(gameBoard.getWorkingFileDirectory());
@@ -594,6 +718,11 @@ public class GameFieldServiceImpl implements GameFieldService {
         }
     }
 
+    /**
+     * Перевірка чи завантажений файл існує
+     * @param filePath шлях до файлу
+     * @return чи файл існує
+     */
     private boolean isFileExist(String filePath) {
         boolean isExist = true;
         File file = new File(filePath);
@@ -609,6 +738,11 @@ public class GameFieldServiceImpl implements GameFieldService {
         return isExist;
     }
 
+    /**
+     * Виклик відкриття контекстного меню
+     * @param chessFigure об'єкт фігури
+     * @param borderPane клітинка
+     */
     private void onSelectContextMenuItem(ChessFigure chessFigure, BorderPane borderPane) {
         Position position = new Position();
         if (borderPane != null) {
@@ -622,6 +756,10 @@ public class GameFieldServiceImpl implements GameFieldService {
         refreshGame(gameBoard.getWorkingFileDirectory());
     }
 
+    /**
+     * Виклик видалення фігури з шахівниці
+     * @param borderPane клітинка
+     */
     private void onRemoveFigureFromBoard(BorderPane borderPane) {
         Position position = new Position(Integer.parseInt(borderPane.getId().split("-")[1].split("")[0]),
                 Integer.parseInt(borderPane.getId().split("-")[1].split("")[1]));
@@ -633,6 +771,10 @@ public class GameFieldServiceImpl implements GameFieldService {
         }
     }
 
+    /**
+     * Виклик збереження результату гри
+     * @param e
+     */
     private void onSavedGameResults(MouseEvent e) {
         GameFieldService gameFieldService = new GameFieldServiceImpl();
 
@@ -651,6 +793,10 @@ public class GameFieldServiceImpl implements GameFieldService {
         }
     }
 
+    /**
+     * Зчитування нового користувацкого файлу
+     * @param e
+     */
     private void onUploadChessPosition(MouseEvent e) {
         GameMenuServiceImpl gameMenuService = new GameMenuServiceImpl();
         Node node = (Node) e.getSource();
@@ -677,6 +823,9 @@ public class GameFieldServiceImpl implements GameFieldService {
         }
     }
 
+    /**
+     * Виклик запуску гри
+     */
     public void onStartGame() {
         try {
             gameBoard.getWorkingFileName().setText("init.txt");
@@ -688,6 +837,10 @@ public class GameFieldServiceImpl implements GameFieldService {
         refreshGame(gameBoard.getWorkingFileDirectory());
     }
 
+    /**
+     * Виклик завантаження гри
+     * @param file вхідний файл
+     */
     public void onLoadGame(File file) {
         gameService.initGame(file.getPath());
         gameBoard.setGameStarted(true);
@@ -696,6 +849,10 @@ public class GameFieldServiceImpl implements GameFieldService {
         gameService.getFiguresForSetup().forEach(this::setFigureOnBoard);
     }
 
+    /**
+     * Виклик перевантаження гри
+     * @param directory шлях до вхідного файлу
+     */
     private void refreshGame(String directory) {
         isFileExist(directory);
         if (gameFileService.gameFileValidator(gameBoard.getWorkingFileName().getText())) {

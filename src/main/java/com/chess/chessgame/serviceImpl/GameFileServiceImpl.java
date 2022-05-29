@@ -14,9 +14,17 @@ import java.nio.file.*;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * Клас для обробки роботи з файлами
+ */
 public class GameFileServiceImpl implements GameFileService {
     private static final GameService gameService = new GameServiceImpl();
 
+    /**
+     * Зчитування вмісту файлу та парсинг в об’єкт ChessFigure
+     * @param fileName імя файлу
+     * @return список фігур файлу
+     */
     @Override
     public List<ChessFigure> getFiguresFromFile(String fileName) {
         List<ChessFigure> figures = new ArrayList<>();
@@ -43,6 +51,11 @@ public class GameFileServiceImpl implements GameFileService {
         return figures;
     }
 
+    /**
+     * Видалення запису про фігуру з файлу
+     * @param chessFigure об'єкт фігури
+     * @param fileName імя файлу
+     */
     @Override
     public void removeFigureFromFile(ChessFigure chessFigure, String fileName) {
         String removeChessLine = chessFigure.getColor().toString().toLowerCase(Locale.ROOT) + " " +
@@ -71,6 +84,11 @@ public class GameFileServiceImpl implements GameFileService {
         }
     }
 
+    /**
+     * Повне очищення файлу з записами про фігури
+     * @param fileName імя файлу
+     * @return
+     */
     @Override
     public boolean clearFiguresFile(String fileName) {
         boolean isCleared = false;
@@ -86,6 +104,11 @@ public class GameFileServiceImpl implements GameFileService {
         return isCleared;
     }
 
+    /**
+     * Додавання запису про фігуру у файл
+     * @param fileName імя файлу
+     * @param chessFigure об'єкт фігури
+     */
     @Override
     public void appendFigureToFile(String fileName, ChessFigure chessFigure) {
         try {
@@ -99,6 +122,11 @@ public class GameFileServiceImpl implements GameFileService {
         }
     }
 
+    /**
+     * Дописування тексту у файл
+     * @param fileName імя файлу
+     * @param text текст для запису
+     */
     @Override
     public void writeTextToFile(String fileName, String text) {
         try {
@@ -112,6 +140,11 @@ public class GameFileServiceImpl implements GameFileService {
         }
     }
 
+    /**
+     * Отримання зображення фігури по посиланню
+     * @param path посилання на зображення
+     * @return
+     */
     @Override
     public Image loadImageByPath(String path) {
         InputStream inputStream = getFileInputStream(path);
@@ -124,6 +157,10 @@ public class GameFileServiceImpl implements GameFileService {
         return image;
     }
 
+    /**
+     * Створення гри зі стандартним розташуванням фігур
+     * @throws IOException
+     */
     @Override
     public void createWorkingFiles() throws IOException {
         File initFile = new File(System.getProperty("user.dir") + "\\init.txt");
@@ -138,12 +175,20 @@ public class GameFileServiceImpl implements GameFileService {
         }
     }
 
+    /**
+     * Видалення файлу зі стандартним розташуванням фігур
+     */
     @Override
     public void deleteWorkingFiles() {
         File initFile = new File(System.getProperty("user.dir") + "\\init.txt");
         initFile.delete();
     }
 
+    /**
+     * Конвертація фігури у рядок для збереження
+     * @param chessFigure об'єкт фігури
+     * @return рядок для збереження
+     */
     @Override
     public String getFigurePathForPrint(ChessFigure chessFigure) {
         StringBuilder chessPath = new StringBuilder(appendChessIcon(chessFigure) + " ");
@@ -158,6 +203,11 @@ public class GameFileServiceImpl implements GameFileService {
         return chessPath.toString();
     }
 
+    /**
+     * Отримання форматованого запису про фігуру
+     * @param chessFigure об'єкт фігури
+     * @return рядок з інформацією про фігуру
+     */
     @Override
     public String getFigurePath(ChessFigure chessFigure) {
         return chessFigure.getColor().toString().toLowerCase(Locale.ROOT) + " " +
@@ -166,6 +216,13 @@ public class GameFileServiceImpl implements GameFileService {
                 chessFigure.getPosition().getxPosition();
     }
 
+    /**
+     * Запис результатів гри у файл
+     * @param chessFigureListMap Map з усіма атаками фігур
+     * @param directory Директорія запису файлу результату
+     * @return збережено файл чи ні
+     * @throws IOException
+     */
     @Override
     public boolean saveResultFile(Map<ChessFigure, List<ChessFigure>> chessFigureListMap, String directory) throws IOException {
         boolean isSaved = false;
@@ -186,6 +243,11 @@ public class GameFileServiceImpl implements GameFileService {
         return isSaved;
     }
 
+    /**
+     * Отримання символа фігури
+     * @param chessFigure об'єкт фігури
+     * @return символа фігури
+     */
     private String appendChessIcon(ChessFigure chessFigure) {
         String ico = "";
         switch (chessFigure.getName()) {
@@ -233,6 +295,11 @@ public class GameFileServiceImpl implements GameFileService {
         return ico;
     }
 
+    /**
+     * Отримання форматованого запису списку фігур для збереження
+     * @param chessFigures спсисок фігур
+     * @return рядок з списком фігур
+     */
     private String getFormattedFigureListPath(List<ChessFigure> chessFigures) {
         StringBuilder stringBuilder = new StringBuilder();
         AtomicInteger k = new AtomicInteger();
@@ -246,6 +313,11 @@ public class GameFileServiceImpl implements GameFileService {
         return stringBuilder.toString();
     }
 
+    /**
+     * Отримання ресурсних файлів
+     * @param fileName назва файлу
+     * @return вхідний потік
+     */
     private InputStream getFileInputStream(String fileName) {
         ClassLoader classLoader = getClass().getClassLoader();
         InputStream inputStream = classLoader.getResourceAsStream(fileName);
@@ -256,6 +328,11 @@ public class GameFileServiceImpl implements GameFileService {
         }
     }
 
+    /**
+     * Валідація вхідного файлу користувача
+     * @param fileName назва файлу
+     * @return валідний файл чи ні
+     */
     @Override
     public boolean gameFileValidator(String fileName) {
         List<String> names = new ArrayList<>();
@@ -320,6 +397,11 @@ public class GameFileServiceImpl implements GameFileService {
         return isValid;
     }
 
+    /**
+     * Отримання вмісту ігрового файлу
+     * @param fileName назва файлу
+     * @return рядок з вмістом файлу
+     */
     @Override
     public String getFileContent(String fileName) {
         StringBuilder fileContent = new StringBuilder();

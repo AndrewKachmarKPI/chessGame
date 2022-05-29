@@ -10,7 +10,9 @@ import com.chess.chessgame.services.GameService;
 import java.io.IOException;
 import java.util.*;
 
-
+/**
+ * Класс для оброблення ігрової логіки
+ */
 public class GameServiceImpl implements GameService {
     public GameFileService gameFileService;
     public ChessBoard chessBoard;
@@ -20,12 +22,20 @@ public class GameServiceImpl implements GameService {
         this.chessBoard = new ChessBoard();
     }
 
+    /**
+     * Запуск та створення гри
+     * @param fileName шлях до вхідного файлу
+     */
     @Override
     public void initGame(String fileName) {
         loadFigures(fileName);
         fillFigureMap();
     }
 
+    /**
+     * Завантаження фігур з файлу у гру
+     * @param fileName шлях до вхідного файлу
+     */
     private void loadFigures(String fileName) {
         List<ChessFigure> figures = gameFileService.getFiguresFromFile(fileName);
         int[][] matrix = new int[8][8];
@@ -37,12 +47,20 @@ public class GameServiceImpl implements GameService {
         chessBoard = new ChessBoard(figures, chessFigureMap, matrix);
     }
 
+    /**
+     * Заповнення матриці об’єктів фігурами та їхніми атаками
+     */
     private void fillFigureMap() {
         List<ChessFigure> chessFigures = chessBoard.getFigures();
         Map<ChessFigure, List<ChessFigure>> chessFigureMap = chessBoard.getChessFigureMap();
         chessFigures.forEach(chessFigure -> chessFigureMap.put(chessFigure, getAttackedFigures(chessFigure)));
     }
 
+    /**
+     * Отримання фігур які б’ються вибраною фігурою
+     * @param chessFigure об'єкт фігури
+     * @return список атакованих фігур
+     */
     private List<ChessFigure> getAttackedFigures(ChessFigure chessFigure) {
         List<Position> figurePositions = convertMatrixToPositionList(getFigureTrajectory(chessFigure.getPosition(), chessFigure.getName(), chessFigure.getColor()));
         List<ChessFigure> matchedFigures = new ArrayList<>();
@@ -55,6 +73,11 @@ public class GameServiceImpl implements GameService {
         return matchedFigures;
     }
 
+    /**
+     * Конвертація матриці чисел у список обєктів позицій
+     * @param figureMatrix матриця фігури
+     * @return спиосок позицій атакованих фігур
+     */
     private List<Position> convertMatrixToPositionList(int[][] figureMatrix) {
         List<Position> figurePositions = new ArrayList<>();
         for (int i = 0; i < 8; i++) {
@@ -67,12 +90,21 @@ public class GameServiceImpl implements GameService {
         return figurePositions;
     }
 
+    /**
+     * Отримання усіх фігур на шахівниці
+     * @return список фігур
+     */
     @Override
     public List<ChessFigure> getFiguresForSetup() {
         return chessBoard.getFigures();
     }
 
 
+    /**
+     * Отримання порядкового номеру фігури
+     * @param chessFigure об'єкт фігури
+     * @return номер фігури
+     */
     private int getFigureNumber(ChessFigure chessFigure) {
         switch (chessFigure.getName()) {
             case KING: {
@@ -94,6 +126,10 @@ public class GameServiceImpl implements GameService {
         return 0;
     }
 
+    /**
+     * Отримання списку яка фігура яку б’є
+     * @return Map атак фігур
+     */
     @Override
     public Map<ChessFigure, List<ChessFigure>> getAttackMap() {
         Map<ChessFigure, List<ChessFigure>> chessFigureListMap = new HashMap<>();
@@ -105,6 +141,13 @@ public class GameServiceImpl implements GameService {
         return chessFigureListMap;
     }
 
+    /**
+     * Отримання траєкторії ходу фігури
+     * @param pos позиція фігури
+     * @param figureName назва фігури
+     * @param figureColor колір фігури
+     * @return матриця траекторії фігури
+     */
     @Override
     public int[][] getFigureTrajectory(Position pos, FigureName figureName, FigureColor figureColor) {
         int[][] matrix = new int[8][8];
@@ -115,6 +158,13 @@ public class GameServiceImpl implements GameService {
         return matrix;
     }
 
+    /**
+     * Створення шахової фігури відповідних параметрів
+     * @param pos позиція фігури
+     * @param figureName назва фігури
+     * @param figureColor колір фігури
+     * @return створений об'єкт фігури
+     */
     @Override
     public ChessFigure createChessFigure(Position pos, FigureName figureName, FigureColor figureColor) {
         switch (figureName) {
@@ -137,6 +187,10 @@ public class GameServiceImpl implements GameService {
         return null;
     }
 
+    /**
+     * Очищення шахівниці
+     * @param fileName шлях до вхідного файлу
+     */
     @Override
     public void clearGameBoard(String fileName) {
         chessBoard = new ChessBoard();
@@ -145,11 +199,21 @@ public class GameServiceImpl implements GameService {
         }
     }
 
+    /**
+     * Додавання фігури на шахівницю
+     * @param chessFigure об'єкт фігури
+     * @param fileName шлях до вхідного файлу
+     */
     @Override
     public void addNewFigure(ChessFigure chessFigure, String fileName) {
         gameFileService.appendFigureToFile(fileName, chessFigure);
     }
 
+    /**
+     * Видалення фігури з шахівниці
+     * @param position позиція фігури
+     * @param fileName шлях до вхідного файлу
+     */
     @Override
     public void removeFigure(Position position, String fileName) {
         Optional<ChessFigure> chessFigure = chessBoard.getFigures()
@@ -163,6 +227,11 @@ public class GameServiceImpl implements GameService {
         }
     }
 
+    /**
+     * Зберігання результату гри
+     * @param directory шлях до вхідного файлу
+     * @return чи збережено файл
+     */
     @Override
     public boolean saveGameResults(String directory) {
         boolean isSaved = false;
@@ -174,6 +243,10 @@ public class GameServiceImpl implements GameService {
         return isSaved;
     }
 
+    /**
+     * Отримання списку доступних фігур для розміщення
+     * @return спсисок доступних фігур
+     */
     @Override
     public List<ChessFigure> getAvailableFigures() {
         List<ChessFigure> figures = new ArrayList<>();
