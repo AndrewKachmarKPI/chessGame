@@ -304,7 +304,7 @@ public class GameFieldServiceImpl implements GameFieldService {
     /**
      * Отримання прямокутника клітинки
      * @param borderPane одна клітинка
-     * @return прамокутник літинки
+     * @return прамокутник клітинки
      */
     private Rectangle getRectangleOfBorderPane(BorderPane borderPane) {
         AtomicReference<Rectangle> rectangle = new AtomicReference<>(new Rectangle());

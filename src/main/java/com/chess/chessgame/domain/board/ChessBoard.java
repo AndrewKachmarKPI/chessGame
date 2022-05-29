@@ -13,21 +13,17 @@ public class ChessBoard {
 
     public ChessBoard() {
     }
-
     public ChessBoard(List<ChessFigure> figures, Map<ChessFigure, List<ChessFigure>> chessFigureMap, int[][] chessMatrix) {
         this.figures = figures;
         this.chessFigureMap = chessFigureMap;
         this.chessMatrix = chessMatrix;
     }
-
     public Map<ChessFigure, List<ChessFigure>> getChessFigureMap() {
         return chessFigureMap;
     }
-
     public List<ChessFigure> getFigures() {
         return figures;
     }
-
     public int[][] getChessMatrix() {
         return chessMatrix;
     }

@@ -34,7 +34,6 @@ public class GameMenuServiceImpl implements GameMenuService {
         gameFileService = new GameFileServiceImpl();
         rootGroup = createNavigationMenu();
     }
-
     /**
      * Створення головної сцени
      * @return створений об'єкт сцени
@@ -46,7 +45,6 @@ public class GameMenuServiceImpl implements GameMenuService {
         scene.getStylesheets().add("styles.css");
         return scene;
     }
-
     /**
      * Створення головного меню
      * @return створена група меню
@@ -91,7 +89,6 @@ public class GameMenuServiceImpl implements GameMenuService {
         borderPane.setMinWidth(900);
         return new Group(borderPane);
     }
-
     /**
      * Запуск гри
      * @param e
@@ -101,7 +98,6 @@ public class GameMenuServiceImpl implements GameMenuService {
         gameFieldService.onStartGame();
         setGameFileName("init.txt", gameFileService.getFileContent("init.txt"));
     }
-
     /**
      * Закриття головного меню
      */
@@ -110,7 +106,6 @@ public class GameMenuServiceImpl implements GameMenuService {
         Group gameFieldGroup = gameFieldService.createGameGroup();
         rootGroup.getChildren().add(gameFieldGroup);
     }
-
     /**
      * Відкриття форми вибору файлу
      * @param stage обє'кт Stage
@@ -126,7 +121,6 @@ public class GameMenuServiceImpl implements GameMenuService {
         stage.getIcons().add(gameFileService.loadImageByPath("images/main-icon.png"));
         return fileChooser.showOpenDialog(stage);
     }
-
     /**
      * Завантаження власного файлу гри
      * @param e
@@ -146,7 +140,6 @@ public class GameMenuServiceImpl implements GameMenuService {
             }
         }
     }
-
     /**
      * Закриття гри
      * @param e

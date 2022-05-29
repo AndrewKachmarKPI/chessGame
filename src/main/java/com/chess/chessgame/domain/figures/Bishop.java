@@ -14,7 +14,6 @@ public class Bishop extends ChessFigure {
         matrix[this.getPosition().getxPosition()][this.getPosition().getyPosition()] = 5;
         return removeDuplicates(matrix, gameMatrix);
     }
-
     @Override
     public int[][] removeDuplicates(int[][] matrix, int[][] gameMatrix) {
         int[] mainDiagonalFigure = attackService.getDiagonalSplice(matrix, true, this.getPosition());

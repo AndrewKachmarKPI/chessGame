@@ -87,7 +87,7 @@ public class GameFileServiceImpl implements GameFileService {
     /**
      * Повне очищення файлу з записами про фігури
      * @param fileName імя файлу
-     * @return
+     * @return очищено файл чи ні
      */
     @Override
     public boolean clearFiguresFile(String fileName) {
@@ -143,7 +143,7 @@ public class GameFileServiceImpl implements GameFileService {
     /**
      * Отримання зображення фігури по посиланню
      * @param path посилання на зображення
-     * @return
+     * @return обє'кт зображення
      */
     @Override
     public Image loadImageByPath(String path) {
@@ -159,7 +159,6 @@ public class GameFileServiceImpl implements GameFileService {
 
     /**
      * Створення гри зі стандартним розташуванням фігур
-     * @throws IOException
      */
     @Override
     public void createWorkingFiles() throws IOException {
@@ -221,7 +220,6 @@ public class GameFileServiceImpl implements GameFileService {
      * @param chessFigureListMap Map з усіма атаками фігур
      * @param directory Директорія запису файлу результату
      * @return збережено файл чи ні
-     * @throws IOException
      */
     @Override
     public boolean saveResultFile(Map<ChessFigure, List<ChessFigure>> chessFigureListMap, String directory) throws IOException {
@@ -246,7 +244,7 @@ public class GameFileServiceImpl implements GameFileService {
     /**
      * Отримання символа фігури
      * @param chessFigure об'єкт фігури
-     * @return символа фігури
+     * @return символ фігури
      */
     private String appendChessIcon(ChessFigure chessFigure) {
         String ico = "";
