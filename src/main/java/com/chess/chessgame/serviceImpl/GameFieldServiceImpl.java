@@ -243,7 +243,7 @@ public class GameFieldServiceImpl implements GameFieldService {
                 rectangle.setFill(Color.web("26211b"));
                 rectangle.setWidth(20);
                 rectangle.setHeight(80);
-                Text text = new Text(String.valueOf(i + 1));
+                Text text = new Text(String.valueOf(8-i));
                 text.setFont(Font.font("Verdana", 15));
                 text.setFill(Color.WHITE);
                 stack.getChildren().addAll(rectangle, text);
@@ -384,7 +384,7 @@ public class GameFieldServiceImpl implements GameFieldService {
             ImageView imageView = getImageOfBorderPane(borderPane);
             String cellFigureColor = imageView.getId().split("-")[0];
             if (cellFigureColor.equals(figureColor.toString().toUpperCase(Locale.ROOT))) {
-                color = (Color) rectangle.getFill();
+                color = (Color) rectangle.getFill(); //COLOR check
             }
         }
         gameBoard.getSelectedCells().add(new GameBoardCell((Color) rectangle.getFill(), rectangle));
@@ -486,7 +486,7 @@ public class GameFieldServiceImpl implements GameFieldService {
         nameLabel.setTextFill(Color.WHITE);
         nameLabel.setStyle("-fx-font-weight: bold");
         char[] characters = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'};
-        Label positionLabel = new Label("(" + (chessFigure.getPosition().getxPosition() + 1) + "," + characters[chessFigure.getPosition().getyPosition()] + ")");
+        Label positionLabel = new Label("(" + (8-chessFigure.getPosition().getxPosition()) + "," + characters[chessFigure.getPosition().getyPosition()] + ")");
         positionLabel.setTextFill(Color.WHITE);
         positionLabel.setStyle("-fx-font-weight: bold");
         VBox labelBox = new VBox(nameLabel, positionLabel);

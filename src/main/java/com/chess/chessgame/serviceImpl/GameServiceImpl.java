@@ -66,7 +66,7 @@ public class GameServiceImpl implements GameService {
         List<ChessFigure> matchedFigures = new ArrayList<>();
 
         figurePositions.forEach(position -> chessBoard.getFigures().forEach(figure -> {
-            if (position.equals(figure.getPosition()) && !figure.getColor().equals(chessFigure.getColor())) {
+            if (position.equals(figure.getPosition())&& !figure.getColor().equals(chessFigure.getColor())) {//COLOR check
                 matchedFigures.add(figure);
             }
         }));
