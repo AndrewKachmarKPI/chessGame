@@ -197,8 +197,9 @@ public class GameFileServiceImpl implements GameFileService {
         for (int i = 0; i < maxSize - chessFigure.getName().toString().length(); i++) {
             chessPath.append(" ");
         }
-        chessPath.append(chessFigure.getPosition().getyPosition()).append(" ")
-                .append(chessFigure.getPosition().getxPosition());
+        char[] characters = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'};
+        chessPath.append(chessFigure.getPosition().getxPosition()+1).append(" ")
+                .append(characters[chessFigure.getPosition().getyPosition()]);
         return chessPath.toString();
     }
 
