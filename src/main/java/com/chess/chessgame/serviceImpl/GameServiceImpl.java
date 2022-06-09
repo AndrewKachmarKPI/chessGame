@@ -24,6 +24,7 @@ public class GameServiceImpl implements GameService {
 
     /**
      * Запуск та створення гри
+     *
      * @param fileName шлях до вхідного файлу
      */
     @Override
@@ -34,6 +35,7 @@ public class GameServiceImpl implements GameService {
 
     /**
      * Завантаження фігур з файлу у гру
+     *
      * @param fileName шлях до вхідного файлу
      */
     private void loadFigures(String fileName) {
@@ -45,7 +47,7 @@ public class GameServiceImpl implements GameService {
             chessFigureMap.put(chessFigure, new ArrayList<>());
             matrix[chessFigure.getPosition().getxPosition()][chessFigure.getPosition().getyPosition()] = getFigureNumber(chessFigure);
         });
-        chessBoard = new ChessBoard(figures, chessFigureMap,figureMatrix, matrix);
+        chessBoard = new ChessBoard(figures, chessFigureMap, figureMatrix, matrix);
         figures.forEach(chessFigure -> {
             figureMatrix.put(chessFigure, chessFigure.getMoveDirection(chessBoard.getChessMatrix()));
         });
@@ -63,6 +65,7 @@ public class GameServiceImpl implements GameService {
 
     /**
      * Отримання фігур які б’ються вибраною фігурою
+     *
      * @param chessFigure об'єкт фігури
      * @return список атакованих фігур
      */
@@ -78,12 +81,12 @@ public class GameServiceImpl implements GameService {
         return matchedFigures;
     }
 
-    private void kingCheck(ChessFigure chessFigure, int [][] figureMatrix){
+    private void kingCheck(ChessFigure chessFigure, int[][] figureMatrix) {
         chessBoard.getFigureMatrix().forEach((figure, matrix) -> {
-            if(chessFigure.getPosition()!=figure.getPosition() && figure.getColor() != chessFigure.getColor()){
+            if (chessFigure.getPosition() != figure.getPosition() && figure.getColor() != chessFigure.getColor()) {
                 for (int i = 0; i < 8; i++) {
                     for (int j = 0; j < 8; j++) {
-                        if(matrix[i][j] == 1){
+                        if (matrix[i][j] == 1) {
                             figureMatrix[i][j] = 0;
                         }
                     }
@@ -179,7 +182,7 @@ public class GameServiceImpl implements GameService {
         if (chessFigure != null) {
             matrix = chessFigure.getMoveDirection(chessBoard.getChessMatrix());
         }
-        if(figureName == FigureName.KING){
+        if (figureName == FigureName.KING) {
             kingCheck(chessFigure, matrix);
         }
         return matrix;
