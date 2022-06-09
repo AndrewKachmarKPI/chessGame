@@ -300,7 +300,16 @@ public class AttackServiceImpl implements AttackService {
         }
     }
 
-    public boolean isOnOneDiagonal(Position figurePosition, Position chessPosition, int i, int j, boolean mode) {
+    /**
+     * Метод перевірки чи 2 фігури знаходяться на 1 діагоналі
+     * @param figurePosition позиція першої фігури
+     * @param chessPosition позиція другої фігури
+     * @param i індекс
+     * @param j індекс
+     * @param mode головна чи побічна діагональ
+     * @return чи 2 фігури знаходяться на одній діагоналі
+     */
+    private boolean isOnOneDiagonal(Position figurePosition, Position chessPosition, int i, int j, boolean mode) {
         if (mode) {
             return isDiagonal(figurePosition, i, j, true) && isDiagonal(chessPosition, i, j, true);
         } else {
@@ -308,6 +317,13 @@ public class AttackServiceImpl implements AttackService {
         }
     }
 
+    /**
+     * @param position позиція фігури
+     * @param i індекс
+     * @param j індекс
+     * @param mode головна чи побічна діагональ
+     * @return чи фігури знаходяться на діагоналі
+     */
     public boolean isDiagonal(Position position, int i, int j, boolean mode) {
         if (mode) {
             return i + position.getyPosition() == j + position.getxPosition();
@@ -316,10 +332,21 @@ public class AttackServiceImpl implements AttackService {
         }
     }
 
+    /**
+     *
+     * @param position позиція фігури
+     * @param x індекс
+     * @return чи індекс сусідній до позиції по x
+     */
     public boolean isNeighbourX(Position position, int x) {
         return Math.abs(position.getxPosition() - x) == 1;
     }
-
+    /**
+     *
+     * @param position позиція фігури
+     * @param y індекс
+     * @return чи індекс сусідній до позиції по y
+     */
     public boolean isNeighbourY(Position position, int y) {
         return Math.abs(position.getyPosition() - y) == 1;
     }

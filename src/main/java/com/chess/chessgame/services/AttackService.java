@@ -17,7 +17,6 @@ public interface AttackService {
     void removeTrailing(ChessFigure figure, ChessFigure chessFigure, int[][] matrix, int[][] figureMatrix);
     void removeAxisDirection(ChessFigure figure, ChessFigure chessFigure, int[][] matrix, int[][] figureMatrix);
     void removeDiagonal(ChessFigure figure, ChessFigure chessFigure, int[][] matrix, int[][] figureMatrix);
-    boolean isOnOneDiagonal(Position figurePosition, Position chessPosition, int i, int j, boolean mode);
     boolean isDiagonal(Position position, int i, int j, boolean mode);
     boolean isNeighbourX(Position position, int x);
     boolean isNeighbourY(Position position, int y);

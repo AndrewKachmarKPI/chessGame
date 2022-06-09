@@ -81,6 +81,11 @@ public class GameServiceImpl implements GameService {
         return matchedFigures;
     }
 
+    /**
+     * Метод для вираховування ходів короля
+     * @param chessFigure об'єкт короля
+     * @param figureMatrix матриця короля
+     */
     private void kingMovementsCheck(ChessFigure chessFigure, int[][] figureMatrix) {
         chessBoard.getFigureMatrix().forEach((figure, matrix) -> {
             if (chessFigure.getPosition() != figure.getPosition() && figure.getColor() != chessFigure.getColor()) {//COLOR check
