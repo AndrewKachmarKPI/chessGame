@@ -255,28 +255,56 @@ public class AttackServiceImpl implements AttackService {
                     figureMatrix[figure.getPosition().getxPosition()][j + 1] = 0;
                 }
             }
-            if (matrix[figure.getPosition().getyPosition()][j] == 10 && figure.getPosition().getyPosition() == chessFigure.getPosition().getyPosition()) {
-                if (figure.getPosition().getxPosition() > chessFigure.getPosition().getxPosition() && figure.getPosition().getyPosition() != 0) {
-                    figureMatrix[figure.getPosition().getyPosition() - 1][j] = 0;
+            if (matrix[j][figure.getPosition().getyPosition()] == 10 && figure.getPosition().getyPosition() == chessFigure.getPosition().getyPosition()) {
+                if (figure.getPosition().getxPosition() > chessFigure.getPosition().getxPosition() && j != 0) {
+                    figureMatrix[j-1][figure.getPosition().getyPosition()] = 0;
                 }
-                if (figure.getPosition().getxPosition() < chessFigure.getPosition().getxPosition() && figure.getPosition().getyPosition() != 7) {
-                    figureMatrix[figure.getPosition().getyPosition() + 1][j] = 0;
+                if (figure.getPosition().getxPosition() < chessFigure.getPosition().getxPosition() && j != 7) {
+                    figureMatrix[j+1][figure.getPosition().getyPosition()] = 0;
                 }
             }
         }
     }
 
+    /**
+     * Вираховування ходів короля по діагоналях
+     * @param figure       фігура з дошки
+     * @param chessFigure  король
+     * @param matrix       матриця для фігури
+     * @param figureMatrix матриця короля
+     */
     public void removeDiagonal(ChessFigure figure, ChessFigure chessFigure, int[][] matrix, int[][] figureMatrix) {
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                if (matrix[i][j] == 1 && isDiagonal(chessFigure.getPosition(), i, j, true) && isNeighbourY(chessFigure.getPosition(), j) && isNeighbourX(chessFigure.getPosition(), i)) {
-                    if (figure.getPosition().getxPosition()>chessFigure.getPosition().getxPosition() &&
-                            figure.getPosition().getxPosition()>chessFigure.getPosition().getxPosition()) {
-                        figureMatrix[i][j] = 0;
+                if (matrix[i][j] == 1 && isOnOneDiagonal(figure.getPosition(),chessFigure.getPosition(), i, j, true)) {
+                    if (figure.getPosition().getxPosition() > chessFigure.getPosition().getxPosition() &&
+                            figure.getPosition().getyPosition() > chessFigure.getPosition().getyPosition() && chessFigure.getPosition().getxPosition() != 0 && chessFigure.getPosition().getyPosition() != 0) {
+                        figureMatrix[chessFigure.getPosition().getxPosition() - 1][chessFigure.getPosition().getyPosition() - 1] = 0;
+                    }
+                    if (figure.getPosition().getxPosition() < chessFigure.getPosition().getxPosition() &&
+                            figure.getPosition().getyPosition() < chessFigure.getPosition().getyPosition() && chessFigure.getPosition().getxPosition() != 7 && chessFigure.getPosition().getyPosition() != 7) {
+                        figureMatrix[chessFigure.getPosition().getxPosition() + 1][chessFigure.getPosition().getyPosition() + 1] = 0;
                     }
                 }
-//                +
+                if (matrix[i][j] == 1 && isOnOneDiagonal(figure.getPosition(),chessFigure.getPosition(), i, j, false)) {
+                    if (figure.getPosition().getxPosition() < chessFigure.getPosition().getxPosition() &&
+                            figure.getPosition().getyPosition() > chessFigure.getPosition().getyPosition() && chessFigure.getPosition().getxPosition() != 7 && chessFigure.getPosition().getyPosition() != 0) {
+                        figureMatrix[chessFigure.getPosition().getxPosition() + 1][chessFigure.getPosition().getyPosition() - 1] = 0;
+                    }
+                    if (figure.getPosition().getxPosition() > chessFigure.getPosition().getxPosition() &&
+                            figure.getPosition().getyPosition() < chessFigure.getPosition().getyPosition() && chessFigure.getPosition().getxPosition() != 0 && chessFigure.getPosition().getyPosition() != 7) {
+                        figureMatrix[chessFigure.getPosition().getxPosition() - 1][chessFigure.getPosition().getyPosition() + 1] = 0;
+                    }
+                }
             }
+        }
+    }
+
+    public boolean isOnOneDiagonal(Position figurePosition, Position chessPosition, int i, int j, boolean mode) {
+        if (mode) {
+            return isDiagonal(figurePosition, i, j, true) && isDiagonal(chessPosition, i, j, true);
+        } else {
+            return isDiagonal(figurePosition, i, j, false) && isDiagonal(chessPosition, i, j, false);
         }
     }
 

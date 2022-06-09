@@ -84,13 +84,12 @@ public class GameServiceImpl implements GameService {
     private void kingMovementsCheck(ChessFigure chessFigure, int[][] figureMatrix) {
         chessBoard.getFigureMatrix().forEach((figure, matrix) -> {
             if (chessFigure.getPosition() != figure.getPosition() && figure.getColor() != chessFigure.getColor()) {//COLOR check
-                if(figure.getName()!=FigureName.KING || figure.getName()!=FigureName.BISHOP){
-                    chessFigure.getAttackService().removeTrailing(figure,chessFigure,matrix,figureMatrix);
-                    chessFigure.getAttackService().removeAxisDirection(figure,chessFigure,matrix,figureMatrix);
+                chessFigure.getAttackService().removeTrailing(figure, chessFigure, matrix, figureMatrix);
+                if (figure.getName() != FigureName.KNIGHT && figure.getName() != FigureName.BISHOP) {
+                    chessFigure.getAttackService().removeAxisDirection(figure, chessFigure, matrix, figureMatrix);
                 }
-                if(figure.getPosition().getxPosition() != chessFigure.getPosition().getxPosition() &&
-                        figure.getPosition().getyPosition() != chessFigure.getPosition().getyPosition()){
-                    chessFigure.getAttackService().removeDiagonal(figure,chessFigure,matrix,figureMatrix);
+                if (figure.getName() == FigureName.BISHOP || figure.getName() == FigureName.QUEEN) {
+                    chessFigure.getAttackService().removeDiagonal(figure, chessFigure, matrix, figureMatrix);
                 }
             }
         });
