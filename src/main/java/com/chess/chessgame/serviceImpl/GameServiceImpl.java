@@ -40,11 +40,16 @@ public class GameServiceImpl implements GameService {
         List<ChessFigure> figures = gameFileService.getFiguresFromFile(fileName);
         int[][] matrix = new int[8][8];
         Map<ChessFigure, List<ChessFigure>> chessFigureMap = new HashMap<>();
+        Map<ChessFigure, int[][]> figureMatrix = new HashMap<>();
         figures.forEach(chessFigure -> {
             chessFigureMap.put(chessFigure, new ArrayList<>());
             matrix[chessFigure.getPosition().getxPosition()][chessFigure.getPosition().getyPosition()] = getFigureNumber(chessFigure);
         });
-        chessBoard = new ChessBoard(figures, chessFigureMap, matrix);
+        chessBoard = new ChessBoard(figures, chessFigureMap,figureMatrix, matrix);
+        figures.forEach(chessFigure -> {
+            figureMatrix.put(chessFigure, chessFigure.getMoveDirection(chessBoard.getChessMatrix()));
+        });
+        chessBoard.setFigureMatrix(figureMatrix);
     }
 
     /**
@@ -73,8 +78,23 @@ public class GameServiceImpl implements GameService {
         return matchedFigures;
     }
 
+    private void kingCheck(ChessFigure chessFigure, int [][] figureMatrix){
+        chessBoard.getFigureMatrix().forEach((figure, matrix) -> {
+            if(chessFigure.getPosition()!=figure.getPosition() && figure.getColor() != chessFigure.getColor()){
+                for (int i = 0; i < 8; i++) {
+                    for (int j = 0; j < 8; j++) {
+                        if(matrix[i][j] == 1){
+                            figureMatrix[i][j] = 0;
+                        }
+                    }
+                }
+            }
+        });
+    }
+
     /**
      * Конвертація матриці чисел у список обєктів позицій
+     *
      * @param figureMatrix матриця фігури
      * @return спиосок позицій атакованих фігур
      */
@@ -92,6 +112,7 @@ public class GameServiceImpl implements GameService {
 
     /**
      * Отримання усіх фігур на шахівниці
+     *
      * @return список фігур
      */
     @Override
@@ -102,6 +123,7 @@ public class GameServiceImpl implements GameService {
 
     /**
      * Отримання порядкового номеру фігури
+     *
      * @param chessFigure об'єкт фігури
      * @return номер фігури
      */
@@ -128,6 +150,7 @@ public class GameServiceImpl implements GameService {
 
     /**
      * Отримання списку яка фігура яку б’є
+     *
      * @return Map атак фігур
      */
     @Override
@@ -143,8 +166,9 @@ public class GameServiceImpl implements GameService {
 
     /**
      * Отримання траєкторії ходу фігури
-     * @param pos позиція фігури
-     * @param figureName назва фігури
+     *
+     * @param pos         позиція фігури
+     * @param figureName  назва фігури
      * @param figureColor колір фігури
      * @return матриця траекторії фігури
      */
@@ -155,13 +179,17 @@ public class GameServiceImpl implements GameService {
         if (chessFigure != null) {
             matrix = chessFigure.getMoveDirection(chessBoard.getChessMatrix());
         }
+        if(figureName == FigureName.KING){
+            kingCheck(chessFigure, matrix);
+        }
         return matrix;
     }
 
     /**
      * Створення шахової фігури відповідних параметрів
-     * @param pos позиція фігури
-     * @param figureName назва фігури
+     *
+     * @param pos         позиція фігури
+     * @param figureName  назва фігури
      * @param figureColor колір фігури
      * @return створений об'єкт фігури
      */
@@ -189,6 +217,7 @@ public class GameServiceImpl implements GameService {
 
     /**
      * Очищення шахівниці
+     *
      * @param fileName шлях до вхідного файлу
      */
     @Override
@@ -201,8 +230,9 @@ public class GameServiceImpl implements GameService {
 
     /**
      * Додавання фігури на шахівницю
+     *
      * @param chessFigure об'єкт фігури
-     * @param fileName шлях до вхідного файлу
+     * @param fileName    шлях до вхідного файлу
      */
     @Override
     public void addNewFigure(ChessFigure chessFigure, String fileName) {
@@ -211,6 +241,7 @@ public class GameServiceImpl implements GameService {
 
     /**
      * Видалення фігури з шахівниці
+     *
      * @param position позиція фігури
      * @param fileName шлях до вхідного файлу
      */
@@ -229,6 +260,7 @@ public class GameServiceImpl implements GameService {
 
     /**
      * Зберігання результату гри
+     *
      * @param directory шлях до вхідного файлу
      * @return чи збережено файл
      */
@@ -245,6 +277,7 @@ public class GameServiceImpl implements GameService {
 
     /**
      * Отримання списку доступних фігур для розміщення
+     *
      * @return спсисок доступних фігур
      */
     @Override

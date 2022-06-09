@@ -3,6 +3,7 @@ package com.chess.chessgame.services;
 import com.chess.chessgame.domain.figures.*;
 import com.chess.chessgame.enums.FigureColor;
 import com.chess.chessgame.enums.FigureName;
+import javafx.geometry.Pos;
 
 import java.util.*;
 

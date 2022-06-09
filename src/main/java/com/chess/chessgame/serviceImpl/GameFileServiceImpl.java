@@ -199,7 +199,7 @@ public class GameFileServiceImpl implements GameFileService {
         }
         char[] characters = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'};
         chessPath.append(chessFigure.getPosition().getxPosition()+1).append(" ")
-                .append(characters[chessFigure.getPosition().getyPosition()]);
+                .append(characters[7-chessFigure.getPosition().getyPosition()]);
         return chessPath.toString();
     }
 
