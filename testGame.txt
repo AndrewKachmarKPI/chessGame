@@ -1,2 +1,1 @@
-white king 4 4
-black bishop 3 5
+white king 7 7

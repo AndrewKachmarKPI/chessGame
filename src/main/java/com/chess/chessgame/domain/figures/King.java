@@ -22,32 +22,18 @@ public class King extends ChessFigure {
         }
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                if (isDiagonal(i, j, true) && isNeighbourY(j) && isNeighbourX(i)) {
+                if (getAttackService().isDiagonal(this.getPosition(), i, j, true) && getAttackService().isNeighbourY(this.getPosition(), j) &&
+                        getAttackService().isNeighbourX(this.getPosition(), i)) {
                     matrix[i][j] = 1;
                 }
-                if (isDiagonal(i, j, false) && isNeighbourY(j) && isNeighbourX(i)) {
+                if (getAttackService().isDiagonal(this.getPosition(), i, j, false) && getAttackService().isNeighbourY(this.getPosition(), j) &&
+                        getAttackService().isNeighbourX(this.getPosition(), i)) {
                     matrix[i][j] = 1;
                 }
             }
         }
         matrix[this.getPosition().getxPosition()][this.getPosition().getyPosition()] = 2;
         return removeDuplicates(matrix, gameMatrix);
-    }
-
-    private boolean isDiagonal(int i, int j, boolean mode) {
-        if (mode) {
-            return i + this.getPosition().getyPosition() == j + this.getPosition().getxPosition();
-        } else {
-            return i + (8 - this.getPosition().getyPosition()) + j - this.getPosition().getxPosition() == 8;
-        }
-    }
-
-    private boolean isNeighbourX(int x) {
-        return Math.abs(this.getPosition().getxPosition() - x) == 1;
-    }
-
-    private boolean isNeighbourY(int y) {
-        return Math.abs(this.getPosition().getyPosition() - y) == 1;
     }
 
     @Override
