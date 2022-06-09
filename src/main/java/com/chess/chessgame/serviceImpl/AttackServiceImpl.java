@@ -1,6 +1,8 @@
 package com.chess.chessgame.serviceImpl;
 
+import com.chess.chessgame.domain.figures.ChessFigure;
 import com.chess.chessgame.domain.figures.Position;
+import com.chess.chessgame.enums.FigureName;
 import com.chess.chessgame.services.AttackService;
 
 /**
@@ -9,7 +11,8 @@ import com.chess.chessgame.services.AttackService;
 public class AttackServiceImpl implements AttackService {
     /**
      * Метод для отримання вертикального зрізу матриці
-     * @param matrix матриця гри або фігури
+     *
+     * @param matrix   матриця гри або фігури
      * @param position позиція фігури
      * @return вертикальний зріз матриці
      */
@@ -24,8 +27,9 @@ public class AttackServiceImpl implements AttackService {
 
     /**
      * Запис вертикального зрізу у матрицю
-     * @param matrix матриця гри або фігури
-     * @param splice вертикальний зріз
+     *
+     * @param matrix   матриця гри або фігури
+     * @param splice   вертикальний зріз
      * @param position позиція фігури
      * @return матриця гри або фігури
      */
@@ -39,9 +43,10 @@ public class AttackServiceImpl implements AttackService {
 
     /**
      * Форматування зрізу у двох напрамках проставлення можливих ходів фігури
+     *
      * @param figureArray масив матриці ходів фігури
-     * @param gameArray масив матриці гри
-     * @param position позиція фігури
+     * @param gameArray   масив матриці гри
+     * @param position    позиція фігури
      * @return результуючий масив ходів та атак
      */
     @Override
@@ -73,8 +78,9 @@ public class AttackServiceImpl implements AttackService {
 
     /**
      * Форматування діагонального зрізу і проставлення можливих ходів фігури
-     * @param figureArray масив матриці ходів фігури
-     * @param gameArray масив матриці гри
+     *
+     * @param figureArray  масив матриці ходів фігури
+     * @param gameArray    масив матриці гри
      * @param figureNumber номер фігури
      * @return результуючий масив ходів та атак
      */
@@ -107,9 +113,10 @@ public class AttackServiceImpl implements AttackService {
 
     /**
      * Запис діагонального зрізу у матрицю
-     * @param matrix матриця гри або фігури
-     * @param splice масив для запису в матрицю
-     * @param isMain головна чи побічна діагональ матриці
+     *
+     * @param matrix   матриця гри або фігури
+     * @param splice   масив для запису в матрицю
+     * @param isMain   головна чи побічна діагональ матриці
      * @param position позиція фігури
      */
     @Override
@@ -134,8 +141,9 @@ public class AttackServiceImpl implements AttackService {
 
     /**
      * Отримання діагонального зрізу матриці фігури відносно позиції
-     * @param matrix матриця гри або фігури
-     * @param isMain головна чи побічна діагональ матриці
+     *
+     * @param matrix   матриця гри або фігури
+     * @param isMain   головна чи побічна діагональ матриці
      * @param position позиція фігури
      * @return діагональний зріз матриці
      */
@@ -161,7 +169,8 @@ public class AttackServiceImpl implements AttackService {
 
     /**
      * Отримання позиції фігури у масиві
-     * @param array масив для отримання позиції
+     *
+     * @param array        масив для отримання позиції
      * @param figureNumber елемент пошуку
      * @return позиція елементу в масиві
      */
@@ -178,7 +187,8 @@ public class AttackServiceImpl implements AttackService {
 
     /**
      * Додавання елементу до масиву
-     * @param array масив
+     *
+     * @param array   масив
      * @param element елемент
      * @return масив з доданим елементом
      */
@@ -192,7 +202,8 @@ public class AttackServiceImpl implements AttackService {
 
     /**
      * Проставлення можливих ходів фігури відносно матриць гри
-     * @param matrix матриця фігури
+     *
+     * @param matrix     матриця фігури
      * @param gameMatrix матриця гри
      * @return матриця фігури з атаками
      */
@@ -206,5 +217,82 @@ public class AttackServiceImpl implements AttackService {
             }
         }
         return matrix;
+    }
+
+    /**
+     * Вираховування ходів короля
+     *
+     * @param figure       фігура з дошки
+     * @param chessFigure  король
+     * @param matrix       матриця для фігури
+     * @param figureMatrix матриця короля
+     */
+    public void removeTrailing(ChessFigure figure, ChessFigure chessFigure, int[][] matrix, int[][] figureMatrix) {
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                if (matrix[i][j] == 1) {
+                    figureMatrix[i][j] = 0;
+                }
+            }
+        }
+    }
+
+    /**
+     * Вираховування ходів короля по горизонталі і вертикалі
+     *
+     * @param figure       фігура з дошки
+     * @param chessFigure  король
+     * @param matrix       матриця для фігури
+     * @param figureMatrix матриця короля
+     */
+    public void removeAxisDirection(ChessFigure figure, ChessFigure chessFigure, int[][] matrix, int[][] figureMatrix) {
+        for (int j = 0; j < 8; j++) {
+            if (matrix[figure.getPosition().getxPosition()][j] == 10 && figure.getPosition().getxPosition() == chessFigure.getPosition().getxPosition()) {
+                if (figure.getPosition().getyPosition() > chessFigure.getPosition().getyPosition() && j != 0) {
+                    figureMatrix[figure.getPosition().getxPosition()][j - 1] = 0;
+                }
+                if (figure.getPosition().getyPosition() < chessFigure.getPosition().getyPosition() && j != 7) {
+                    figureMatrix[figure.getPosition().getxPosition()][j + 1] = 0;
+                }
+            }
+            if (matrix[figure.getPosition().getyPosition()][j] == 10 && figure.getPosition().getyPosition() == chessFigure.getPosition().getyPosition()) {
+                if (figure.getPosition().getxPosition() > chessFigure.getPosition().getxPosition() && figure.getPosition().getyPosition() != 0) {
+                    figureMatrix[figure.getPosition().getyPosition() - 1][j] = 0;
+                }
+                if (figure.getPosition().getxPosition() < chessFigure.getPosition().getxPosition() && figure.getPosition().getyPosition() != 7) {
+                    figureMatrix[figure.getPosition().getyPosition() + 1][j] = 0;
+                }
+            }
+        }
+    }
+
+    public void removeDiagonal(ChessFigure figure, ChessFigure chessFigure, int[][] matrix, int[][] figureMatrix) {
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                if (matrix[i][j] == 1 && isDiagonal(chessFigure.getPosition(), i, j, true) && isNeighbourY(chessFigure.getPosition(), j) && isNeighbourX(chessFigure.getPosition(), i)) {
+                    if (figure.getPosition().getxPosition()>chessFigure.getPosition().getxPosition() &&
+                            figure.getPosition().getxPosition()>chessFigure.getPosition().getxPosition()) {
+                        figureMatrix[i][j] = 0;
+                    }
+                }
+//                +
+            }
+        }
+    }
+
+    public boolean isDiagonal(Position position, int i, int j, boolean mode) {
+        if (mode) {
+            return i + position.getyPosition() == j + position.getxPosition();
+        } else {
+            return i + (8 - position.getyPosition()) + j - position.getxPosition() == 8;
+        }
+    }
+
+    public boolean isNeighbourX(Position position, int x) {
+        return Math.abs(position.getxPosition() - x) == 1;
+    }
+
+    public boolean isNeighbourY(Position position, int y) {
+        return Math.abs(position.getyPosition() - y) == 1;
     }
 }

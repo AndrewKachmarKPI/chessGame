@@ -27,11 +27,11 @@ public class Rook extends ChessFigure {
     public int[][] removeDuplicates(int[][] matrix, int[][] gameMatrix) {
         int[] horizontalFigureSplice = matrix[this.getPosition().getxPosition()];
         int[] horizontalGameSplice = gameMatrix[this.getPosition().getxPosition()];
-        int[] verticalFigureSplice = attackService.getVerticalSplice(matrix, this.getPosition().getyPosition());
-        int[] verticalGameSplice = attackService.getVerticalSplice(gameMatrix, this.getPosition().getyPosition());
+        int[] verticalFigureSplice = getAttackService().getVerticalSplice(matrix, this.getPosition().getyPosition());
+        int[] verticalGameSplice = getAttackService().getVerticalSplice(gameMatrix, this.getPosition().getyPosition());
 
-        matrix[this.getPosition().getxPosition()] = attackService.processSpliceMultiDirection(horizontalFigureSplice, horizontalGameSplice, this.getPosition().getyPosition());
-        matrix = attackService.setVerticalSplice(matrix, attackService.processSpliceMultiDirection(verticalFigureSplice,
+        matrix[this.getPosition().getxPosition()] = getAttackService().processSpliceMultiDirection(horizontalFigureSplice, horizontalGameSplice, this.getPosition().getyPosition());
+        matrix = getAttackService().setVerticalSplice(matrix, getAttackService().processSpliceMultiDirection(verticalFigureSplice,
                 verticalGameSplice, this.getPosition().getxPosition()), this.getPosition().getyPosition());
         return matrix;
     }

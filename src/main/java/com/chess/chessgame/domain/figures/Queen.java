@@ -28,23 +28,23 @@ public class Queen extends ChessFigure {
     public int[][] removeDuplicates(int[][] matrix, int[][] gameMatrix) {
         int[] horizontalFigureSplice = matrix[this.getPosition().getxPosition()];
         int[] horizontalGameSplice = gameMatrix[this.getPosition().getxPosition()];
-        int[] verticalFigureSplice = attackService.getVerticalSplice(matrix,this.getPosition().getyPosition());
-        int[] verticalGameSplice = attackService.getVerticalSplice(gameMatrix,this.getPosition().getyPosition());
+        int[] verticalFigureSplice = getAttackService().getVerticalSplice(matrix,this.getPosition().getyPosition());
+        int[] verticalGameSplice = getAttackService().getVerticalSplice(gameMatrix,this.getPosition().getyPosition());
 
-        int[] mainDiagonalFigure = attackService.getDiagonalSplice(matrix, true, this.getPosition());
-        int[] secondDiagonalFigure = attackService.getDiagonalSplice(matrix, false, this.getPosition());
-        int[] mainDiagonalGame = attackService.getDiagonalSplice(gameMatrix, true, this.getPosition());
-        int[] secondDiagonalGame = attackService.getDiagonalSplice(gameMatrix, false, this.getPosition());
+        int[] mainDiagonalFigure = getAttackService().getDiagonalSplice(matrix, true, this.getPosition());
+        int[] secondDiagonalFigure = getAttackService().getDiagonalSplice(matrix, false, this.getPosition());
+        int[] mainDiagonalGame = getAttackService().getDiagonalSplice(gameMatrix, true, this.getPosition());
+        int[] secondDiagonalGame = getAttackService().getDiagonalSplice(gameMatrix, false, this.getPosition());
 
-        matrix[this.getPosition().getxPosition()] = attackService.processSpliceMultiDirection(horizontalFigureSplice,
+        matrix[this.getPosition().getxPosition()] = getAttackService().processSpliceMultiDirection(horizontalFigureSplice,
                 horizontalGameSplice,this.getPosition().getyPosition());
-        matrix = attackService.setVerticalSplice(matrix, attackService.processSpliceMultiDirection(verticalFigureSplice,
+        matrix = getAttackService().setVerticalSplice(matrix, getAttackService().processSpliceMultiDirection(verticalFigureSplice,
                 verticalGameSplice,this.getPosition().getxPosition()),this.getPosition().getyPosition());
 
 
 
-        attackService.setDiagonalSplice(matrix, attackService.processSpliceDiagonal(mainDiagonalFigure, mainDiagonalGame, 3), true, this.getPosition());
-        attackService.setDiagonalSplice(matrix, attackService.processSpliceDiagonal(secondDiagonalFigure, secondDiagonalGame, 3), false, this.getPosition());
+        getAttackService().setDiagonalSplice(matrix, getAttackService().processSpliceDiagonal(mainDiagonalFigure, mainDiagonalGame, 3), true, this.getPosition());
+        getAttackService().setDiagonalSplice(matrix, getAttackService().processSpliceDiagonal(secondDiagonalFigure, secondDiagonalGame, 3), false, this.getPosition());
 
         return matrix;
     }

@@ -16,13 +16,13 @@ public class Bishop extends ChessFigure {
     }
     @Override
     public int[][] removeDuplicates(int[][] matrix, int[][] gameMatrix) {
-        int[] mainDiagonalFigure = attackService.getDiagonalSplice(matrix, true, this.getPosition());
-        int[] secondDiagonalFigure = attackService.getDiagonalSplice(matrix, false, this.getPosition());
-        int[] mainDiagonalGame = attackService.getDiagonalSplice(gameMatrix, true, this.getPosition());
-        int[] secondDiagonalGame = attackService.getDiagonalSplice(gameMatrix, false, this.getPosition());
+        int[] mainDiagonalFigure = getAttackService().getDiagonalSplice(matrix, true, this.getPosition());
+        int[] secondDiagonalFigure = getAttackService().getDiagonalSplice(matrix, false, this.getPosition());
+        int[] mainDiagonalGame = getAttackService().getDiagonalSplice(gameMatrix, true, this.getPosition());
+        int[] secondDiagonalGame = getAttackService().getDiagonalSplice(gameMatrix, false, this.getPosition());
 
-        attackService.setDiagonalSplice(matrix, attackService.processSpliceDiagonal(mainDiagonalFigure, mainDiagonalGame, 5), true, this.getPosition());
-        attackService.setDiagonalSplice(matrix, attackService.processSpliceDiagonal(secondDiagonalFigure, secondDiagonalGame, 5), false, this.getPosition());
+        getAttackService().setDiagonalSplice(matrix, getAttackService().processSpliceDiagonal(mainDiagonalFigure, mainDiagonalGame, 5), true, this.getPosition());
+        getAttackService().setDiagonalSplice(matrix, getAttackService().processSpliceDiagonal(secondDiagonalFigure, secondDiagonalGame, 5), false, this.getPosition());
         return matrix;
     }
 }

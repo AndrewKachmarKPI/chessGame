@@ -1,5 +1,6 @@
 package com.chess.chessgame.services;
 
+import com.chess.chessgame.domain.figures.ChessFigure;
 import com.chess.chessgame.domain.figures.Position;
 
 
@@ -13,4 +14,10 @@ public interface AttackService {
     int getPosOfElement(int[] array, int figureNumber);
     int[] addElementToArray(int[] array, int element);
     int[][] setAttackSimple(int[][] matrix, int[][] gameMatrix);
+    void removeTrailing(ChessFigure figure, ChessFigure chessFigure, int[][] matrix, int[][] figureMatrix);
+    void removeAxisDirection(ChessFigure figure, ChessFigure chessFigure, int[][] matrix, int[][] figureMatrix);
+    void removeDiagonal(ChessFigure figure, ChessFigure chessFigure, int[][] matrix, int[][] figureMatrix);
+    boolean isDiagonal(Position position, int i, int j, boolean mode);
+    boolean isNeighbourX(Position position, int x);
+    boolean isNeighbourY(Position position, int y);
 }

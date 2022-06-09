@@ -81,15 +81,16 @@ public class GameServiceImpl implements GameService {
         return matchedFigures;
     }
 
-    private void kingCheck(ChessFigure chessFigure, int[][] figureMatrix) {
+    private void kingMovementsCheck(ChessFigure chessFigure, int[][] figureMatrix) {
         chessBoard.getFigureMatrix().forEach((figure, matrix) -> {
-            if (chessFigure.getPosition() != figure.getPosition() && figure.getColor() != chessFigure.getColor()) {
-                for (int i = 0; i < 8; i++) {
-                    for (int j = 0; j < 8; j++) {
-                        if (matrix[i][j] == 1) {
-                            figureMatrix[i][j] = 0;
-                        }
-                    }
+            if (chessFigure.getPosition() != figure.getPosition() && figure.getColor() != chessFigure.getColor()) {//COLOR check
+                if(figure.getName()!=FigureName.KING || figure.getName()!=FigureName.BISHOP){
+                    chessFigure.getAttackService().removeTrailing(figure,chessFigure,matrix,figureMatrix);
+                    chessFigure.getAttackService().removeAxisDirection(figure,chessFigure,matrix,figureMatrix);
+                }
+                if(figure.getPosition().getxPosition() != chessFigure.getPosition().getxPosition() &&
+                        figure.getPosition().getyPosition() != chessFigure.getPosition().getyPosition()){
+                    chessFigure.getAttackService().removeDiagonal(figure,chessFigure,matrix,figureMatrix);
                 }
             }
         });
@@ -183,7 +184,7 @@ public class GameServiceImpl implements GameService {
             matrix = chessFigure.getMoveDirection(chessBoard.getChessMatrix());
         }
         if (figureName == FigureName.KING) {
-            kingCheck(chessFigure, matrix);
+            kingMovementsCheck(chessFigure, matrix);
         }
         return matrix;
     }

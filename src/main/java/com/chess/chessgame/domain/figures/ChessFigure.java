@@ -12,7 +12,7 @@ public abstract class ChessFigure {
     private FigureColor color;
     private Position position;
 
-    public AttackService attackService;
+    private AttackService attackService;
 
     public ChessFigure() {
         attackService = new AttackServiceImpl();
@@ -73,6 +73,11 @@ public abstract class ChessFigure {
         }
         return matrix;
     }
+
+    public AttackService getAttackService() {
+        return attackService;
+    }
+
     @Override
     public String toString() {
         return "ChessFigure{" +
