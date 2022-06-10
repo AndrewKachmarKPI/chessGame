@@ -15,7 +15,7 @@ public interface AttackService {
     int[] addElementToArray(int[] array, int element);
     int[][] setAttackSimple(int[][] matrix, int[][] gameMatrix);
     void removeTrailing(ChessFigure figure, ChessFigure chessFigure, int[][] matrix, int[][] figureMatrix);
-    void removeAxisDirection(ChessFigure figure, ChessFigure chessFigure, int[][] matrix, int[][] figureMatrix);
+    void removeAxis(ChessFigure figure, ChessFigure chessFigure, int[][] matrix, int[][] figureMatrix);
     void removeDiagonal(ChessFigure figure, ChessFigure chessFigure, int[][] matrix, int[][] figureMatrix);
     boolean isDiagonal(Position position, int i, int j, boolean mode);
     boolean isNeighbourX(Position position, int x);

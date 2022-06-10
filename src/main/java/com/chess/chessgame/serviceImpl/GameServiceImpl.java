@@ -91,7 +91,7 @@ public class GameServiceImpl implements GameService {
             if (chessFigure.getPosition() != figure.getPosition() && figure.getColor() != chessFigure.getColor()) {//COLOR check
                 chessFigure.getAttackService().removeTrailing(figure, chessFigure, matrix, figureMatrix);
                 if (figure.getName() != FigureName.KNIGHT && figure.getName() != FigureName.BISHOP) {
-                    chessFigure.getAttackService().removeAxisDirection(figure, chessFigure, matrix, figureMatrix);
+                    chessFigure.getAttackService().removeAxis(figure, chessFigure, matrix, figureMatrix);
                 }
                 if (figure.getName() == FigureName.BISHOP || figure.getName() == FigureName.QUEEN) {
                     chessFigure.getAttackService().removeDiagonal(figure, chessFigure, matrix, figureMatrix);

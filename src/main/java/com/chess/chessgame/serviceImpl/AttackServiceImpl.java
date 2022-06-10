@@ -2,7 +2,6 @@ package com.chess.chessgame.serviceImpl;
 
 import com.chess.chessgame.domain.figures.ChessFigure;
 import com.chess.chessgame.domain.figures.Position;
-import com.chess.chessgame.enums.FigureName;
 import com.chess.chessgame.services.AttackService;
 
 /**
@@ -245,7 +244,7 @@ public class AttackServiceImpl implements AttackService {
      * @param matrix       матриця для фігури
      * @param figureMatrix матриця короля
      */
-    public void removeAxisDirection(ChessFigure figure, ChessFigure chessFigure, int[][] matrix, int[][] figureMatrix) {
+    public void removeAxis(ChessFigure figure, ChessFigure chessFigure, int[][] matrix, int[][] figureMatrix) {
         for (int j = 0; j < 8; j++) {
             if (matrix[figure.getPosition().getxPosition()][j] == 10 && figure.getPosition().getxPosition() == chessFigure.getPosition().getxPosition()) {
                 if (figure.getPosition().getyPosition() > chessFigure.getPosition().getyPosition() && j != 0) {
@@ -276,7 +275,7 @@ public class AttackServiceImpl implements AttackService {
     public void removeDiagonal(ChessFigure figure, ChessFigure chessFigure, int[][] matrix, int[][] figureMatrix) {
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                if (matrix[i][j] == 1 && isOnOneDiagonal(figure.getPosition(),chessFigure.getPosition(), i, j, true)) {
+                if (matrix[i][j] == 1 && isOneDiagonal(figure.getPosition(),chessFigure.getPosition(), i, j, true)) {
                     if (figure.getPosition().getxPosition() > chessFigure.getPosition().getxPosition() &&
                             figure.getPosition().getyPosition() > chessFigure.getPosition().getyPosition() && chessFigure.getPosition().getxPosition() != 0 && chessFigure.getPosition().getyPosition() != 0) {
                         figureMatrix[chessFigure.getPosition().getxPosition() - 1][chessFigure.getPosition().getyPosition() - 1] = 0;
@@ -286,7 +285,7 @@ public class AttackServiceImpl implements AttackService {
                         figureMatrix[chessFigure.getPosition().getxPosition() + 1][chessFigure.getPosition().getyPosition() + 1] = 0;
                     }
                 }
-                if (matrix[i][j] == 1 && isOnOneDiagonal(figure.getPosition(),chessFigure.getPosition(), i, j, false)) {
+                if (matrix[i][j] == 1 && isOneDiagonal(figure.getPosition(),chessFigure.getPosition(), i, j, false)) {
                     if (figure.getPosition().getxPosition() < chessFigure.getPosition().getxPosition() &&
                             figure.getPosition().getyPosition() > chessFigure.getPosition().getyPosition() && chessFigure.getPosition().getxPosition() != 7 && chessFigure.getPosition().getyPosition() != 0) {
                         figureMatrix[chessFigure.getPosition().getxPosition() + 1][chessFigure.getPosition().getyPosition() - 1] = 0;
@@ -309,7 +308,7 @@ public class AttackServiceImpl implements AttackService {
      * @param mode головна чи побічна діагональ
      * @return чи 2 фігури знаходяться на одній діагоналі
      */
-    private boolean isOnOneDiagonal(Position figurePosition, Position chessPosition, int i, int j, boolean mode) {
+    private boolean isOneDiagonal(Position figurePosition, Position chessPosition, int i, int j, boolean mode) {
         if (mode) {
             return isDiagonal(figurePosition, i, j, true) && isDiagonal(chessPosition, i, j, true);
         } else {
