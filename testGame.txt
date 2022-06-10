@@ -1,3 +1,1 @@
 white king 4 4
-black queen 6 3
-black rook 2 4

@@ -275,7 +275,8 @@ public class AttackServiceImpl implements AttackService {
     public void removeDiagonal(ChessFigure figure, ChessFigure chessFigure, int[][] matrix, int[][] figureMatrix) {
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                if (matrix[i][j] == 1 && isOneDiagonal(figure.getPosition(),chessFigure.getPosition(), i, j, true)) {
+                if (matrix[i][j] == 1 || matrix[i][j] == 10 && isOneDiagonal(figure.getPosition(),chessFigure.getPosition(), i, j, true)
+                        || isOneDiagonal(figure.getPosition(),chessFigure.getPosition(), i, j, false)) {
                     if (figure.getPosition().getxPosition() > chessFigure.getPosition().getxPosition() &&
                             figure.getPosition().getyPosition() > chessFigure.getPosition().getyPosition() && chessFigure.getPosition().getxPosition() != 0 && chessFigure.getPosition().getyPosition() != 0) {
                         figureMatrix[chessFigure.getPosition().getxPosition() - 1][chessFigure.getPosition().getyPosition() - 1] = 0;
@@ -284,8 +285,6 @@ public class AttackServiceImpl implements AttackService {
                             figure.getPosition().getyPosition() < chessFigure.getPosition().getyPosition() && chessFigure.getPosition().getxPosition() != 7 && chessFigure.getPosition().getyPosition() != 7) {
                         figureMatrix[chessFigure.getPosition().getxPosition() + 1][chessFigure.getPosition().getyPosition() + 1] = 0;
                     }
-                }
-                if (matrix[i][j] == 1 && isOneDiagonal(figure.getPosition(),chessFigure.getPosition(), i, j, false)) {
                     if (figure.getPosition().getxPosition() < chessFigure.getPosition().getxPosition() &&
                             figure.getPosition().getyPosition() > chessFigure.getPosition().getyPosition() && chessFigure.getPosition().getxPosition() != 7 && chessFigure.getPosition().getyPosition() != 0) {
                         figureMatrix[chessFigure.getPosition().getxPosition() + 1][chessFigure.getPosition().getyPosition() - 1] = 0;
