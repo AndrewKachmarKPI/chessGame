@@ -180,7 +180,7 @@ public class GameFieldServiceImpl implements GameFieldService {
                 } else {
                     rectangle.setFill(Color.web("#ecedd1"));
                 }
-                borderPane.setId("BorderPane-" + (7-i) + (7-j));
+                borderPane.setId("BorderPane-" + (7-i) + (j));
                 if (gameBoard.isGameStarted()) {
                     borderPane.setCursor(Cursor.HAND);
                 }
@@ -486,7 +486,7 @@ public class GameFieldServiceImpl implements GameFieldService {
         nameLabel.setTextFill(Color.WHITE);
         nameLabel.setStyle("-fx-font-weight: bold");
         char[] characters = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'};
-        Label positionLabel = new Label("(" + (chessFigure.getPosition().getxPosition() + 1) + "," + characters[7-chessFigure.getPosition().getyPosition()] + ")");
+        Label positionLabel = new Label("(" + (chessFigure.getPosition().getxPosition() + 1) + "," + characters[chessFigure.getPosition().getyPosition()] + ")");
         positionLabel.setTextFill(Color.WHITE);
         positionLabel.setStyle("-fx-font-weight: bold");
         VBox labelBox = new VBox(nameLabel, positionLabel);
