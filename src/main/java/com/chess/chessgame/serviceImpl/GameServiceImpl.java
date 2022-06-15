@@ -9,6 +9,7 @@ import com.chess.chessgame.services.GameService;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Класс для оброблення ігрової логіки
@@ -48,9 +49,7 @@ public class GameServiceImpl implements GameService {
             matrix[chessFigure.getPosition().getxPosition()][chessFigure.getPosition().getyPosition()] = getFigureNumber(chessFigure);
         });
         chessBoard = new ChessBoard(figures, chessFigureMap, figureMatrix, matrix);
-        figures.forEach(chessFigure -> {
-            figureMatrix.put(chessFigure, chessFigure.getMoveDirection(chessBoard.getChessMatrix()));
-        });
+        figures.forEach(chessFigure -> figureMatrix.put(chessFigure, chessFigure.getMoveDirection(chessBoard.getChessMatrix())));
         chessBoard.setFigureMatrix(figureMatrix);
     }
 
@@ -83,17 +82,21 @@ public class GameServiceImpl implements GameService {
 
     /**
      * Метод для вираховування ходів короля
-     * @param chessFigure об'єкт короля
+     *
+     * @param chessFigure  об'єкт короля
      * @param figureMatrix матриця короля
      */
     private void kingMovementsCheck(ChessFigure chessFigure, int[][] figureMatrix) {
         chessBoard.getFigureMatrix().forEach((figure, matrix) -> {
             if (chessFigure.getPosition() != figure.getPosition() && figure.getColor() != chessFigure.getColor()) {//COLOR check
                 chessFigure.getAttackService().removeTrailing(figure, chessFigure, matrix, figureMatrix);
-                if (figure.getName() != FigureName.KNIGHT && figure.getName() != FigureName.BISHOP) {
+
+                List<Position> attackPos = convertMatrixToPositionList(matrix);
+                Optional<Position> position = attackPos.stream().filter(pos->pos.equals(chessFigure.getPosition())).findAny();
+                if (figure.getName() != FigureName.KNIGHT && figure.getName() != FigureName.BISHOP && position.isPresent()) {
                     chessFigure.getAttackService().removeAxis(figure, chessFigure, matrix, figureMatrix);
                 }
-                if (figure.getName() == FigureName.BISHOP || figure.getName() == FigureName.QUEEN) {
+                if (position.isPresent() && figure.getName() != FigureName.KNIGHT && figure.getName() != FigureName.ROOK) {
                     chessFigure.getAttackService().removeDiagonal(figure, chessFigure, matrix, figureMatrix);
                 }
             }
