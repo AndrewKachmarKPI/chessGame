@@ -6,10 +6,11 @@ import com.chess.chessgame.enums.FigureColor;
 import com.chess.chessgame.enums.FigureName;
 import com.chess.chessgame.services.GameFileService;
 import com.chess.chessgame.services.GameService;
+import javafx.geometry.Pos;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Класс для оброблення ігрової логіки
@@ -92,7 +93,7 @@ public class GameServiceImpl implements GameService {
                 chessFigure.getAttackService().removeTrailing(figure, chessFigure, matrix, figureMatrix);
 
                 List<Position> attackPos = convertMatrixToPositionList(matrix);
-                Optional<Position> position = attackPos.stream().filter(pos->pos.equals(chessFigure.getPosition())).findAny();
+                Optional<Position> position = attackPos.stream().filter(pos -> pos.equals(chessFigure.getPosition())).findAny();
                 if (figure.getName() != FigureName.KNIGHT && figure.getName() != FigureName.BISHOP && position.isPresent()) {
                     chessFigure.getAttackService().removeAxis(figure, chessFigure, matrix, figureMatrix);
                 }
@@ -101,6 +102,31 @@ public class GameServiceImpl implements GameService {
                 }
             }
         });
+        List<Position> attackPos = convertMatrixToPositionList(figureMatrix);
+        attackPos.forEach(position -> {
+            Optional<ChessFigure> foundFigure = chessBoard.getFigures().stream().filter(figure -> figure.getPosition().equals(position)).findFirst();
+            foundFigure.ifPresent(figure -> {
+                System.out.println("ATTACKED" + figure.getName() + "-" + figure.getColor());
+                if (isAttacked(chessFigure, figure)) {
+                    figureMatrix[figure.getPosition().getxPosition()][figure.getPosition().getyPosition()] = 0;
+                }
+            });
+        });
+    }
+
+    private boolean isAttacked(ChessFigure compareFigure, ChessFigure attackedFigure) {
+        AtomicBoolean isAttacked = new AtomicBoolean(false);
+        chessBoard.getFigureMatrix().forEach((figure, matrix) -> {
+            if (!compareFigure.equals(figure) && !compareFigure.getColor().equals(figure.getColor())) { //COLOR check
+                List<Position> positions = convertMatrixToPositionList(matrix);
+                Optional<Position> finalPosition = positions.stream()
+                        .filter(position -> position.equals(attackedFigure.getPosition())).findFirst();
+                if (finalPosition.isPresent()) {
+                    isAttacked.set(true);
+                }
+            }
+        });
+        return isAttacked.get();
     }
 
     /**
