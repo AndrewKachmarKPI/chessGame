@@ -106,7 +106,6 @@ public class GameServiceImpl implements GameService {
         attackPos.forEach(position -> {
             Optional<ChessFigure> foundFigure = chessBoard.getFigures().stream().filter(figure -> figure.getPosition().equals(position)).findFirst();
             foundFigure.ifPresent(figure -> {
-                System.out.println("ATTACKED" + figure.getName() + "-" + figure.getColor());
                 if (isAttacked(chessFigure, figure)) {
                     figureMatrix[figure.getPosition().getxPosition()][figure.getPosition().getyPosition()] = 0;
                 }
