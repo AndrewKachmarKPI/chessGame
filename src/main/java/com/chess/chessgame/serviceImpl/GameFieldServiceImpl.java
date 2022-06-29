@@ -855,7 +855,7 @@ public class GameFieldServiceImpl implements GameFieldService {
      */
     private void refreshGame(String directory) {
         isFileExist(directory);
-        if (gameFileService.gameFileValidator(gameBoard.getWorkingFileName().getText())) {
+        if (gameFileService.gameFileValidator(gameBoard.getWorkingFileDirectory())) {
             gameService.initGame(directory);
             gameBoard.setGameStarted(true);
             gameService.getFiguresForSetup().forEach(this::setFigureOnBoard);
